@@ -17,6 +17,7 @@ Everything is edited from the admin panel at `/admin`, which is in French.
   - FAQ: questions and answers, also exposed to search engines as structured data
   - Form: a form built in the Forms collection
 - **Header / Footer**: the menu links.
+- **Coordonnées du studio**: phone, address and social links. They are shown in the footer and published to search engines as local business data.
 - **Forms / Form Submissions**: the contact form and the messages it receives.
 - **Redirects**: redirect old URLs to new pages.
 
