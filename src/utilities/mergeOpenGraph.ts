@@ -4,6 +4,7 @@ import { SITE_NAME } from './siteName'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
+  locale: 'fr_FR',
   siteName: SITE_NAME,
   title: SITE_NAME,
 }

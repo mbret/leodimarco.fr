@@ -7,9 +7,9 @@ import './index.scss'
 
 const SuccessMessage: React.FC = () => (
   <div>
-    Database seeded! You can now{' '}
+    Pages créées !{' '}
     <a target="_blank" href="/">
-      visit your website
+      Voir le site
     </a>
   </div>
 )
@@ -24,15 +24,15 @@ export const SeedButton: React.FC = () => {
       e.preventDefault()
 
       if (seeded) {
-        toast.info('Database already seeded.')
+        toast.info('Les pages sont déjà créées.')
         return
       }
       if (loading) {
-        toast.info('Seeding already in progress.')
+        toast.info('Création en cours.')
         return
       }
       if (error) {
-        toast.error(`An error occurred, please refresh and try again.`)
+        toast.error('Une erreur est survenue, rechargez la page et réessayez.')
         return
       }
 
@@ -48,7 +48,7 @@ export const SeedButton: React.FC = () => {
                     resolve(true)
                     setSeeded(true)
                   } else {
-                    reject('An error occurred while seeding.')
+                    reject('Une erreur est survenue.')
                   }
                 })
                 .catch((error) => {
@@ -59,9 +59,9 @@ export const SeedButton: React.FC = () => {
             }
           }),
           {
-            loading: 'Seeding with data....',
+            loading: 'Création des pages…',
             success: <SuccessMessage />,
-            error: 'An error occurred while seeding.',
+            error: 'Une erreur est survenue.',
           },
         )
       } catch (err) {
@@ -73,14 +73,14 @@ export const SeedButton: React.FC = () => {
   )
 
   let message = ''
-  if (loading) message = ' (seeding...)'
-  if (seeded) message = ' (done!)'
-  if (error) message = ` (error: ${error})`
+  if (loading) message = ' (en cours…)'
+  if (seeded) message = ' (terminé !)'
+  if (error) message = ` (erreur : ${error})`
 
   return (
     <Fragment>
       <button className="seedButton" onClick={handleClick}>
-        Seed your database
+        Créer les pages de départ
       </button>
       {message}
     </Fragment>

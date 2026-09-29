@@ -1,33 +1,61 @@
-import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
+import type { Payload, PayloadRequest, RequiredDataFromCollectionSlug } from 'payload'
 
-import { contactForm as contactFormData } from './contact-form'
-import { contact as contactPageData } from './contact-page'
-import { home } from './home'
-import { image1 } from './image-1'
-import { image2 } from './image-2'
-import { imageHero1 } from './image-hero-1'
-import { post1 } from './post-1'
-import { post2 } from './post-2'
-import { post3 } from './post-3'
+import type { Form, Page } from '@/payload-types'
+import { SITE_NAME } from '@/utilities/siteName'
 
-const collections: CollectionSlug[] = [
-  'categories',
-  'media',
-  'pages',
-  'posts',
-  'forms',
-  'form-submissions',
-  'search',
-]
+import { heading, paragraph, richText } from './richText'
 
-const globals: GlobalSlug[] = ['header', 'footer']
+type PageData = RequiredDataFromCollectionSlug<'pages'>
 
-const categories = ['Technology', 'News', 'Finance', 'Design', 'Software', 'Engineering']
+const pageLink = (page: Page, label: string, appearance?: 'default' | 'outline') => ({
+  link: {
+    type: 'reference' as const,
+    reference: { relationTo: 'pages' as const, value: page.id },
+    label,
+    ...(appearance ? { appearance } : {}),
+  },
+})
 
-// Next.js revalidation errors are normal when seeding the database without a server running
-// i.e. running `yarn seed` locally instead of using the admin UI within an active app
-// The app is not running to revalidate the pages and so the API routes are not available
-// These error messages can be ignored: `Error hitting revalidate route for...`
+const hero = (title: string, intro?: string): PageData['hero'] => ({
+  type: 'lowImpact',
+  richText: richText(heading(title), ...(intro ? [paragraph(intro)] : [])),
+})
+
+const contactCta = (contact: Page) => ({
+  blockType: 'cta' as const,
+  richText: richText(
+    heading('Un projet en tête ?', 'h3'),
+    paragraph('Décrivez votre idée, l’emplacement et la taille souhaités.'),
+  ),
+  links: [pageLink(contact, 'Me contacter')],
+})
+
+const contactFormData: RequiredDataFromCollectionSlug<'forms'> = {
+  title: 'Contact',
+  submitButtonLabel: 'Envoyer',
+  confirmationType: 'message',
+  confirmationMessage: richText(
+    heading('Merci !', 'h2'),
+    paragraph('Votre message a bien été envoyé. Je vous réponds dès que possible.'),
+  ),
+  fields: [
+    { blockType: 'text', name: 'nom', label: 'Nom', required: true, width: 100 },
+    { blockType: 'email', name: 'email', label: 'Email', required: true, width: 100 },
+    { blockType: 'text', name: 'telephone', label: 'Téléphone', required: false, width: 100 },
+    {
+      blockType: 'textarea',
+      name: 'projet',
+      label: 'Votre projet (idée, emplacement, taille)',
+      required: true,
+      width: 100,
+    },
+  ],
+}
+
+/**
+ * Creates the starter pages, contact form and menus with placeholder text.
+ * Only fills in what is missing, so it never overwrites content edited in the admin.
+ */
 export const seed = async ({
   payload,
   req,
@@ -35,264 +63,195 @@ export const seed = async ({
   payload: Payload
   req: PayloadRequest
 }): Promise<void> => {
-  payload.logger.info('Seeding database...')
+  payload.logger.info('Creating starter content...')
 
-  // we need to clear the media directory before seeding
-  // as well as the collections and globals
-  // this is because while `yarn seed` drops the database
-  // the custom `/api/seed` endpoint does not
-  payload.logger.info(`— Clearing collections and globals...`)
-
-  // clear the database
-  await Promise.all(
-    globals.map((global) =>
-      payload.updateGlobal({
-        slug: global,
-        data: {
-          navItems: [],
-        },
+  const findPage = async (slug: string) =>
+    (
+      await payload.find({
+        collection: 'pages',
         depth: 0,
-        context: {
-          disableRevalidate: true,
-        },
-      }),
-    ),
-  )
+        limit: 1,
+        req,
+        where: { slug: { equals: slug } },
+      })
+    ).docs[0]
 
-  await Promise.all(
-    collections.map((collection) => payload.db.deleteMany({ collection, req, where: {} })),
-  )
-
-  await Promise.all(
-    collections
-      .filter((collection) => Boolean(payload.collections[collection].config.versions))
-      .map((collection) => payload.db.deleteVersions({ collection, req, where: {} })),
-  )
-
-  payload.logger.info(`— Seeding demo author and user...`)
-
-  await payload.delete({
-    collection: 'users',
-    depth: 0,
-    where: {
-      email: {
-        equals: 'demo-author@example.com',
-      },
-    },
-  })
-
-  payload.logger.info(`— Seeding media...`)
-
-  const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/3.x/templates/website/src/endpoints/seed/image-post1.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/3.x/templates/website/src/endpoints/seed/image-post2.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/3.x/templates/website/src/endpoints/seed/image-post3.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/3.x/templates/website/src/endpoints/seed/image-hero1.webp',
-    ),
-  ])
-
-  const [demoAuthor, image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
-    payload.create({
-      collection: 'users',
-      data: {
-        name: 'Demo Author',
-        email: 'demo-author@example.com',
-        password: 'password',
-      },
-    }),
-    payload.create({
-      collection: 'media',
-      data: image1,
-      file: image1Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: image2,
-      file: image2Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: image2,
-      file: image3Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: imageHero1,
-      file: hero1Buffer,
-    }),
-    categories.map((category) =>
-      payload.create({
-        collection: 'categories',
-        data: {
-          title: category,
-          slug: category,
-        },
-      }),
-    ),
-  ])
-
-  payload.logger.info(`— Seeding posts...`)
-
-  // Do not create posts with `Promise.all` because we want the posts to be created in order
-  // This way we can sort them by `createdAt` or `publishedAt` and they will be in the expected order
-  const post1Doc = await payload.create({
-    collection: 'posts',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: post1({ heroImage: image1Doc, blockImage: image2Doc, author: demoAuthor }),
-  })
-
-  const post2Doc = await payload.create({
-    collection: 'posts',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: post2({ heroImage: image2Doc, blockImage: image3Doc, author: demoAuthor }),
-  })
-
-  const post3Doc = await payload.create({
-    collection: 'posts',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: post3({ heroImage: image3Doc, blockImage: image1Doc, author: demoAuthor }),
-  })
-
-  // update each post with related posts
-  await payload.update({
-    id: post1Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post2Doc.id, post3Doc.id],
-    },
-  })
-  await payload.update({
-    id: post2Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post1Doc.id, post3Doc.id],
-    },
-  })
-  await payload.update({
-    id: post3Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post1Doc.id, post2Doc.id],
-    },
-  })
-
-  payload.logger.info(`— Seeding contact form...`)
-
-  const contactForm = await payload.create({
-    collection: 'forms',
-    depth: 0,
-    data: contactFormData,
-  })
-
-  payload.logger.info(`— Seeding pages...`)
-
-  const [_, contactPage] = await Promise.all([
+  const ensurePage = async (data: PageData): Promise<Page> =>
+    (await findPage(data.slug!)) ||
     payload.create({
       collection: 'pages',
+      data: { _status: 'published', ...data },
       depth: 0,
-      data: home({ heroImage: imageHomeDoc, metaImage: image2Doc }),
-    }),
-    payload.create({
-      collection: 'pages',
+      req,
+    })
+
+  const existingForm = (
+    await payload.find({
+      collection: 'forms',
       depth: 0,
-      data: contactPageData({ contactForm: contactForm }),
-    }),
-  ])
+      limit: 1,
+      req,
+      where: { title: { equals: contactFormData.title } },
+    })
+  ).docs[0]
 
-  payload.logger.info(`— Seeding globals...`)
+  const contactForm: Form =
+    existingForm ||
+    (await payload.create({ collection: 'forms', data: contactFormData, depth: 0, req }))
 
-  await Promise.all([
-    payload.updateGlobal({
+  const contact = await ensurePage({
+    slug: 'contact',
+    title: 'Contact',
+    hero: hero('Contact', 'Décrivez votre projet, je vous réponds dès que possible.'),
+    layout: [{ blockType: 'formBlock', form: contactForm.id, enableIntro: false }],
+  })
+
+  const galerie = await ensurePage({
+    slug: 'galerie',
+    title: 'Galerie',
+    hero: hero('Galerie', 'Une sélection de tatouages réalisés au studio.'),
+    layout: [{ blockType: 'gallery' }],
+  })
+
+  const prestations = await ensurePage({
+    slug: 'prestations',
+    title: 'Prestations',
+    hero: hero(
+      'Prestations',
+      'Chaque tatouage commence par un échange pour comprendre votre projet.',
+    ),
+    layout: [
+      {
+        blockType: 'services',
+        items: [
+          {
+            title: 'Création sur mesure',
+            description:
+              'Un dessin unique, réalisé à partir de votre idée, de vos références et de l’emplacement choisi.',
+            price: 'Sur devis',
+          },
+          {
+            title: 'Flash',
+            description: 'Des motifs déjà dessinés, disponibles tels quels ou légèrement adaptés.',
+            price: 'Sur devis',
+          },
+          {
+            title: 'Recouvrement',
+            description: 'Transformer ou masquer un ancien tatouage avec un nouveau motif.',
+            price: 'Sur devis',
+          },
+          {
+            title: 'Retouche',
+            description: 'Raviver un tatouage existant ou reprendre une cicatrisation inégale.',
+            price: 'Sur devis',
+          },
+        ],
+      },
+      contactCta(contact),
+    ],
+  })
+
+  const aPropos = await ensurePage({
+    slug: 'a-propos',
+    title: 'À propos',
+    hero: hero('À propos'),
+    layout: [
+      {
+        blockType: 'content',
+        columns: [
+          {
+            size: 'full',
+            richText: richText(
+              paragraph('Texte à compléter : votre parcours, votre style et votre studio.'),
+            ),
+          },
+        ],
+      },
+    ],
+  })
+
+  const faq = await ensurePage({
+    slug: 'faq',
+    title: 'FAQ',
+    hero: hero('Questions fréquentes'),
+    layout: [
+      {
+        blockType: 'faq',
+        items: [
+          {
+            question: 'Comment prendre rendez-vous ?',
+            answer:
+              'Remplissez le formulaire de la page Contact en décrivant votre projet : idée, emplacement, taille et références. Je vous recontacte pour en discuter et fixer une date.',
+          },
+          {
+            question: 'Un acompte est-il demandé ?',
+            answer:
+              'Un acompte peut être demandé pour réserver la séance. Il est alors déduit du prix final.',
+          },
+          {
+            question: 'Comment préparer la séance ?',
+            answer:
+              'Dormez bien, mangez avant de venir, évitez l’alcool la veille et venez avec une peau hydratée et non exposée au soleil.',
+          },
+          {
+            question: 'Comment prendre soin de mon tatouage ?',
+            answer:
+              'Des consignes détaillées vous sont données après la séance. En résumé : laver doucement, hydrater, et éviter soleil, piscine et mer pendant la cicatrisation.',
+          },
+        ],
+      },
+      contactCta(contact),
+    ],
+  })
+
+  const home = await ensurePage({
+    slug: 'home',
+    title: 'Accueil',
+    hero: {
+      type: 'lowImpact',
+      richText: richText(
+        heading(SITE_NAME),
+        paragraph('Tatoueur. Créations sur mesure, flashs et recouvrements.'),
+      ),
+      links: [
+        pageLink(contact, 'Prendre rendez-vous', 'default'),
+        pageLink(galerie, 'Voir la galerie', 'outline'),
+      ],
+    },
+    layout: [
+      { blockType: 'gallery', heading: 'Dernières réalisations', limit: 6 },
+      contactCta(contact),
+    ],
+  })
+
+  const header = await payload.findGlobal({ slug: 'header', depth: 0, req })
+  if (!header.navItems?.length) {
+    await payload.updateGlobal({
       slug: 'header',
       data: {
         navItems: [
-          {
-            link: {
-              type: 'custom',
-              label: 'Posts',
-              url: '/posts',
-            },
-          },
-          {
-            link: {
-              type: 'reference',
-              label: 'Contact',
-              reference: {
-                relationTo: 'pages',
-                value: contactPage.id,
-              },
-            },
-          },
+          pageLink(home, 'Accueil'),
+          pageLink(prestations, 'Prestations'),
+          pageLink(galerie, 'Galerie'),
+          pageLink(aPropos, 'À propos'),
+          pageLink(faq, 'FAQ'),
+          pageLink(contact, 'Contact'),
         ],
       },
-    }),
-    payload.updateGlobal({
+      req,
+    })
+  }
+
+  const footer = await payload.findGlobal({ slug: 'footer', depth: 0, req })
+  if (!footer.navItems?.length) {
+    await payload.updateGlobal({
       slug: 'footer',
       data: {
-        navItems: [
-          {
-            link: {
-              type: 'custom',
-              label: 'Admin',
-              url: '/admin',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Source Code',
-              newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/3.x/templates/website',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Payload',
-              newTab: true,
-              url: 'https://payloadcms.com/',
-            },
-          },
-        ],
+        navItems: [pageLink(faq, 'FAQ'), pageLink(contact, 'Contact')],
       },
-    }),
-  ])
-
-  payload.logger.info('Seeded database successfully!')
-}
-
-async function fetchFileByURL(url: string): Promise<File> {
-  const res = await fetch(url, {
-    credentials: 'include',
-    method: 'GET',
-  })
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch file from ${url}, status: ${res.status}`)
+      req,
+    })
   }
 
-  const data = await res.arrayBuffer()
-
-  return {
-    name: url.split('/').pop() || `file-${Date.now()}`,
-    data: Buffer.from(data),
-    mimetype: `image/${url.split('.').pop()}`,
-    size: data.byteLength,
-  }
+  payload.logger.info('Starter content created.')
 }

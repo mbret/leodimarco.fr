@@ -2,18 +2,22 @@ import React, { Fragment } from 'react'
 
 import type { Page } from '@/payload-types'
 
-import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
+import { FAQBlock } from '@/blocks/FAQ/Component'
 import { FormBlock } from '@/blocks/Form/Component'
+import { GalleryBlock } from '@/blocks/Gallery/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { ServicesBlock } from '@/blocks/Services/Component'
 
 const blockComponents = {
-  archive: ArchiveBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
+  faq: FAQBlock,
   formBlock: FormBlock,
+  gallery: GalleryBlock,
   mediaBlock: MediaBlock,
+  services: ServicesBlock,
 }
 
 export const RenderBlocks: React.FC<{
