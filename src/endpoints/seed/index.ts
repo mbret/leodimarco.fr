@@ -328,22 +328,27 @@ export const seed = async ({
     })
   }
 
+  // Fill in each studio detail only where nothing has been entered yet
   const studio = await payload.findGlobal({ slug: 'studio', depth: 0, req })
-  if (!studio.phone && !studio.street && !studio.socials?.length) {
-    await payload.updateGlobal({
-      slug: 'studio',
-      data: {
-        phone: '+33618510548',
-        street: '23 Grande Rue',
-        postalCode: '54000',
-        city: 'Nancy',
-        socials: [
-          { platform: 'instagram', url: INSTAGRAM_URL },
-          { platform: 'facebook', url: FACEBOOK_URL },
-        ],
-      },
-      req,
-    })
+  const studioDefaults = {
+    phone: '+33618510548',
+    street: '23 Grande Rue',
+    postalCode: '54000',
+    city: 'Nancy',
+  }
+  const missingStudio = {
+    ...Object.fromEntries(
+      Object.entries(studioDefaults).filter(([key]) => !studio[key as keyof typeof studioDefaults]),
+    ),
+    ...(!studio.socials?.length && {
+      socials: [
+        { platform: 'instagram' as const, url: INSTAGRAM_URL },
+        { platform: 'facebook' as const, url: FACEBOOK_URL },
+      ],
+    }),
+  }
+  if (Object.keys(missingStudio).length > 0) {
+    await payload.updateGlobal({ slug: 'studio', data: missingStudio, req })
   }
 
   payload.logger.info('Starter content created.')
