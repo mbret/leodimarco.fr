@@ -1,4 +1,4 @@
-// Keep these in sync with the CSS variables in your tailwind configuration
+// Keep these in sync with the breakpoints in src/app/(frontend)/globals.css
 
 export const cssVariables = {
   breakpoints: {
