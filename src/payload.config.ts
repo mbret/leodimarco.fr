@@ -10,6 +10,7 @@ import { Realisations } from './collections/Realisations'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
+import { Studio } from './Studio/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -82,7 +83,7 @@ export default buildConfig({
       },
     }),
   ],
-  globals: [Header, Footer],
+  globals: [Header, Footer, Studio],
   i18n: {
     fallbackLanguage: 'fr',
     supportedLanguages: { fr, en },

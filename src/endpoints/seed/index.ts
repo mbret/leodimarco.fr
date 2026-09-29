@@ -30,6 +30,27 @@ const contactCta = (contact: Page) => ({
   links: [pageLink(contact, 'Me contacter')],
 })
 
+const INSTAGRAM_URL = 'https://www.instagram.com/leodimarcotricopigmentation/'
+const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61557075478028'
+
+const instagramCta = {
+  blockType: 'cta' as const,
+  richText: richText(
+    heading('Plus de résultats sur Instagram', 'h3'),
+    paragraph('Je partage régulièrement mes derniers résultats cicatrisés.'),
+  ),
+  links: [
+    {
+      link: {
+        type: 'custom' as const,
+        url: INSTAGRAM_URL,
+        newTab: true,
+        label: 'Suivre sur Instagram',
+      },
+    },
+  ],
+}
+
 // SEO title and description; generateMeta appends the site name to the title
 const meta = (title: string, description: string) => ({ title, description })
 
@@ -112,23 +133,26 @@ export const seed = async ({
     title: 'Contact',
     hero: hero(
       'Contact',
-      'Décrivez votre situation, je vous réponds pour convenir d’un premier rendez-vous.',
+      'Studio privé, sur rendez-vous. Décrivez votre situation, je vous réponds pour convenir d’une consultation.',
     ),
-    layout: [{ blockType: 'formBlock', form: contactForm.id, enableIntro: false }],
+    layout: [{ blockType: 'formBlock', form: contactForm.id, enableIntro: false }, instagramCta],
     meta: meta(
       'Contact et rendez-vous',
-      'Prenez rendez-vous pour une micropigmentation capillaire à Nancy : décrivez votre situation, réponse rapide.',
+      'Prenez rendez-vous pour une tricopigmentation à Nancy : studio privé, sur rendez-vous. Décrivez votre situation, réponse rapide.',
     ),
   })
 
   const galerie = await ensurePage({
     slug: 'galerie',
     title: 'Galerie',
-    hero: hero('Résultats', 'Des résultats avant / après réalisés au studio.'),
-    layout: [{ blockType: 'gallery' }],
+    hero: hero(
+      'Résultats',
+      'Des résultats avant / après réalisés au studio, photographiés une fois cicatrisés.',
+    ),
+    layout: [{ blockType: 'gallery' }, instagramCta],
     meta: meta(
       'Résultats avant / après',
-      'Photos avant / après de micropigmentations capillaires réalisées à Nancy : effet rasé, densification, cicatrices.',
+      'Photos avant / après de tricopigmentations réalisées à Nancy : effet crâne rasé, densification, cicatrices.',
     ),
   })
 
@@ -144,7 +168,7 @@ export const seed = async ({
         blockType: 'services',
         items: [
           {
-            title: 'Effet rasé',
+            title: 'Effet crâne rasé',
             description:
               'Recrée l’aspect d’une coupe rasée de près sur un crâne dégarni ou chauve, avec une ligne frontale adaptée à votre visage.',
             price: 'Sur devis',
@@ -163,7 +187,7 @@ export const seed = async ({
           },
           {
             title: 'Retouche',
-            description: 'Raviver une micropigmentation qui a pâli avec le temps.',
+            description: 'Raviver une tricopigmentation qui a pâli avec le temps.',
             price: 'Sur devis',
           },
         ],
@@ -172,7 +196,7 @@ export const seed = async ({
     ],
     meta: meta(
       'Prestations',
-      'Micropigmentation capillaire à Nancy : effet rasé, densification des cheveux clairsemés, camouflage de cicatrices et retouches.',
+      'Tricopigmentation à Nancy : effet crâne rasé, densification des cheveux clairsemés, camouflage de cicatrices et retouches.',
     ),
   })
 
@@ -187,13 +211,21 @@ export const seed = async ({
           {
             size: 'full',
             richText: richText(
-              paragraph('Texte à compléter : votre parcours, votre formation et votre studio.'),
+              paragraph(
+                'Je suis Léo, praticien en tricopigmentation, formé et certifié par la Medico Derm Academy. Je vous accueille dans mon studio privé à Nancy, sur rendez-vous.',
+              ),
+              paragraph(
+                'Lorsque la ligne frontale recule, les proportions du visage changent. Je n’aime pas l’idée de transformer un visage : j’aime l’idée de le rééquilibrer. Un résultat naturel se construit point après point, dans le détail.',
+              ),
             ),
           },
         ],
       },
     ],
-    meta: meta('À propos', 'Léo Di Marco, spécialiste de la micropigmentation capillaire à Nancy.'),
+    meta: meta(
+      'À propos',
+      'Léo Di Marco, praticien en tricopigmentation formé à la Medico Derm Academy, studio privé à Nancy.',
+    ),
   })
 
   const faq = await ensurePage({
@@ -205,14 +237,14 @@ export const seed = async ({
         blockType: 'faq',
         items: [
           {
-            question: 'Qu’est-ce que la micropigmentation capillaire ?',
+            question: 'Qu’est-ce que la tricopigmentation ?',
             answer:
-              'Une technique qui dépose de minuscules points de pigment dans le cuir chevelu pour imiter l’aspect de cheveux rasés, ou donner de la densité à des cheveux clairsemés.',
+              'Aussi appelée micropigmentation capillaire, c’est une technique qui dépose de minuscules points de pigment dans le cuir chevelu pour imiter l’aspect de cheveux rasés, ou donner de la densité à des cheveux clairsemés.',
           },
           {
             question: 'Combien de séances faut-il ?',
             answer:
-              'En général deux à trois séances, espacées de quelques jours à quelques semaines, pour construire la densité progressivement. Le nombre exact dépend de votre situation.',
+              'En général trois à quatre séances, pour construire la densité progressivement. Le nombre exact dépend de votre situation et se définit lors de la consultation.',
           },
           {
             question: 'Est-ce douloureux ?',
@@ -232,7 +264,7 @@ export const seed = async ({
           {
             question: 'Quels soins après une séance ?',
             answer:
-              'Des consignes détaillées vous sont données après chaque séance. En résumé : ne pas mouiller le crâne ni transpirer les premiers jours, et éviter soleil, piscine et sport intense pendant la cicatrisation.',
+              'Des rougeurs après la séance sont normales et disparaissent vite, souvent dès le lendemain. Des consignes détaillées vous sont données après chaque séance : en résumé, ne pas mouiller le crâne ni transpirer les premiers jours, et éviter soleil, piscine et sport intense pendant la cicatrisation.',
           },
         ],
       },
@@ -240,7 +272,7 @@ export const seed = async ({
     ],
     meta: meta(
       'Questions fréquentes',
-      'Tout savoir sur la micropigmentation capillaire : séances, douleur, durée du résultat, soins et prise de rendez-vous à Nancy.',
+      'Tout savoir sur la tricopigmentation : séances, douleur, durée du résultat, soins et prise de rendez-vous à Nancy.',
     ),
   })
 
@@ -252,7 +284,7 @@ export const seed = async ({
       richText: richText(
         heading(SITE_NAME),
         paragraph(
-          'Micropigmentation capillaire à Nancy. Effet rasé, densification et camouflage de cicatrices.',
+          'Tricopigmentation à Nancy. Effet crâne rasé, densification et camouflage de cicatrices, dans un studio privé sur rendez-vous.',
         ),
       ),
       links: [
@@ -262,8 +294,8 @@ export const seed = async ({
     },
     layout: [{ blockType: 'gallery', heading: 'Avant / après', limit: 6 }, contactCta(contact)],
     meta: meta(
-      'Micropigmentation capillaire à Nancy',
-      'Léo Di Marco, micropigmentation capillaire à Nancy (54) : effet rasé, densification des cheveux clairsemés et camouflage de cicatrices.',
+      'Tricopigmentation à Nancy',
+      'Léo Di Marco, tricopigmentation (micropigmentation capillaire) à Nancy (54) : effet crâne rasé, densification et camouflage de cicatrices.',
     ),
   })
 
@@ -294,6 +326,29 @@ export const seed = async ({
       },
       req,
     })
+  }
+
+  // Fill in each studio detail only where nothing has been entered yet
+  const studio = await payload.findGlobal({ slug: 'studio', depth: 0, req })
+  const studioDefaults = {
+    phone: '+33618510548',
+    street: '23 Grande Rue',
+    postalCode: '54000',
+    city: 'Nancy',
+  }
+  const missingStudio = {
+    ...Object.fromEntries(
+      Object.entries(studioDefaults).filter(([key]) => !studio[key as keyof typeof studioDefaults]),
+    ),
+    ...(!studio.socials?.length && {
+      socials: [
+        { platform: 'instagram' as const, url: INSTAGRAM_URL },
+        { platform: 'facebook' as const, url: FACEBOOK_URL },
+      ],
+    }),
+  }
+  if (Object.keys(missingStudio).length > 0) {
+    await payload.updateGlobal({ slug: 'studio', data: missingStudio, req })
   }
 
   payload.logger.info('Starter content created.')

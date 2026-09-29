@@ -108,10 +108,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    studio: Studio;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    studio: StudioSelect<false> | StudioSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1541,6 +1543,29 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "studio".
+ */
+export interface Studio {
+  id: number;
+  /**
+   * Au format international, par exemple +33612345678.
+   */
+  phone?: string | null;
+  street?: string | null;
+  postalCode?: string | null;
+  city?: string | null;
+  socials?:
+    | {
+        platform: 'instagram' | 'facebook' | 'youtube';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1579,6 +1604,26 @@ export interface FooterSelect<T extends boolean = true> {
               url?: T;
               label?: T;
             };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "studio_select".
+ */
+export interface StudioSelect<T extends boolean = true> {
+  phone?: T;
+  street?: T;
+  postalCode?: T;
+  city?: T;
+  socials?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
         id?: T;
       };
   updatedAt?: T;
