@@ -1,0 +1,6 @@
+# pnpm 11 only runs dependency build scripts listed here, and fails the install on unlisted ones
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+  bufferutil: false
