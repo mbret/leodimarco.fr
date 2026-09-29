@@ -3,6 +3,8 @@ import * as migration_20260929_081753_media_storage_prefix from './20260929_0817
 import * as migration_20260929_091300_realisations_and_tattoo_blocks from './20260929_091300_realisations_and_tattoo_blocks'
 import * as migration_20260929_102924_realisations_before_photo from './20260929_102924_realisations_before_photo'
 import * as migration_20260929_104524_studio_details from './20260929_104524_studio_details'
+import * as migration_20260929_180232_faq_categories from './20260929_180232_faq_categories'
+import * as migration_20260929_180300_faq_content from './20260929_180300_faq_content'
 
 export const migrations = [
   {
@@ -29,5 +31,15 @@ export const migrations = [
     up: migration_20260929_104524_studio_details.up,
     down: migration_20260929_104524_studio_details.down,
     name: '20260929_104524_studio_details',
+  },
+  {
+    up: migration_20260929_180232_faq_categories.up,
+    down: migration_20260929_180232_faq_categories.down,
+    name: '20260929_180232_faq_categories',
+  },
+  {
+    up: migration_20260929_180300_faq_content.up,
+    down: migration_20260929_180300_faq_content.down,
+    name: '20260929_180300_faq_content',
   },
 ]

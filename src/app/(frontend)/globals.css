@@ -18,6 +18,11 @@
     font-family: var(--font-heading);
     font-weight: unset;
     font-size: unset;
+  }
+
+  /* Tight tracking only suits large titles; smaller headings like FAQ questions keep the default */
+  h1,
+  h2 {
     letter-spacing: -0.02em;
   }
 }

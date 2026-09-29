@@ -470,10 +470,27 @@ export interface ServicesBlock {
  * via the `definition` "FAQBlock".
  */
 export interface FAQBlock {
-  heading?: string | null;
-  items: {
-    question: string;
-    answer: string;
+  categories: {
+    title: string;
+    items: {
+      question: string;
+      answer: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      };
+      id?: string | null;
+    }[];
     id?: string | null;
   }[];
   id?: string | null;
@@ -1090,12 +1107,17 @@ export interface ServicesBlockSelect<T extends boolean = true> {
  * via the `definition` "FAQBlock_select".
  */
 export interface FAQBlockSelect<T extends boolean = true> {
-  heading?: T;
-  items?:
+  categories?:
     | T
     | {
-        question?: T;
-        answer?: T;
+        title?: T;
+        items?:
+          | T
+          | {
+              question?: T;
+              answer?: T;
+              id?: T;
+            };
         id?: T;
       };
   id?: T;
