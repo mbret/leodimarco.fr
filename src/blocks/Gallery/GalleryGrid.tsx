@@ -40,6 +40,11 @@ export const GalleryGrid: React.FC<{ realisations: Realisation[] }> = ({ realisa
                 resource={realisation.image}
                 size="(max-width: 768px) 50vw, 33vw"
               />
+              {realisation.before && (
+                <span className="absolute top-2 left-2 rounded-md bg-background/80 px-2 py-1 text-xs font-medium">
+                  Avant / après
+                </span>
+              )}
             </button>
           </li>
         ))}
@@ -48,7 +53,7 @@ export const GalleryGrid: React.FC<{ realisations: Realisation[] }> = ({ realisa
       <Dialog open={current !== null} onOpenChange={(open) => !open && setOpenIndex(null)}>
         {current && (
           <DialogContent
-            className="sm:max-w-3xl"
+            className={current.before ? 'sm:max-w-5xl' : 'sm:max-w-3xl'}
             onKeyDown={(event) => {
               if (event.key === 'ArrowLeft') step(-1)
               if (event.key === 'ArrowRight') step(1)
@@ -60,9 +65,27 @@ export const GalleryGrid: React.FC<{ realisations: Realisation[] }> = ({ realisa
                 {current.description || current.title}
               </DialogDescription>
             </DialogHeader>
-            <div className="relative h-[70vh]">
-              <Media fill imgClassName="object-contain" resource={current.image} size="100vw" />
-            </div>
+            {current.before ? (
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { label: 'Avant', resource: current.before },
+                  { label: 'Après', resource: current.image },
+                ].map(({ label, resource }) => (
+                  <figure className="grid gap-2" key={label}>
+                    <div className="relative h-[50vh] md:h-[65vh]">
+                      <Media fill imgClassName="object-contain" resource={resource} size="50vw" />
+                    </div>
+                    <figcaption className="text-center text-sm text-muted-foreground">
+                      {label}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            ) : (
+              <div className="relative h-[70vh]">
+                <Media fill imgClassName="object-contain" resource={current.image} size="100vw" />
+              </div>
+            )}
             {count > 1 && (
               <div className="flex justify-between">
                 <Button onClick={() => step(-1)} size="icon" variant="outline">

@@ -4,7 +4,7 @@ import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { revalidateRealisation, revalidateRealisationDelete } from './hooks/revalidateRealisation'
 
-// Tattoo photos shown by the Gallery block, in the order set by drag and drop in the admin
+// Before/after results shown by the Gallery block, in the order set by drag and drop in the admin
 export const Realisations: CollectionConfig<'realisations'> = {
   slug: 'realisations',
   labels: {
@@ -25,15 +25,31 @@ export const Realisations: CollectionConfig<'realisations'> = {
     title: true,
     description: true,
     image: true,
+    before: true,
   },
   orderable: true,
   fields: [
     {
-      name: 'image',
-      type: 'upload',
-      label: 'Photo',
-      relationTo: 'media',
-      required: true,
+      type: 'row',
+      fields: [
+        {
+          name: 'before',
+          type: 'upload',
+          label: 'Photo avant',
+          relationTo: 'media',
+          admin: {
+            description:
+              'Optionnel. Si elle est renseignée, la galerie affiche l’avant et l’après.',
+          },
+        },
+        {
+          name: 'image',
+          type: 'upload',
+          label: 'Photo après',
+          relationTo: 'media',
+          required: true,
+        },
+      ],
     },
     {
       name: 'title',
@@ -46,7 +62,7 @@ export const Realisations: CollectionConfig<'realisations'> = {
       type: 'textarea',
       label: 'Description',
       admin: {
-        description: 'Optionnel : style, emplacement, nombre de séances…',
+        description: 'Optionnel : zone traitée, nombre de séances…',
       },
     },
   ],
