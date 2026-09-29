@@ -15,8 +15,10 @@
   h4,
   h5,
   h6 {
+    font-family: var(--font-heading);
     font-weight: unset;
     font-size: unset;
+    letter-spacing: -0.02em;
   }
 }
 
@@ -41,7 +43,7 @@
   --breakpoint-lg: 64rem;
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 86rem;
-  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-manrope);
   --font-sans: var(--font-geist-sans);
 }
 
@@ -197,7 +199,8 @@
 .prose h1 {
   margin-bottom: 0.25em;
   font-size: 2.5rem;
-  font-weight: normal;
+  font-weight: 600;
+  letter-spacing: -0.03em;
 }
 
 .prose h2 {

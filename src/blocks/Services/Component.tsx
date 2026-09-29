@@ -12,7 +12,7 @@ export const ServicesBlock: React.FC<ServicesBlockProps> = ({ heading, items }) 
         {(items || []).map((item) => (
           <Card key={item.id}>
             <CardHeader>
-              <CardTitle>{item.title}</CardTitle>
+              <CardTitle className="font-heading">{item.title}</CardTitle>
               {item.price && <CardDescription>{item.price}</CardDescription>}
             </CardHeader>
             {item.description && (
