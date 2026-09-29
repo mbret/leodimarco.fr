@@ -18,6 +18,16 @@ import { s3Storage } from '@payloadcms/storage-s3'
 import { en } from '@payloadcms/translations/languages/en'
 import { fr } from '@payloadcms/translations/languages/fr'
 
+// Preview deployments use a separate Neon branch so their migrations never touch production
+const getDatabaseURL = () => {
+  if (process.env.VERCEL_ENV !== 'preview') return process.env.POSTGRES_URL || ''
+
+  if (!process.env.PREVIEW_POSTGRES_URL) {
+    throw new Error('PREVIEW_POSTGRES_URL must be set for preview deployments')
+  }
+  return process.env.PREVIEW_POSTGRES_URL
+}
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -58,7 +68,7 @@ export default buildConfig({
   editor: defaultLexical,
   db: vercelPostgresAdapter({
     pool: {
-      connectionString: process.env.POSTGRES_URL || '',
+      connectionString: getDatabaseURL(),
     },
   }),
   collections: [Pages, Realisations, Media, Users],
