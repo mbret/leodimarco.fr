@@ -24,11 +24,14 @@ const hero = (title: string, intro?: string): PageData['hero'] => ({
 const contactCta = (contact: Page) => ({
   blockType: 'cta' as const,
   richText: richText(
-    heading('Un projet en tête ?', 'h3'),
-    paragraph('Décrivez votre idée, l’emplacement et la taille souhaités.'),
+    heading('Envie d’en savoir plus ?', 'h3'),
+    paragraph('Décrivez votre situation, je vous réponds pour en discuter.'),
   ),
   links: [pageLink(contact, 'Me contacter')],
 })
+
+// SEO title and description; generateMeta appends the site name to the title
+const meta = (title: string, description: string) => ({ title, description })
 
 const contactFormData: RequiredDataFromCollectionSlug<'forms'> = {
   title: 'Contact',
@@ -45,12 +48,17 @@ const contactFormData: RequiredDataFromCollectionSlug<'forms'> = {
     {
       blockType: 'textarea',
       name: 'projet',
-      label: 'Votre projet (idée, emplacement, taille)',
+      label: 'Votre situation (zone concernée, attentes)',
       required: true,
       width: 100,
     },
   ],
 }
+
+// Menu items whose page was deleted keep their row but lose their link
+const hasValidLinks = (
+  navItems?: { link?: { url?: string | null; reference?: { value?: unknown } | null } }[] | null,
+) => Boolean(navItems?.some(({ link }) => link?.url || link?.reference?.value))
 
 /**
  * Creates the starter pages, contact form and menus with placeholder text.
@@ -102,15 +110,26 @@ export const seed = async ({
   const contact = await ensurePage({
     slug: 'contact',
     title: 'Contact',
-    hero: hero('Contact', 'Décrivez votre projet, je vous réponds dès que possible.'),
+    hero: hero(
+      'Contact',
+      'Décrivez votre situation, je vous réponds pour convenir d’un premier rendez-vous.',
+    ),
     layout: [{ blockType: 'formBlock', form: contactForm.id, enableIntro: false }],
+    meta: meta(
+      'Contact et rendez-vous',
+      'Prenez rendez-vous pour une micropigmentation capillaire à Nancy : décrivez votre situation, réponse rapide.',
+    ),
   })
 
   const galerie = await ensurePage({
     slug: 'galerie',
     title: 'Galerie',
-    hero: hero('Galerie', 'Une sélection de tatouages réalisés au studio.'),
+    hero: hero('Résultats', 'Des résultats avant / après réalisés au studio.'),
     layout: [{ blockType: 'gallery' }],
+    meta: meta(
+      'Résultats avant / après',
+      'Photos avant / après de micropigmentations capillaires réalisées à Nancy : effet rasé, densification, cicatrices.',
+    ),
   })
 
   const prestations = await ensurePage({
@@ -118,37 +137,43 @@ export const seed = async ({
     title: 'Prestations',
     hero: hero(
       'Prestations',
-      'Chaque tatouage commence par un échange pour comprendre votre projet.',
+      'Chaque projet commence par un rendez-vous pour étudier votre situation, définir la ligne frontale et choisir la teinte.',
     ),
     layout: [
       {
         blockType: 'services',
         items: [
           {
-            title: 'Création sur mesure',
+            title: 'Effet rasé',
             description:
-              'Un dessin unique, réalisé à partir de votre idée, de vos références et de l’emplacement choisi.',
+              'Recrée l’aspect d’une coupe rasée de près sur un crâne dégarni ou chauve, avec une ligne frontale adaptée à votre visage.',
             price: 'Sur devis',
           },
           {
-            title: 'Flash',
-            description: 'Des motifs déjà dessinés, disponibles tels quels ou légèrement adaptés.',
+            title: 'Densification',
+            description:
+              'Pour les cheveux clairsemés : des points de pigment entre les cheveux réduisent le contraste avec le cuir chevelu et donnent un effet de densité.',
             price: 'Sur devis',
           },
           {
-            title: 'Recouvrement',
-            description: 'Transformer ou masquer un ancien tatouage avec un nouveau motif.',
+            title: 'Camouflage de cicatrices',
+            description:
+              'Atténue les cicatrices de greffe (FUE, FUT) ou d’accident en les fondant dans la zone environnante.',
             price: 'Sur devis',
           },
           {
             title: 'Retouche',
-            description: 'Raviver un tatouage existant ou reprendre une cicatrisation inégale.',
+            description: 'Raviver une micropigmentation qui a pâli avec le temps.',
             price: 'Sur devis',
           },
         ],
       },
       contactCta(contact),
     ],
+    meta: meta(
+      'Prestations',
+      'Micropigmentation capillaire à Nancy : effet rasé, densification des cheveux clairsemés, camouflage de cicatrices et retouches.',
+    ),
   })
 
   const aPropos = await ensurePage({
@@ -162,12 +187,13 @@ export const seed = async ({
           {
             size: 'full',
             richText: richText(
-              paragraph('Texte à compléter : votre parcours, votre style et votre studio.'),
+              paragraph('Texte à compléter : votre parcours, votre formation et votre studio.'),
             ),
           },
         ],
       },
     ],
+    meta: meta('À propos', 'Léo Di Marco, spécialiste de la micropigmentation capillaire à Nancy.'),
   })
 
   const faq = await ensurePage({
@@ -179,29 +205,43 @@ export const seed = async ({
         blockType: 'faq',
         items: [
           {
+            question: 'Qu’est-ce que la micropigmentation capillaire ?',
+            answer:
+              'Une technique qui dépose de minuscules points de pigment dans le cuir chevelu pour imiter l’aspect de cheveux rasés, ou donner de la densité à des cheveux clairsemés.',
+          },
+          {
+            question: 'Combien de séances faut-il ?',
+            answer:
+              'En général deux à trois séances, espacées de quelques jours à quelques semaines, pour construire la densité progressivement. Le nombre exact dépend de votre situation.',
+          },
+          {
+            question: 'Est-ce douloureux ?',
+            answer:
+              'La sensation varie selon les personnes. Elle est le plus souvent décrite comme un inconfort léger, moins intense qu’un tatouage classique.',
+          },
+          {
+            question: 'Combien de temps dure le résultat ?',
+            answer:
+              'Le pigment s’estompe très progressivement avec les années. Une séance d’entretien permet de garder un rendu net.',
+          },
+          {
             question: 'Comment prendre rendez-vous ?',
             answer:
-              'Remplissez le formulaire de la page Contact en décrivant votre projet : idée, emplacement, taille et références. Je vous recontacte pour en discuter et fixer une date.',
+              'Remplissez le formulaire de la page Contact en décrivant votre situation. Un premier rendez-vous permet d’en discuter, de définir la ligne frontale et de choisir la teinte.',
           },
           {
-            question: 'Un acompte est-il demandé ?',
+            question: 'Quels soins après une séance ?',
             answer:
-              'Un acompte peut être demandé pour réserver la séance. Il est alors déduit du prix final.',
-          },
-          {
-            question: 'Comment préparer la séance ?',
-            answer:
-              'Dormez bien, mangez avant de venir, évitez l’alcool la veille et venez avec une peau hydratée et non exposée au soleil.',
-          },
-          {
-            question: 'Comment prendre soin de mon tatouage ?',
-            answer:
-              'Des consignes détaillées vous sont données après la séance. En résumé : laver doucement, hydrater, et éviter soleil, piscine et mer pendant la cicatrisation.',
+              'Des consignes détaillées vous sont données après chaque séance. En résumé : ne pas mouiller le crâne ni transpirer les premiers jours, et éviter soleil, piscine et sport intense pendant la cicatrisation.',
           },
         ],
       },
       contactCta(contact),
     ],
+    meta: meta(
+      'Questions fréquentes',
+      'Tout savoir sur la micropigmentation capillaire : séances, douleur, durée du résultat, soins et prise de rendez-vous à Nancy.',
+    ),
   })
 
   const home = await ensurePage({
@@ -211,28 +251,31 @@ export const seed = async ({
       type: 'lowImpact',
       richText: richText(
         heading(SITE_NAME),
-        paragraph('Tatoueur. Créations sur mesure, flashs et recouvrements.'),
+        paragraph(
+          'Micropigmentation capillaire à Nancy. Effet rasé, densification et camouflage de cicatrices.',
+        ),
       ),
       links: [
         pageLink(contact, 'Prendre rendez-vous', 'default'),
-        pageLink(galerie, 'Voir la galerie', 'outline'),
+        pageLink(galerie, 'Voir les résultats', 'outline'),
       ],
     },
-    layout: [
-      { blockType: 'gallery', heading: 'Dernières réalisations', limit: 6 },
-      contactCta(contact),
-    ],
+    layout: [{ blockType: 'gallery', heading: 'Avant / après', limit: 6 }, contactCta(contact)],
+    meta: meta(
+      'Micropigmentation capillaire à Nancy',
+      'Léo Di Marco, micropigmentation capillaire à Nancy (54) : effet rasé, densification des cheveux clairsemés et camouflage de cicatrices.',
+    ),
   })
 
   const header = await payload.findGlobal({ slug: 'header', depth: 0, req })
-  if (!header.navItems?.length) {
+  if (!hasValidLinks(header.navItems)) {
     await payload.updateGlobal({
       slug: 'header',
       data: {
         navItems: [
           pageLink(home, 'Accueil'),
           pageLink(prestations, 'Prestations'),
-          pageLink(galerie, 'Galerie'),
+          pageLink(galerie, 'Résultats'),
           pageLink(aPropos, 'À propos'),
           pageLink(faq, 'FAQ'),
           pageLink(contact, 'Contact'),
@@ -243,7 +286,7 @@ export const seed = async ({
   }
 
   const footer = await payload.findGlobal({ slug: 'footer', depth: 0, req })
-  if (!footer.navItems?.length) {
+  if (!hasValidLinks(footer.navItems)) {
     await payload.updateGlobal({
       slug: 'footer',
       data: {

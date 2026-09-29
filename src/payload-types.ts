@@ -676,10 +676,14 @@ export interface Form {
 export interface Realisation {
   id: number;
   _order?: string | null;
+  /**
+   * Optionnel. Si elle est renseignée, la galerie affiche l’avant et l’après.
+   */
+  before?: (number | null) | Media;
   image: number | Media;
   title: string;
   /**
-   * Optionnel : style, emplacement, nombre de séances…
+   * Optionnel : zone traitée, nombre de séances…
    */
   description?: string | null;
   updatedAt: string;
@@ -1112,6 +1116,7 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface RealisationsSelect<T extends boolean = true> {
   _order?: T;
+  before?: T;
   image?: T;
   title?: T;
   description?: T;
