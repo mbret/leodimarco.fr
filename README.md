@@ -30,6 +30,7 @@ The Vercel build command is `pnpm run ci`, so database migrations run on every d
 Services:
 
 - **Neon Postgres**: connected through the Vercel integration, which sets `POSTGRES_URL`.
+- **Preview database**: preview deployments use `PREVIEW_POSTGRES_URL` (Preview only), which points to a Neon branch named `preview`. Pull request migrations therefore run on that branch, never on production. To refresh it with production data, reset the branch from its parent in the Neon console.
 - **Cloudflare R2**: create a bucket and an R2 API token with Object Read & Write access to it, then add these environment variables to the Vercel project (Production and Preview):
   - `R2_ENDPOINT`: the bucket's S3 endpoint, `https://<account_id>.r2.cloudflarestorage.com` (or `https://<account_id>.eu.r2.cloudflarestorage.com` for an EU bucket)
   - `R2_BUCKET`: the bucket name
