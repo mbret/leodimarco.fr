@@ -3,6 +3,7 @@ import type { Payload, PayloadRequest, RequiredDataFromCollectionSlug } from 'pa
 import type { Form, Page } from '@/payload-types'
 import { SITE_NAME } from '@/utilities/siteName'
 
+import { faqPageData } from './faq'
 import { heading, paragraph, richText } from './richText'
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
@@ -228,53 +229,7 @@ export const seed = async ({
     ),
   })
 
-  const faq = await ensurePage({
-    slug: 'faq',
-    title: 'FAQ',
-    hero: hero('Questions fréquentes'),
-    layout: [
-      {
-        blockType: 'faq',
-        items: [
-          {
-            question: 'Qu’est-ce que la tricopigmentation ?',
-            answer:
-              'Aussi appelée micropigmentation capillaire, c’est une technique qui dépose de minuscules points de pigment dans le cuir chevelu pour imiter l’aspect de cheveux rasés, ou donner de la densité à des cheveux clairsemés.',
-          },
-          {
-            question: 'Combien de séances faut-il ?',
-            answer:
-              'En général trois à quatre séances, pour construire la densité progressivement. Le nombre exact dépend de votre situation et se définit lors de la consultation.',
-          },
-          {
-            question: 'Est-ce douloureux ?',
-            answer:
-              'La sensation varie selon les personnes. Elle est le plus souvent décrite comme un inconfort léger, moins intense qu’un tatouage classique.',
-          },
-          {
-            question: 'Combien de temps dure le résultat ?',
-            answer:
-              'Le pigment s’estompe très progressivement avec les années. Une séance d’entretien permet de garder un rendu net.',
-          },
-          {
-            question: 'Comment prendre rendez-vous ?',
-            answer:
-              'Remplissez le formulaire de la page Contact en décrivant votre situation. Un premier rendez-vous permet d’en discuter, de définir la ligne frontale et de choisir la teinte.',
-          },
-          {
-            question: 'Quels soins après une séance ?',
-            answer:
-              'Des rougeurs après la séance sont normales et disparaissent vite, souvent dès le lendemain. Des consignes détaillées vous sont données après chaque séance : en résumé, ne pas mouiller le crâne ni transpirer les premiers jours, et éviter soleil, piscine et sport intense pendant la cicatrisation.',
-          },
-        ],
-      },
-      contactCta(contact),
-    ],
-    meta: meta(
-      'Questions fréquentes',
-      'Tout savoir sur la tricopigmentation : séances, douleur, durée du résultat, soins et prise de rendez-vous à Nancy.',
-    ),
-  })
+  const faq = await ensurePage(faqPageData(contact))
 
   const home = await ensurePage({
     slug: 'home',
