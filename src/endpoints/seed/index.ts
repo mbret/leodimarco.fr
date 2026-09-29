@@ -287,9 +287,9 @@ export const seed = async ({
   const studio = await payload.findGlobal({ slug: 'studio', depth: 0, req })
   const studioDefaults = {
     phone: '+33618510548',
-    street: '23 Grande Rue',
-    postalCode: '54000',
-    city: 'Nancy',
+    street: '74 rue des Jardins Fleuris',
+    postalCode: '54340',
+    city: 'Pompey',
   }
   const missingStudio = {
     ...Object.fromEntries(
