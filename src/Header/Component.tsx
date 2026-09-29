@@ -10,7 +10,7 @@ export async function Header() {
 
   return (
     <header className="container relative z-20">
-      <div className="py-8 flex justify-between">
+      <div className="py-8 flex items-center justify-between">
         <Link href="/">
           <Logo />
         </Link>
