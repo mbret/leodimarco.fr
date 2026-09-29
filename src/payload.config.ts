@@ -14,8 +14,7 @@ import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
-import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
-import { vercelBlobPrivateAdapter } from './storage/vercelBlobPrivate'
+import { s3Storage } from '@payloadcms/storage-s3'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -68,14 +67,20 @@ export default buildConfig({
   cors: [getServerSideURL()].filter(Boolean),
   plugins: [
     ...plugins,
-    // BLOB_STORE_ID is set on Vercel; without it (local dev) uploads go to public/media
-    cloudStoragePlugin({
+    // Cloudflare R2 through its S3 API; without R2_BUCKET (local dev) uploads go to public/media
+    s3Storage({
       alwaysInsertFields: true,
-      enabled: Boolean(process.env.BLOB_STORE_ID),
+      enabled: Boolean(process.env.R2_BUCKET),
       collections: {
-        media: {
-          adapter: vercelBlobPrivateAdapter(),
-          disableLocalStorage: true,
+        media: true,
+      },
+      bucket: process.env.R2_BUCKET || '',
+      config: {
+        endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+        region: 'auto',
+        credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
         },
       },
     }),
