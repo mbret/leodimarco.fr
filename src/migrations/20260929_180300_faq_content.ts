@@ -31,5 +31,6 @@ export async function up({ payload, req }: MigrateUpArgs): Promise<void> {
 }
 
 export async function down(_args: MigrateDownArgs): Promise<void> {
-  // Content change only; the previous FAQ text is kept in the page's version history
+  // Content change only. The previous placeholder questions are not restored: the schema
+  // migration drops them, including from version history, since nothing depended on them.
 }
