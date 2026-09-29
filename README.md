@@ -2,10 +2,6 @@
 
 This is the official [Payload Website Template](https://github.com/payloadcms/payload/blob/3.x/templates/website). Use it to power websites, blogs, or portfolios from small to enterprise. This repo includes a fully-working backend, enterprise-grade admin panel, and a beautifully designed, production-ready website.
 
-You can deploy to Vercel, using Neon and Vercel Blob Storage with one click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?build-command=pnpm%20run%20ci&demo-description=A%20production-ready%20website%20built%20with%20Payload%2C%20the%20only%20Next.js-native%20CMS.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F1EyBgbstPv4d6NMwzldDyY%2F58d07399ce2a2bb51341125fe4f51572%2Fpayloadwebsitetempate_vercel_thumbnail.jpg&demo-title=Payload%20Website%20Starter&demo-url=https%3A%2F%2Fpayload-vercel-website-demo.vercel.app%2F&env=PAYLOAD_SECRET%2CCRON_SECRET%2CPREVIEW_SECRET&from=templates&project-name=Payload%20Website%20Starter&repository-name=payload-website-starter&repository-url=https%3A%2F%2Fgithub.com%2Fpayloadcms%2Fpayload%2Ftree%2F3.x%2Ftemplates%2Fwith-vercel-website&skippable-integrations=1&stores=%255B%257B%2522type%2522%253A%2522integration%2522%252C%2522productSlug%2522%253A%2522neon%2522%252C%2522integrationSlug%2522%253A%2522neon%2522%257D%252C%257B%2522type%2522%253A%2522blob%2522%257D%255D)
-
 This template is right for you if you are working on:
 
 - A personal or enterprise-grade website, blog, or portfolio
@@ -29,7 +25,7 @@ Core features:
 
 ## Quick start – Deploying to Vercel
 
-Click the 'Deploy' button to spin up this template directly into Vercel hosting. It will first prompt you save this template into your own Github repo so that you own the code and can make any changes you want to it. You will be prompted to set up the required services and secrets. Once the app is built and deployed, you can visit your site using the generated URL.
+Import this repository as a Vercel project and use `pnpm run ci` as the build command, so database migrations run on every deploy.
 
 Set up the following services and secrets and then once the app has been built and deployed you will be able to visit your site at the generated URL.
 
@@ -41,9 +37,15 @@ This project uses the following services integrated into Vercel which you will n
 
 Neon Database - Postgres-based cloud database used to host your data
 
-Vercel Blob Storage - object storage used to host your files such as images and videos
+The Neon connection variables will automatically be setup for you on Vercel when the database is connected.
 
-The connection variables will automatically be setup for you on Vercel when these services are connected.
+Cloudflare R2 - object storage used to host your files such as images and videos. Create a bucket and an R2 API token with Object Read & Write access to it, then add these environment variables to the Vercel project (Production and Preview):
+
+- `R2_ENDPOINT` - the bucket's S3 endpoint, `https://<account_id>.r2.cloudflarestorage.com` (or `https://<account_id>.eu.r2.cloudflarestorage.com` for an EU bucket)
+- `R2_BUCKET` - the bucket name
+- `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` - from the R2 API token
+
+Without `R2_BUCKET`, uploads are written to `public/media`, which fails on Vercel's read-only filesystem.
 
 #### Secrets
 
@@ -66,7 +68,7 @@ After you click the `Deploy` button above, you'll want to have standalone copy o
 ### Development
 
 1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `POSTGRES_URL` and `BLOB_READ_WRITE_TOKEN` from your Vercel project to your `.env` if you want to use Vercel Blob and the Neon database that was created for you.
+2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `POSTGRES_URL` from your Vercel project to your `.env` to use the Neon database that was created for you. Add the `R2_*` variables too if you want uploads stored in R2; without them uploads go to `public/media`.
 
    > _NOTE: If the connection string value includes `localhost` or `127.0.0.1`, the code will automatically use a normal postgres adapter instead of Vercel._. You can override this functionality by setting `forceUseVercelPostgres: true` if desired.
 
