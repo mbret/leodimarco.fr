@@ -13,8 +13,9 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 
+// generateMeta appends the site name, so the SEO title is just the document title
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
+  return doc?.title || ''
 }
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {

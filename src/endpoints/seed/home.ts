@@ -1,5 +1,6 @@
 import type { RequiredDataFromCollectionSlug } from 'payload'
 import type { Media } from '@/payload-types'
+import { SITE_NAME } from '@/utilities/siteName'
 
 type HomeArgs = {
   heroImage: Media
@@ -47,7 +48,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Payload Website Template',
+                  text: SITE_NAME,
                   version: 1,
                 },
               ],
@@ -666,9 +667,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       },
     ],
     meta: {
-      description: 'An open-source website built with Payload and Next.js.',
       image: heroImage.id,
-      title: 'Payload Website Template',
     },
     title: 'Home',
   }

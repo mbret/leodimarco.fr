@@ -14,7 +14,8 @@ import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
+import { vercelBlobPrivateAdapter } from './storage/vercelBlobPrivate'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -67,11 +68,16 @@ export default buildConfig({
   cors: [getServerSideURL()].filter(Boolean),
   plugins: [
     ...plugins,
-    vercelBlobStorage({
+    // BLOB_STORE_ID is set on Vercel; without it (local dev) uploads go to public/media
+    cloudStoragePlugin({
+      alwaysInsertFields: true,
+      enabled: Boolean(process.env.BLOB_STORE_ID),
       collections: {
-        media: true,
+        media: {
+          adapter: vercelBlobPrivateAdapter(),
+          disableLocalStorage: true,
+        },
       },
-      token: process.env.BLOB_READ_WRITE_TOKEN || '',
     }),
   ],
   globals: [Header, Footer],
