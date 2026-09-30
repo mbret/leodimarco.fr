@@ -169,6 +169,6 @@ export const faqPageData = (contact: Page): PageData => ({
   meta: {
     title: 'Questions fréquentes',
     description:
-      'Tout savoir sur la tricopigmentation : origine, différence avec le tatouage, matériel, séances, douleur, résultat et soins. Studio à Nancy.',
+      'Tout savoir sur la tricopigmentation : origine, différence avec le tatouage, matériel, séances, douleur, résultat et soins. Studio à Pompey, près de Nancy.',
   },
 })

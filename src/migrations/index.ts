@@ -5,6 +5,7 @@ import * as migration_20260929_102924_realisations_before_photo from './20260929
 import * as migration_20260929_104524_studio_details from './20260929_104524_studio_details'
 import * as migration_20260929_180232_faq_categories from './20260929_180232_faq_categories'
 import * as migration_20260929_180300_faq_content from './20260929_180300_faq_content'
+import * as migration_20260929_190000_pompey_wording from './20260929_190000_pompey_wording'
 
 export const migrations = [
   {
@@ -41,5 +42,10 @@ export const migrations = [
     up: migration_20260929_180300_faq_content.up,
     down: migration_20260929_180300_faq_content.down,
     name: '20260929_180300_faq_content',
+  },
+  {
+    up: migration_20260929_190000_pompey_wording.up,
+    down: migration_20260929_190000_pompey_wording.down,
+    name: '20260929_190000_pompey_wording',
   },
 ]

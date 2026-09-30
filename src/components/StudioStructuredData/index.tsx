@@ -12,7 +12,7 @@ export async function StudioStructuredData() {
     '@context': 'https://schema.org',
     '@type': 'HealthAndBeautyBusiness',
     name: SITE_NAME,
-    description: 'Tricopigmentation (micropigmentation capillaire) à Nancy',
+    description: 'Tricopigmentation (micropigmentation capillaire) à Pompey, près de Nancy',
     url: getServerSideURL(),
     ...(studio?.phone && { telephone: studio.phone }),
     ...((studio?.street || studio?.city) && {

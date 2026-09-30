@@ -139,7 +139,7 @@ export const seed = async ({
     layout: [{ blockType: 'formBlock', form: contactForm.id, enableIntro: false }, instagramCta],
     meta: meta(
       'Contact et rendez-vous',
-      'Prenez rendez-vous pour une tricopigmentation à Nancy : studio privé, sur rendez-vous. Décrivez votre situation, réponse rapide.',
+      'Prenez rendez-vous pour une tricopigmentation à Pompey, près de Nancy : studio privé, sur rendez-vous. Décrivez votre situation, réponse rapide.',
     ),
   })
 
@@ -153,7 +153,7 @@ export const seed = async ({
     layout: [{ blockType: 'gallery' }, instagramCta],
     meta: meta(
       'Résultats avant / après',
-      'Photos avant / après de tricopigmentations réalisées à Nancy : effet crâne rasé, densification, cicatrices.',
+      'Photos avant / après de tricopigmentations réalisées à Pompey, près de Nancy : effet crâne rasé, densification, cicatrices.',
     ),
   })
 
@@ -197,7 +197,7 @@ export const seed = async ({
     ],
     meta: meta(
       'Prestations',
-      'Tricopigmentation à Nancy : effet crâne rasé, densification des cheveux clairsemés, camouflage de cicatrices et retouches.',
+      'Tricopigmentation à Pompey, près de Nancy : effet crâne rasé, densification des cheveux clairsemés, camouflage de cicatrices et retouches.',
     ),
   })
 
@@ -213,7 +213,7 @@ export const seed = async ({
             size: 'full',
             richText: richText(
               paragraph(
-                'Je suis Léo, praticien en tricopigmentation, formé et certifié par la Medico Derm Academy. Je vous accueille dans mon studio privé à Nancy, sur rendez-vous.',
+                'Je suis Léo, praticien en tricopigmentation, formé et certifié par la Medico Derm Academy. Je vous accueille dans mon studio privé à Pompey, près de Nancy, sur rendez-vous.',
               ),
               paragraph(
                 'Lorsque la ligne frontale recule, les proportions du visage changent. Je n’aime pas l’idée de transformer un visage : j’aime l’idée de le rééquilibrer. Un résultat naturel se construit point après point, dans le détail.',
@@ -225,7 +225,7 @@ export const seed = async ({
     ],
     meta: meta(
       'À propos',
-      'Léo Di Marco, praticien en tricopigmentation formé à la Medico Derm Academy, studio privé à Nancy.',
+      'Léo Di Marco, praticien en tricopigmentation formé à la Medico Derm Academy, studio privé à Pompey, près de Nancy.',
     ),
   })
 
@@ -239,7 +239,7 @@ export const seed = async ({
       richText: richText(
         heading(SITE_NAME),
         paragraph(
-          'Tricopigmentation à Nancy. Effet crâne rasé, densification et camouflage de cicatrices, dans un studio privé sur rendez-vous.',
+          'Tricopigmentation à Pompey, près de Nancy. Effet crâne rasé, densification et camouflage de cicatrices, dans un studio privé sur rendez-vous.',
         ),
       ),
       links: [
@@ -249,8 +249,8 @@ export const seed = async ({
     },
     layout: [{ blockType: 'gallery', heading: 'Avant / après', limit: 6 }, contactCta(contact)],
     meta: meta(
-      'Tricopigmentation à Nancy',
-      'Léo Di Marco, tricopigmentation (micropigmentation capillaire) à Nancy (54) : effet crâne rasé, densification et camouflage de cicatrices.',
+      'Tricopigmentation à Pompey, près de Nancy',
+      'Léo Di Marco, tricopigmentation (micropigmentation capillaire) à Pompey (54), près de Nancy : effet crâne rasé, densification et camouflage de cicatrices.',
     ),
   })
 
@@ -287,9 +287,9 @@ export const seed = async ({
   const studio = await payload.findGlobal({ slug: 'studio', depth: 0, req })
   const studioDefaults = {
     phone: '+33618510548',
-    street: '23 Grande Rue',
-    postalCode: '54000',
-    city: 'Nancy',
+    street: '74 rue des Jardins Fleuris',
+    postalCode: '54340',
+    city: 'Pompey',
   }
   const missingStudio = {
     ...Object.fromEntries(
