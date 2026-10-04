@@ -27,7 +27,15 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      //required: true,
+      label: 'Texte alternatif',
+      admin: {
+        description:
+          'Décrit l’image pour Google et les lecteurs d’écran, par exemple « Tricopigmentation effet crâne rasé, vue de profil ».',
+      },
+      // Checked on save instead of `required`, which would make the column NOT NULL and fail the
+      // migration for images already saved without one
+      validate: (value: string | null | undefined) =>
+        Boolean(value?.trim()) || 'Décrivez l’image en quelques mots.',
     },
     {
       name: 'caption',
