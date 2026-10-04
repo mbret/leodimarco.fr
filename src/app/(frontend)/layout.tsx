@@ -5,6 +5,9 @@ import { GeistSans } from 'geist/font/sans'
 import { Manrope } from 'next/font/google'
 import React from 'react'
 
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
@@ -41,6 +44,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {children}
         <Footer />
         <StudioStructuredData />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
