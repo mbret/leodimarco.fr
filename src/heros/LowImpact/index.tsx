@@ -7,7 +7,7 @@ import RichText from '@/components/RichText'
 
 export const LowImpactHero: React.FC<Page['hero']> = ({ links, richText }) => {
   return (
-    <div className="container mt-16">
+    <div className="container md:mt-16">
       <div className="max-w-[48rem]">
         {richText && <RichText data={richText} enableGutter={false} />}
         {Array.isArray(links) && links.length > 0 && (
