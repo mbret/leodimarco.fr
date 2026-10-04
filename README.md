@@ -18,7 +18,7 @@ Everything is edited from the admin panel at `/admin`, which is in French.
   - Form: a form built in the Forms collection
 - **Header / Footer**: the menu links.
 - **Coordonnées du studio**: phone, address and social links. They are shown in the footer and published to search engines as local business data.
-- **Forms / Form Submissions**: the contact form and the messages it receives.
+- **Forms / Form Submissions**: the contact form and the messages it receives. Each message is also emailed to the addresses in the form's Emails list; replying to that email answers the visitor.
 - **Redirects**: redirect old URLs to new pages.
 
 On an empty site, the dashboard offers a button that creates the starter pages, menus and contact form with placeholder text. It only creates what is missing and never overwrites existing content.
@@ -37,6 +37,12 @@ Services:
   - `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY`: from the R2 API token
 
   Without `R2_BUCKET`, uploads are written to `public/media`, which fails on Vercel's read-only filesystem.
+
+- **Gmail**: the contact form's emails are sent from a Gmail account of the site's own, not the one receiving them: Gmail ignores the reply-to address of messages sent from its own address, and may only show them in Sent. Turn on 2-Step Verification for that account, create an [app password](https://myaccount.google.com/apppasswords), then add these environment variables to the Vercel project (Production):
+  - `GMAIL_USER`: the Gmail address
+  - `GMAIL_APP_PASSWORD`: the 16-character app password
+
+  Without them, messages are still saved in Form Submissions, but no email is sent. Changing the Google account's password revokes its app passwords, so create a new one then.
 
 Secrets, which should be long random strings:
 

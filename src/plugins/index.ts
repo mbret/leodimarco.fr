@@ -1,4 +1,5 @@
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
+import type { BeforeEmail } from '@payloadcms/plugin-form-builder/types'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { Plugin } from 'payload'
@@ -19,6 +20,29 @@ const generateURL: GenerateURL<Page> = ({ doc }) => {
 
   return doc?.slug && doc.slug !== 'home' ? `${url}/${doc.slug}` : url
 }
+
+const escapedCharacters: Record<string, string> = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'",
+}
+
+// The form builder escapes the visitor's answers for HTML, but the subject and reply-to address
+// are plain text
+const unescapeHTML = (text: string) =>
+  text && text.replace(/&(amp|lt|gt|quot|#39);/g, (entity) => escapedCharacters[entity])
+
+// HTML also ignores the line breaks typed in the message. Answers never contain a raw "<", so line
+// breaks outside of tags all come from them.
+const beforeEmail: BeforeEmail = (emails) =>
+  emails.map((email) => ({
+    ...email,
+    html: email.html.replace(/(<[^>]*>)|\r?\n/g, (_, tag?: string) => tag ?? '<br>'),
+    replyTo: unescapeHTML(email.replyTo),
+    subject: unescapeHTML(email.subject),
+  }))
 
 export const plugins: Plugin[] = [
   redirectsPlugin({
@@ -48,6 +72,7 @@ export const plugins: Plugin[] = [
     generateURL,
   }),
   formBuilderPlugin({
+    beforeEmail,
     fields: {
       payment: false,
     },

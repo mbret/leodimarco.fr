@@ -3,6 +3,7 @@ import type { Payload, PayloadRequest, RequiredDataFromCollectionSlug } from 'pa
 import type { Form, Page } from '@/payload-types'
 import { SITE_NAME } from '@/utilities/siteName'
 
+import { contactFormData } from './contactForm'
 import { faqPageData } from './faq'
 import { pageLink } from './links'
 import { heading, paragraph, richText } from './richText'
@@ -46,28 +47,6 @@ const instagramCta = {
 
 // SEO title and description; generateMeta appends the site name to the title
 const meta = (title: string, description: string) => ({ title, description })
-
-const contactFormData: RequiredDataFromCollectionSlug<'forms'> = {
-  title: 'Contact',
-  submitButtonLabel: 'Envoyer',
-  confirmationType: 'message',
-  confirmationMessage: richText(
-    heading('Merci !', 'h2'),
-    paragraph('Votre message a bien été envoyé. Je vous réponds dès que possible.'),
-  ),
-  fields: [
-    { blockType: 'text', name: 'nom', label: 'Nom', required: true, width: 100 },
-    { blockType: 'email', name: 'email', label: 'Email', required: true, width: 100 },
-    { blockType: 'text', name: 'telephone', label: 'Téléphone', required: false, width: 100 },
-    {
-      blockType: 'textarea',
-      name: 'projet',
-      label: 'Votre situation (zone concernée, attentes)',
-      required: true,
-      width: 100,
-    },
-  ],
-}
 
 // Menu items whose page was deleted keep their row but lose their link
 const hasValidLinks = (

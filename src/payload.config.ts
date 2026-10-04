@@ -1,4 +1,5 @@
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -14,6 +15,7 @@ import { Studio } from './Studio/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { SITE_NAME } from './utilities/siteName'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { en } from '@payloadcms/translations/languages/en'
 import { fr } from '@payloadcms/translations/languages/fr'
@@ -71,6 +73,23 @@ export default buildConfig({
       connectionString: getDatabaseURL(),
     },
   }),
+  // Sends the contact form's emails from the site's own Gmail account, with an app password. Without
+  // one (local development), Payload only writes emails to the console.
+  email:
+    process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD
+      ? nodemailerAdapter({
+          defaultFromAddress: process.env.GMAIL_USER,
+          defaultFromName: `Site ${SITE_NAME}`,
+          // Connects when sending only, rather than on every cold start
+          skipVerify: true,
+          transportOptions: {
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
+          },
+        })
+      : undefined,
   collections: [Pages, Realisations, Media, Users],
   cors: [getServerSideURL()].filter(Boolean),
   plugins: [

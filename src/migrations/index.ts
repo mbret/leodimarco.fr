@@ -9,6 +9,7 @@ import * as migration_20260929_190000_pompey_wording from './20260929_190000_pom
 import * as migration_20261004_134124_faq_category_buttons from './20261004_134124_faq_category_buttons'
 import * as migration_20261004_140155_faq_highlights from './20261004_140155_faq_highlights'
 import * as migration_20261004_141000_faq_final_content from './20261004_141000_faq_final_content'
+import * as migration_20261004_150000_contact_form_email from './20261004_150000_contact_form_email'
 
 export const migrations = [
   {
@@ -65,5 +66,10 @@ export const migrations = [
     up: migration_20261004_141000_faq_final_content.up,
     down: migration_20261004_141000_faq_final_content.down,
     name: '20261004_141000_faq_final_content',
+  },
+  {
+    up: migration_20261004_150000_contact_form_email.up,
+    down: migration_20261004_150000_contact_form_email.down,
+    name: '20261004_150000_contact_form_email',
   },
 ]
