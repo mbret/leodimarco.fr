@@ -25,7 +25,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
   hero: {
     type: 'lowImpact',
     richText: richText(
-      heading('FAQ — Tricopigmentation à Pompey, près de Nancy'),
+      heading('Questions fréquentes'),
       paragraph(
         'Vous trouverez ici les réponses aux questions les plus fréquentes sur la tricopigmentation : *déroulement*, *douleur*, *résultat*, *cicatrisation*, *entretien* et *indications*.',
       ),
