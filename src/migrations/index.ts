@@ -7,7 +7,7 @@ import * as migration_20260929_180232_faq_categories from './20260929_180232_faq
 import * as migration_20260929_180300_faq_content from './20260929_180300_faq_content'
 import * as migration_20260929_190000_pompey_wording from './20260929_190000_pompey_wording'
 import * as migration_20261004_134124_faq_category_buttons from './20261004_134124_faq_category_buttons'
-import * as migration_20261004_134200_faq_final_content from './20261004_134200_faq_final_content'
+import * as migration_20261004_134300_faq_final_content from './20261004_134300_faq_final_content'
 
 export const migrations = [
   {
@@ -56,8 +56,8 @@ export const migrations = [
     name: '20261004_134124_faq_category_buttons',
   },
   {
-    up: migration_20261004_134200_faq_final_content.up,
-    down: migration_20261004_134200_faq_final_content.down,
-    name: '20261004_134200_faq_final_content',
+    up: migration_20261004_134300_faq_final_content.up,
+    down: migration_20261004_134300_faq_final_content.down,
+    name: '20261004_134300_faq_final_content',
   },
 ]

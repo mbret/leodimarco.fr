@@ -16,7 +16,7 @@ const button = (page: Page, label: string, appearance: 'default' | 'outline') =>
   ...pageLink(page, label, appearance),
 })
 
-// FAQ page content, from Léo's final FAQ document. Used by the seed and by the migration that
+// FAQ page content, from Léo's final FAQ document, closed by the contact call to action. Used by the seed and by the migration that
 // brings existing sites up to date.
 export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPages): PageData => ({
   slug: 'faq',
@@ -345,9 +345,13 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
               ),
             },
           ],
-          ...button(contact, 'Prendre contact', 'default'),
         },
       ],
+    },
+    {
+      blockType: 'cta',
+      richText: richText(heading('Avez-vous d’autres questions ?', 'h3')),
+      links: [pageLink(contact, 'Me contacter')],
     },
   ],
   meta: {
