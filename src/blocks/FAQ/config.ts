@@ -7,6 +7,8 @@ import {
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
 
+import { link } from '@/fields/link'
+
 export const FAQ: Block = {
   slug: 'faq',
   interfaceName: 'FAQBlock',
@@ -71,6 +73,19 @@ export const FAQ: Block = {
             },
           ],
         },
+        // Button shown after the category's questions
+        {
+          name: 'enableLink',
+          type: 'checkbox',
+          label: 'Ajouter un bouton',
+        },
+        link({
+          overrides: {
+            admin: {
+              condition: (_data, siblingData) => Boolean(siblingData?.enableLink),
+            },
+          },
+        }),
       ],
     },
   ],

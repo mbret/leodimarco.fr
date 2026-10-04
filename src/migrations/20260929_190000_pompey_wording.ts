@@ -1,4 +1,4 @@
-import type { MigrateDownArgs, MigrateUpArgs } from '@payloadcms/db-vercel-postgres'
+import { type MigrateDownArgs, type MigrateUpArgs, sql } from '@payloadcms/db-vercel-postgres'
 
 // The studio is in Pompey, near Nancy. Only the exact texts written by the starter content
 // are replaced, so anything an editor wrote about Nancy is left untouched.
@@ -47,7 +47,12 @@ const reword = <T>(value: T): T => {
   return JSON.parse(json)
 }
 
-export async function up({ payload, req }: MigrateUpArgs): Promise<void> {
+export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+  // A new site has no pages yet and gets the Pompey texts from the starter content. Checking with
+  // SQL rather than Payload keeps this migration working after later schema changes.
+  const { rows } = await db.execute(sql`select 1 from pages limit 1`)
+  if (rows.length === 0) return
+
   const { docs: pages } = await payload.find({
     collection: 'pages',
     depth: 0,

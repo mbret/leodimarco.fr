@@ -491,6 +491,21 @@ export interface FAQBlock {
       };
       id?: string | null;
     }[];
+    enableLink?: boolean | null;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?: {
+        relationTo: 'pages';
+        value: number | Page;
+      } | null;
+      url?: string | null;
+      label: string;
+      /**
+       * Choose how the link should be rendered.
+       */
+      appearance?: ('default' | 'outline') | null;
+    };
     id?: string | null;
   }[];
   id?: string | null;
@@ -1117,6 +1132,17 @@ export interface FAQBlockSelect<T extends boolean = true> {
               question?: T;
               answer?: T;
               id?: T;
+            };
+        enableLink?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
             };
         id?: T;
       };

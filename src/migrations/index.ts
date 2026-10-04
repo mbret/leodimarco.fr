@@ -6,6 +6,8 @@ import * as migration_20260929_104524_studio_details from './20260929_104524_stu
 import * as migration_20260929_180232_faq_categories from './20260929_180232_faq_categories'
 import * as migration_20260929_180300_faq_content from './20260929_180300_faq_content'
 import * as migration_20260929_190000_pompey_wording from './20260929_190000_pompey_wording'
+import * as migration_20261004_134124_faq_category_buttons from './20261004_134124_faq_category_buttons'
+import * as migration_20261004_134200_faq_final_content from './20261004_134200_faq_final_content'
 
 export const migrations = [
   {
@@ -47,5 +49,15 @@ export const migrations = [
     up: migration_20260929_190000_pompey_wording.up,
     down: migration_20260929_190000_pompey_wording.down,
     name: '20260929_190000_pompey_wording',
+  },
+  {
+    up: migration_20261004_134124_faq_category_buttons.up,
+    down: migration_20261004_134124_faq_category_buttons.down,
+    name: '20261004_134124_faq_category_buttons',
+  },
+  {
+    up: migration_20261004_134200_faq_final_content.up,
+    down: migration_20261004_134200_faq_final_content.down,
+    name: '20261004_134200_faq_final_content',
   },
 ]

@@ -2,6 +2,7 @@ import React from 'react'
 
 import type { FAQBlock as FAQBlockProps } from '@/payload-types'
 
+import { CMSLink } from '@/components/Link'
 import RichText from '@/components/RichText'
 import {
   Accordion,
@@ -42,6 +43,11 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({ categories }) => {
               </AccordionItem>
             ))}
           </Accordion>
+          {group.enableLink && (
+            <div className="mt-8">
+              <CMSLink {...group.link} />
+            </div>
+          )}
         </section>
       ))}
       <script
