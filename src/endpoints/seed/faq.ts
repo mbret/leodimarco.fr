@@ -37,6 +37,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
   layout: [
     {
       blockType: 'faq',
+      highlightsTitle: 'Les questions les plus posées',
       categories: [
         {
           title: 'Comprendre la tricopigmentation',
@@ -185,6 +186,9 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
             },
             {
               question: 'Combien de séances faut-il ?',
+              highlight: true,
+              shortAnswer:
+                'Le plus souvent trois, de 2 à 5 heures chacune, pour construire le résultat étape par étape.',
               answer: richText(
                 paragraph(
                   'Le traitement se réalise généralement en *plusieurs séances*, le plus souvent *trois*.',
@@ -204,6 +208,9 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
             },
             {
               question: 'Est-ce dangereux ou douloureux ?',
+              highlight: true,
+              shortAnswer:
+                'Sans chirurgie ni anesthésie, dans une couche superficielle du derme. La plupart des clients décrivent un inconfort léger, très supportable.',
               answer: richText(
                 paragraph(
                   'La tricopigmentation est une procédure *sans chirurgie* et *sans anesthésie*, réalisée dans une *couche superficielle du derme*.',
@@ -221,6 +228,9 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
             },
             {
               question: 'Le résultat est-il naturel ?',
+              highlight: true,
+              shortAnswer:
+                'C’est tout l’enjeu : ligne frontale, densité, teinte et finesse du point sont pensées ensemble pour un rendu crédible et peu perceptible.',
               answer: richText(
                 paragraph(
                   'Lorsque l’on parle de naturel, on pense souvent à l’inverse : des traitements *très marqués*, *très droits*, qui laissent supposer une coupe artificielle.',

@@ -2,9 +2,9 @@ import { type MigrateDownArgs, type MigrateUpArgs, sql } from '@payloadcms/db-ve
 
 import { faqPageData } from '../endpoints/seed/faq'
 
-// Fills the FAQ page with the content of Léo's final FAQ document: four categories, the first three
-// ending with a button to another page, then the contact call to action. Sites that were not
-// seeded yet get it from the starter pages button instead.
+// Fills the FAQ page with the content of Léo's final FAQ document: three highlighted questions,
+// four categories, the first three ending with a button to another page, then the contact call
+// to action. Sites that were not seeded yet get it from the starter pages button instead.
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   // Checking for pages with SQL rather than Payload keeps this migration working on a new site
   // after later schema changes
