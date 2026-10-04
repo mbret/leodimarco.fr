@@ -4,18 +4,10 @@ import type { Form, Page } from '@/payload-types'
 import { SITE_NAME } from '@/utilities/siteName'
 
 import { faqPageData } from './faq'
+import { pageLink } from './links'
 import { heading, paragraph, richText } from './richText'
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
-
-const pageLink = (page: Page, label: string, appearance?: 'default' | 'outline') => ({
-  link: {
-    type: 'reference' as const,
-    reference: { relationTo: 'pages' as const, value: page.id },
-    label,
-    ...(appearance ? { appearance } : {}),
-  },
-})
 
 const hero = (title: string, intro?: string): PageData['hero'] => ({
   type: 'lowImpact',
@@ -229,7 +221,7 @@ export const seed = async ({
     ),
   })
 
-  const faq = await ensurePage(faqPageData(contact))
+  const faq = await ensurePage(faqPageData({ aPropos, contact, galerie, prestations }))
 
   const home = await ensurePage({
     slug: 'home',

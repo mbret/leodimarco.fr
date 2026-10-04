@@ -7,6 +7,8 @@ import {
   UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
 
+import { link } from '@/fields/link'
+
 export const FAQ: Block = {
   slug: 'faq',
   interfaceName: 'FAQBlock',
@@ -15,6 +17,15 @@ export const FAQ: Block = {
     plural: 'FAQ',
   },
   fields: [
+    {
+      name: 'highlightsTitle',
+      type: 'text',
+      label: 'Titre des questions mises en avant',
+      defaultValue: 'Les questions les plus posées',
+      admin: {
+        description: 'Affiché au-dessus des questions cochées « Mettre en avant ».',
+      },
+    },
     {
       name: 'categories',
       type: 'array',
@@ -69,8 +80,40 @@ export const FAQ: Block = {
                 ],
               }),
             },
+            // Shown as a card above the categories, linking to the full answer
+            {
+              name: 'highlight',
+              type: 'checkbox',
+              label: 'Mettre en avant',
+              admin: {
+                description: 'Affiche la question en haut de la FAQ. Idéalement trois questions.',
+              },
+            },
+            {
+              name: 'shortAnswer',
+              type: 'textarea',
+              label: 'Réponse courte',
+              required: true,
+              admin: {
+                condition: (_data, siblingData) => Boolean(siblingData?.highlight),
+                description: 'Une ou deux phrases, affichées sur la carte.',
+              },
+            },
           ],
         },
+        // Button shown after the category's questions
+        {
+          name: 'enableLink',
+          type: 'checkbox',
+          label: 'Ajouter un bouton',
+        },
+        link({
+          overrides: {
+            admin: {
+              condition: (_data, siblingData) => Boolean(siblingData?.enableLink),
+            },
+          },
+        }),
       ],
     },
   ],

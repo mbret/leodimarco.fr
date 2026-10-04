@@ -14,16 +14,17 @@ const text = (value: string, format = 0) => ({
   version: 1,
 })
 
-// Splits "plain *emphasised* plain" into text nodes, emphasised parts in bold italic
+// Splits "plain *emphasised* plain _foreign_" into text nodes: emphasised parts in bold italic,
+// foreign words and product names in italic
 const inline = (value: string) =>
   value
-    .split(/(\*[^*]+\*)/)
+    .split(/(\*[^*]+\*|_[^_]+_)/)
     .filter(Boolean)
-    .map((part) =>
-      part.startsWith('*') && part.endsWith('*')
-        ? text(part.slice(1, -1), BOLD | ITALIC)
-        : text(part),
-    )
+    .map((part) => {
+      if (part.startsWith('*') && part.endsWith('*')) return text(part.slice(1, -1), BOLD | ITALIC)
+      if (part.startsWith('_') && part.endsWith('_')) return text(part.slice(1, -1), ITALIC)
+      return text(part)
+    })
 
 export const heading = (value: string, tag: 'h1' | 'h2' | 'h3' = 'h1') => ({
   type: 'heading' as const,

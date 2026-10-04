@@ -470,6 +470,10 @@ export interface ServicesBlock {
  * via the `definition` "FAQBlock".
  */
 export interface FAQBlock {
+  /**
+   * Affiché au-dessus des questions cochées « Mettre en avant ».
+   */
+  highlightsTitle?: string | null;
   categories: {
     title: string;
     items: {
@@ -489,8 +493,31 @@ export interface FAQBlock {
         };
         [k: string]: unknown;
       };
+      /**
+       * Affiche la question en haut de la FAQ. Idéalement trois questions.
+       */
+      highlight?: boolean | null;
+      /**
+       * Une ou deux phrases, affichées sur la carte.
+       */
+      shortAnswer?: string | null;
       id?: string | null;
     }[];
+    enableLink?: boolean | null;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?: {
+        relationTo: 'pages';
+        value: number | Page;
+      } | null;
+      url?: string | null;
+      label: string;
+      /**
+       * Choose how the link should be rendered.
+       */
+      appearance?: ('default' | 'outline') | null;
+    };
     id?: string | null;
   }[];
   id?: string | null;
@@ -1107,6 +1134,7 @@ export interface ServicesBlockSelect<T extends boolean = true> {
  * via the `definition` "FAQBlock_select".
  */
 export interface FAQBlockSelect<T extends boolean = true> {
+  highlightsTitle?: T;
   categories?:
     | T
     | {
@@ -1116,7 +1144,20 @@ export interface FAQBlockSelect<T extends boolean = true> {
           | {
               question?: T;
               answer?: T;
+              highlight?: T;
+              shortAnswer?: T;
               id?: T;
+            };
+        enableLink?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
             };
         id?: T;
       };

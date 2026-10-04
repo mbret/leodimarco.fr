@@ -14,7 +14,7 @@ Everything is edited from the admin panel at `/admin`, which is in French.
   - Media
   - Gallery: shows the Réalisations
   - Prestations: service cards with an optional price
-  - FAQ: questions and answers, also exposed to search engines as structured data
+  - FAQ: questions and answers in categories, each category optionally ending with a button. Questions ticked "Mettre en avant" also appear as cards at the top with their short answer. The questions are exposed to search engines as structured data
   - Form: a form built in the Forms collection
 - **Header / Footer**: the menu links.
 - **Coordonnées du studio**: phone, address and social links. They are shown in the footer and published to search engines as local business data.
