@@ -219,6 +219,9 @@ export interface Page {
  */
 export interface Media {
   id: number;
+  /**
+   * Décrit l’image pour Google et les lecteurs d’écran, par exemple « Tricopigmentation effet crâne rasé, vue de profil ».
+   */
   alt?: string | null;
   caption?: {
     root: {
