@@ -7,6 +7,8 @@ import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 import { formatPhone } from '@/utilities/formatPhone'
 
+import { FooterDots } from './FooterDots'
+
 const socialIcons = {
   facebook: FacebookIcon,
   instagram: InstagramIcon,
@@ -25,7 +27,10 @@ export async function Footer() {
 
   return (
     <footer className="mt-auto border-t border-border bg-card text-card-foreground">
-      <div className="container py-8 gap-8 flex flex-col md:flex-row md:justify-between">
+      <div className="container py-4">
+        <FooterDots />
+      </div>
+      <div className="container pb-8 gap-8 flex flex-col md:flex-row md:justify-between">
         <div className="flex flex-col gap-4">
           <Link className="flex items-center" href="/">
             <Logo />

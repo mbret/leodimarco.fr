@@ -206,15 +206,15 @@
   }
 }
 
-/* Dot field (components/DotField): each group of dots shows once --dot-fill passes its threshold.
-   The field fills in as the page loads, then as the visitor scrolls. */
+/* Dots (components/DotField): each group of dots shows once --dot-fill passes its threshold. They
+   fill in as the page loads, then as the visitor scrolls. */
 @property --dot-fill {
   syntax: '<number>';
   inherits: true;
   initial-value: 0;
 }
 
-.dot-field {
+.dot-field-hero {
   /* Phones and tablets: a patch in the corner beside the title, clear of the text below it and
      fading out under the menu */
   mask-image:
@@ -242,7 +242,7 @@
 
 /* Desktops: beside the title column, fading out at the top and bottom */
 @variant lg {
-  .dot-field {
+  .dot-field-hero {
     mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
     mask-composite: add;
   }
