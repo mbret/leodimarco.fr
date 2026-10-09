@@ -5,7 +5,8 @@ import type { KeyFactsBlock as KeyFactsBlockProps } from '@/payload-types'
 export const KeyFactsBlock: React.FC<KeyFactsBlockProps> = ({ items }) => {
   return (
     <div className="container">
-      <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      {/* Every row is as tall as the tallest card, so the cards stay even when they wrap */}
+      <ul className="grid auto-rows-fr grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {(items || []).map((item) => (
           <li
             className="flex flex-col rounded-lg border border-border bg-card p-4 sm:p-6"
