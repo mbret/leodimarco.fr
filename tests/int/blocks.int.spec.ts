@@ -15,13 +15,25 @@ describe('Testimonials block', () => {
     link: { type: 'custom' as const, url: 'https://example.com/avis', label: 'Voir tous les avis' },
   }
 
-  it('stays hidden until a review is added', () => {
-    const { container } = render(React.createElement(TestimonialsBlock, block))
+  it('stays hidden without reviews or a link', () => {
+    const { container } = render(
+      React.createElement(TestimonialsBlock, { ...block, enableLink: false }),
+    )
 
     expect(container.innerHTML).toBe('')
   })
 
-  it('shows each review with its rating and the link', () => {
+  it('shows the link while there are no reviews yet', () => {
+    render(React.createElement(TestimonialsBlock, block))
+
+    expect(screen.getByRole('heading', { level: 2, name: 'Mes clients témoignent' })).toBeTruthy()
+    expect(screen.queryByRole('list')).toBeNull()
+    expect(screen.getByRole('link', { name: 'Voir tous les avis' }).getAttribute('href')).toBe(
+      'https://example.com/avis',
+    )
+  })
+
+  it('shows each review with its rating', () => {
     render(
       React.createElement(TestimonialsBlock, {
         ...block,
@@ -29,12 +41,9 @@ describe('Testimonials block', () => {
       }),
     )
 
-    expect(screen.getByRole('heading', { level: 2, name: 'Mes clients témoignent' })).toBeTruthy()
     expect(screen.getByRole('img', { name: 'Note : 4 sur 5' })).toBeTruthy()
     expect(screen.getByText('Très bon accueil.')).toBeTruthy()
-    expect(screen.getByRole('link', { name: 'Voir tous les avis' }).getAttribute('href')).toBe(
-      'https://example.com/avis',
-    )
+    expect(screen.getByText('Marc')).toBeTruthy()
   })
 })
 

@@ -11,7 +11,6 @@ import * as migration_20261004_140155_faq_highlights from './20261004_140155_faq
 import * as migration_20261004_141000_faq_final_content from './20261004_141000_faq_final_content'
 import * as migration_20261009_111000_a_propos_content from './20261009_111000_a_propos_content'
 import * as migration_20261009_111606_testimonials_block from './20261009_111606_testimonials_block'
-import * as migration_20261009_111700_home_content from './20261009_111700_home_content'
 import * as migration_20261009_113328_key_facts_block from './20261009_113328_key_facts_block'
 import * as migration_20261009_113400_a_propos_layout from './20261009_113400_a_propos_layout'
 import * as migration_20261009_121252_hero_dot_pattern from './20261009_121252_hero_dot_pattern'
@@ -20,6 +19,7 @@ import * as migration_20261009_130000_dot_pattern_everywhere from './20261009_13
 import * as migration_20261009_130834_nested_pages from './20261009_130834_nested_pages'
 import * as migration_20261009_130900_service_pages_content from './20261009_130900_service_pages_content'
 import * as migration_20261009_135406_faq_retouche_interval from './20261009_135406_faq_retouche_interval'
+import * as migration_20261009_140500_home_content from './20261009_140500_home_content'
 
 export const migrations = [
   {
@@ -88,11 +88,6 @@ export const migrations = [
     name: '20261009_111606_testimonials_block',
   },
   {
-    up: migration_20261009_111700_home_content.up,
-    down: migration_20261009_111700_home_content.down,
-    name: '20261009_111700_home_content',
-  },
-  {
     up: migration_20261009_113328_key_facts_block.up,
     down: migration_20261009_113328_key_facts_block.down,
     name: '20261009_113328_key_facts_block',
@@ -131,5 +126,10 @@ export const migrations = [
     up: migration_20261009_135406_faq_retouche_interval.up,
     down: migration_20261009_135406_faq_retouche_interval.down,
     name: '20261009_135406_faq_retouche_interval',
+  },
+  {
+    up: migration_20261009_140500_home_content.up,
+    down: migration_20261009_140500_home_content.down,
+    name: '20261009_140500_home_content',
   },
 ]

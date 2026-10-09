@@ -517,7 +517,7 @@ export interface TestimonialsBlock {
   heading?: string | null;
   intro?: string | null;
   /**
-   * La section s’affiche sur le site dès qu’un avis est ajouté.
+   * Par exemple des avis Google, recopiés ici. Trois avis remplissent une ligne.
    */
   reviews?:
     | {

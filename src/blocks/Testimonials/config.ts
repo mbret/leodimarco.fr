@@ -30,7 +30,7 @@ export const Testimonials: Block = {
       },
       admin: {
         initCollapsed: true,
-        description: 'La section s’affiche sur le site dès qu’un avis est ajouté.',
+        description: 'Par exemple des avis Google, recopiés ici. Trois avis remplissent une ligne.',
       },
       fields: [
         {

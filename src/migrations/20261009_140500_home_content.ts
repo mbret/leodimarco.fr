@@ -4,7 +4,10 @@ import { homePageData } from '../endpoints/seed/home'
 
 // Fills the home page with the content of Léo's home page document: the three effects, the
 // presentation, the studio, client reviews, three questions and the photo call to action. Sites
-// that were not seeded yet get it from the starter pages button instead.
+// that were not seeded yet get it from the starter pages button instead. Renamed from
+// 20261009_111700_home_content so the preview database, which ran that first version, applies
+// this one too, and so it runs after the hero dot pattern migrations: saving the page through
+// Payload needs their column.
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   // Checking for pages with SQL rather than Payload keeps this migration working on a new site
   // after later schema changes
@@ -22,15 +25,15 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
       })
     ).docs[0]
 
-  const [home, aPropos, faq, galerie] = await Promise.all(
-    ['home', 'a-propos', 'faq', 'galerie'].map(findPage),
+  const [home, aPropos, contact, faq, galerie] = await Promise.all(
+    ['home', 'a-propos', 'contact', 'faq', 'galerie'].map(findPage),
   )
-  if (!home || !aPropos || !faq || !galerie) return
+  if (!home || !aPropos || !contact || !faq || !galerie) return
 
   await payload.update({
     collection: 'pages',
     id: home.id,
-    data: homePageData({ aPropos, faq, galerie }),
+    data: homePageData({ aPropos, contact, faq, galerie }),
     depth: 0,
     req,
     // Migrations run before the build, which renders the new content anyway
