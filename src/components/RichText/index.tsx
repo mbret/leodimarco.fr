@@ -34,7 +34,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
   // Check lists show a check mark, or an empty circle when unticked, instead of the editor's
-  // checkboxes
+  // checkboxes. Screen readers are told which items are unticked.
   list: (args) => {
     const { node, nodesToJSX } = args
     if (node.listType !== 'check') {
@@ -55,7 +55,10 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
             >
               {item.checked && <Check className="size-3.5" strokeWidth={3} />}
             </span>
-            <span>{nodesToJSX({ nodes: item.children })}</span>
+            <span>
+              {!item.checked && <span className="sr-only">Non coché : </span>}
+              {nodesToJSX({ nodes: item.children })}
+            </span>
           </li>
         ))}
       </ul>

@@ -24,6 +24,17 @@ describe('Rich text', () => {
     expect(screen.queryByRole('checkbox')).toBeNull()
   })
 
+  it('tells screen readers which check list items are unticked', () => {
+    const list = checkList('Poste désinfecté', 'Consommables stériles')
+    list.children[1].checked = false
+    renderRichText(richText(list))
+
+    expect(screen.getAllByRole('listitem').map((item) => item.textContent)).toEqual([
+      'Poste désinfecté',
+      'Non coché : Consommables stériles',
+    ])
+  })
+
   it('keeps bullet lists as they are', () => {
     const { container } = renderRichText(richText(bulletList('Rendu léger')))
 
