@@ -15,6 +15,7 @@ Everything is edited from the admin panel at `/admin`, which is in French.
   - Media
   - Gallery: shows the Réalisations
   - Prestations: service cards with an optional price and button
+  - Avis clients: client reviews with their star rating, and an optional link such as "Voir tous les avis Google". The section appears as soon as it has a review or a link
   - FAQ: questions and answers in categories, each category optionally ending with a button. Questions ticked "Mettre en avant" also appear as cards at the top with their short answer. The questions are exposed to search engines as structured data
   - Form: a form built in the Forms collection
 - **Header / Footer**: the menu links.

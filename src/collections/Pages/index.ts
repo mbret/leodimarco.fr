@@ -12,6 +12,7 @@ import { Gallery } from '../../blocks/Gallery/config'
 import { KeyFacts } from '../../blocks/KeyFacts/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { Services } from '../../blocks/Services/config'
+import { Testimonials } from '../../blocks/Testimonials/config'
 import { hero } from '@/heros/config'
 import { createBreadcrumbsField, createParentField } from '@payloadcms/plugin-nested-docs'
 import { slugField } from 'payload'
@@ -92,6 +93,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 MediaBlock,
                 Gallery,
                 Services,
+                Testimonials,
                 FAQ,
                 FormBlock,
                 KeyFacts,
