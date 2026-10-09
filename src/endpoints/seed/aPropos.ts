@@ -7,16 +7,17 @@ import { checkList, heading, paragraph, quote, richText } from './richText'
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
 
-// À propos page content, from Léo's À propos document: key facts first, one sentence set apart as a
-// quote, the hygiene commitments as a check list, and the closing invitation to get in touch as the
-// contact call to action. Used by the seed and by the migration that brings existing sites up to
-// date.
+// À propos page content, from Léo's À propos document: the dot pattern beside the title, key facts
+// first, one sentence set apart as a quote, the hygiene commitments as a check list, and the
+// closing invitation to get in touch as the contact call to action. Used by the seed and by the
+// migration that brings existing sites up to date.
 export const aProposPageData = ({ contact }: { contact: Page }): PageData => ({
   slug: 'a-propos',
   title: 'À propos',
   _status: 'published',
   hero: {
     type: 'lowImpact',
+    dotPattern: true,
     richText: richText(
       heading('À propos'),
       paragraph('Je m’appelle Léo Di Marco et je suis praticien en tricopigmentation.'),

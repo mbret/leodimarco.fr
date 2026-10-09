@@ -158,6 +158,10 @@ export interface Page {
   title: string;
   hero: {
     type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
+    /**
+     * Des points discrets à côté du titre, qui se densifient quand on fait défiler la page.
+     */
+    dotPattern?: boolean | null;
     richText?: {
       root: {
         type: string;
@@ -1025,6 +1029,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         type?: T;
+        dotPattern?: T;
         richText?: T;
         links?:
           | T
