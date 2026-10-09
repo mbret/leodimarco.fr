@@ -6,15 +6,15 @@ Website of Léo Di Marco, tattoo artist. Built with [Payload CMS](https://payloa
 
 Everything is edited from the admin panel at `/admin`, which is in French.
 
-- **Pages**: each page is a hero plus a list of blocks. The site has Accueil (`home`), Prestations, Galerie, À propos, FAQ and Contact. A Low Impact hero can show « Motif de points »: a patch of dots beside the title, different on every visit, that keeps clear of the text and appears dot by dot as the page loads. Every page has it on, and the end of each page mirrors it with a patch at the bottom left, which appears when visitors reach it.
+- **Pages**: each page is a hero plus a list of blocks. The site has Accueil (`home`), Prestations, Galerie, À propos, FAQ and Contact, plus a page per service (Effet rasé, Densification capillaire, Camouflage de cicatrices) under Prestations, such as `/prestations/effet-rase`. A page given a « Page parente » sits under it in the URL and shows a breadcrumb above its title. A Low Impact hero can show « Motif de points »: a patch of dots beside the title, different on every visit, that keeps clear of the text and appears dot by dot as the page loads. Every page has it on, and the end of each page mirrors it with a patch at the bottom left, which appears when visitors reach it.
 - **Réalisations**: the tattoo photos. Drag and drop in the list to change their order. The Gallery block shows them (all of them, or the first few on the homepage).
 - **Blocks** available on pages:
-  - Content: rich text in columns. Quotes are set in large type, and check lists show a check mark for each ticked item
+  - Content: rich text in columns, with lists and tables. Quotes are set in large type, and check lists show a check mark for each ticked item
   - Repères: short facts shown as cards, each a value such as « 29 ans » with a caption
   - Call to Action
   - Media
   - Gallery: shows the Réalisations
-  - Prestations: service cards with an optional price
+  - Prestations: service cards with an optional price and button
   - FAQ: questions and answers in categories, each category optionally ending with a button. Questions ticked "Mettre en avant" also appear as cards at the top with their short answer. The questions are exposed to search engines as structured data
   - Form: a form built in the Forms collection
 - **Header / Footer**: the menu links.

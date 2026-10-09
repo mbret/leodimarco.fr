@@ -4,6 +4,9 @@ import {
   SerializedBlockNode,
   SerializedLinkNode,
   SerializedListItemNode,
+  SerializedTableCellNode,
+  SerializedTableNode,
+  SerializedTableRowNode,
   type DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
 import {
@@ -16,19 +19,36 @@ import { Check } from 'lucide-react'
 import type {
   CallToActionBlock as CTABlockProps,
   MediaBlock as MediaBlockProps,
+  Page,
 } from '@/payload-types'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { pagePath } from '@/utilities/pagePath'
 import { cn } from '@/utilities/ui'
 
-type NodeTypes = DefaultNodeTypes | SerializedBlockNode<CTABlockProps | MediaBlockProps>
+type NodeTypes =
+  | DefaultNodeTypes
+  | SerializedBlockNode<CTABlockProps | MediaBlockProps>
+  | SerializedTableNode
+  | SerializedTableRowNode
+  | SerializedTableCellNode
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value } = linkNode.fields.doc!
   if (typeof value !== 'object') {
     throw new Error('Expected value to be an object')
   }
-  return value.slug === 'home' ? '/' : `/${value.slug}`
+  return pagePath({
+    slug: value.slug as string,
+    breadcrumbs: value.breadcrumbs as Page['breadcrumbs'],
+  })
 }
+
+// Lexical table header flags: the cell is in the header row, or in the header column
+const HEADER_ROW = 1
+const HEADER_COLUMN = 2
+
+const isHeaderRow = (row: SerializedTableRowNode) =>
+  (row.children as SerializedTableCellNode[]).every((cell) => cell.headerState & HEADER_ROW)
 
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
@@ -62,6 +82,38 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
           </li>
         ))}
       </ul>
+    )
+  },
+  // Tables without the default inline borders, styled in globals.css. Leading header rows form
+  // the table head.
+  table: ({ node, nodesToJSX }) => {
+    const rows = node.children as SerializedTableRowNode[]
+    const bodyStart = rows.findIndex((row) => !isHeaderRow(row))
+    const headRows = bodyStart === -1 ? rows : rows.slice(0, bodyStart)
+    const bodyRows = rows.slice(headRows.length)
+
+    return (
+      <div className="lexical-table-container">
+        <table>
+          {headRows.length > 0 && <thead>{nodesToJSX({ nodes: headRows })}</thead>}
+          {bodyRows.length > 0 && <tbody>{nodesToJSX({ nodes: bodyRows })}</tbody>}
+        </table>
+      </div>
+    )
+  },
+  tablecell: ({ node, nodesToJSX }) => {
+    const Cell = node.headerState ? 'th' : 'td'
+    const scope =
+      node.headerState & HEADER_ROW ? 'col' : node.headerState & HEADER_COLUMN ? 'row' : undefined
+
+    return (
+      <Cell
+        colSpan={node.colSpan && node.colSpan > 1 ? node.colSpan : undefined}
+        rowSpan={node.rowSpan && node.rowSpan > 1 ? node.rowSpan : undefined}
+        scope={scope}
+      >
+        {nodesToJSX({ nodes: node.children })}
+      </Cell>
     )
   },
   blocks: {

@@ -192,6 +192,48 @@
   letter-spacing: -0.02em;
 }
 
+/* A heading right below the page title reads as its subtitle */
+.prose h1 + h2 {
+  margin-top: 0;
+}
+
+/* Tables: column headings as small labels, row headings in full colour, the rest muted */
+.prose .lexical-table-container {
+  margin-block: 2em;
+  overflow-x: auto;
+}
+
+.prose .lexical-table-container table {
+  margin-block: 0;
+}
+
+.prose :is(th, td) > p {
+  margin: 0;
+}
+
+.prose thead th {
+  color: var(--color-muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.prose tbody :is(th, td) {
+  padding-block: 0.75em;
+  vertical-align: baseline;
+}
+
+.prose tbody th {
+  padding-inline: 0 1.5em;
+  color: var(--tw-prose-headings);
+  font-weight: 600;
+}
+
+.prose tbody td {
+  color: var(--color-muted-foreground);
+}
+
 @variant md {
   .prose h1 {
     font-size: 3.5rem;

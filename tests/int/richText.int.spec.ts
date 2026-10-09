@@ -3,7 +3,7 @@ import React from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import RichText from '@/components/RichText'
-import { bulletList, checkList, richText } from '@/endpoints/seed/richText'
+import { bulletList, checkList, paragraph, richText, table } from '@/endpoints/seed/richText'
 import type { ContentBlock } from '@/payload-types'
 
 afterEach(cleanup)
@@ -39,5 +39,27 @@ describe('Rich text', () => {
     const { container } = renderRichText(richText(bulletList('Rendu léger')))
 
     expect(container.querySelector('ul.list-bullet li')?.textContent).toBe('Rendu léger')
+  })
+
+  it('shows tables with column headings and row labels', () => {
+    renderRichText(
+      richText(
+        table({
+          head: ['Style de rendu', 'Objectif'],
+          rows: [['Très fondu', 'Résultat discret, peu marqué']],
+        }),
+      ),
+    )
+
+    expect(screen.getByRole('columnheader', { name: 'Objectif' })).toBeTruthy()
+    expect(screen.getByRole('rowheader', { name: 'Très fondu' })).toBeTruthy()
+    expect(screen.getByRole('cell', { name: 'Résultat discret, peu marqué' })).toBeTruthy()
+  })
+
+  it('keeps the footnote mark of a bold price', () => {
+    renderRichText(richText(paragraph('**À partir de 200 €***')))
+
+    expect(screen.getByText('À partir de 200 €').tagName).toBe('STRONG')
+    expect(screen.getByRole('paragraph').textContent).toBe('À partir de 200 €*')
   })
 })

@@ -265,7 +265,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
                 paragraph(
                   'Les cellules du cuir chevelu se renouvellent rapidement, ce qui explique que le rendu puisse *s’adoucir*, *perdre légèrement en intensité* et nécessiter une *retouche* pour conserver un résultat idéal.',
                 ),
-                paragraph('Ces retouches interviennent généralement entre *12 et 18 mois*.'),
+                paragraph('Ces retouches interviennent généralement entre *18 et 24 mois*.'),
               ),
             },
             {

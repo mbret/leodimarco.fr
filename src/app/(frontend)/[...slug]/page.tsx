@@ -4,6 +4,7 @@ import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
 import { draftMode } from 'next/headers'
+import { permanentRedirect } from 'next/navigation'
 import React, { cache } from 'react'
 import { homeStatic } from '@/endpoints/seed/home-static'
 
@@ -11,6 +12,7 @@ import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { DotField } from '@/components/DotField'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { pagePath } from '@/utilities/pagePath'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { cn } from '@/utilities/ui'
 
@@ -24,6 +26,7 @@ export async function generateStaticParams() {
     pagination: false,
     select: {
       slug: true,
+      breadcrumbs: true,
     },
   })
 
@@ -31,8 +34,9 @@ export async function generateStaticParams() {
     ?.filter((doc) => {
       return doc.slug !== 'home'
     })
-    .map(({ slug }) => {
-      return { slug }
+    .map((doc) => {
+      // /prestations/effet-rase becomes ['prestations', 'effet-rase']
+      return { slug: pagePath(doc).split('/').filter(Boolean) }
     })
 
   return params
@@ -40,24 +44,24 @@ export async function generateStaticParams() {
 
 type Args = {
   params: Promise<{
-    slug?: string
+    slug?: string[]
   }>
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
-  const { slug = 'home' } = await paramsPromise
+  const { slug = ['home'] } = await paramsPromise
   // Decode to support slugs with special characters
-  const decodedSlug = decodeURIComponent(slug)
-  const url = '/' + decodedSlug
+  const segments = slug.map(decodeURIComponent)
+  const url = '/' + segments.join('/')
   let page: RequiredDataFromCollectionSlug<'pages'> | null
 
   page = await queryPageBySlug({
-    slug: decodedSlug,
+    slug: segments[segments.length - 1],
   })
 
   // Remove this code once your website is seeded
-  if (!page && slug === 'home') {
+  if (!page && url === '/home') {
     page = homeStatic
   }
 
@@ -65,7 +69,13 @@ export default async function Page({ params: paramsPromise }: Args) {
     return <PayloadRedirects url={url} />
   }
 
-  const { hero, layout } = page
+  // A page has one address: /effet-rase leads to /prestations/effet-rase
+  const path = pagePath(page)
+  if (page.slug !== 'home' && path !== url) {
+    permanentRedirect(path)
+  }
+
+  const { breadcrumbs, hero, layout } = page
   // Pages with dots beside their title get them mirrored at the bottom left too
   const dots = hero?.type === 'lowImpact' && Boolean(hero.dotPattern)
 
@@ -76,7 +86,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       {draft && <LivePreviewListener />}
 
-      <RenderHero {...hero} />
+      <RenderHero {...hero} breadcrumbs={breadcrumbs} />
       <RenderBlocks blocks={layout} />
       {dots && (
         <DotField
@@ -89,16 +99,19 @@ export default async function Page({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = 'home' } = await paramsPromise
+  const { slug = ['home'] } = await paramsPromise
   // Decode to support slugs with special characters
-  const decodedSlug = decodeURIComponent(slug)
+  const segments = slug.map(decodeURIComponent)
   const page = await queryPageBySlug({
-    slug: decodedSlug,
+    slug: segments[segments.length - 1],
   })
 
-  return generateMeta({ doc: page, path: slug === 'home' ? '/' : `/${slug}` })
+  const url = '/' + segments.join('/')
+
+  return generateMeta({ doc: page, path: page ? pagePath(page) : url === '/home' ? '/' : url })
 }
 
+// Slugs are unique, so the last segment of the path is enough to find the page
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
 

@@ -1,4 +1,5 @@
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
+import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { Plugin } from 'payload'
@@ -8,6 +9,7 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 
 import { Page } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { pagePath } from '@/utilities/pagePath'
 
 // generateMeta appends the site name, so the SEO title is just the document title
 const generateTitle: GenerateTitle<Page> = ({ doc }) => {
@@ -17,10 +19,15 @@ const generateTitle: GenerateTitle<Page> = ({ doc }) => {
 const generateURL: GenerateURL<Page> = ({ doc }) => {
   const url = getServerSideURL()
 
-  return doc?.slug && doc.slug !== 'home' ? `${url}/${doc.slug}` : url
+  return doc?.slug && doc.slug !== 'home' ? `${url}${pagePath(doc)}` : url
 }
 
 export const plugins: Plugin[] = [
+  // Pages can sit under a parent page. The parent and breadcrumbs fields are declared on Pages
+  nestedDocsPlugin({
+    collections: ['pages'],
+    generateURL: (docs) => docs.reduce((url, doc) => `${url}/${doc.slug}`, ''),
+  }),
   redirectsPlugin({
     collections: ['pages'],
     overrides: {
