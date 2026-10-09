@@ -351,10 +351,6 @@ export interface ContentBlock {
   columns?:
     | {
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
-        /**
-         * Affiche la colonne dans un cadre, pour la mettre en avant.
-         */
-        boxed?: boolean | null;
         richText?: {
           root: {
             type: string;
@@ -1102,7 +1098,6 @@ export interface ContentBlockSelect<T extends boolean = true> {
     | T
     | {
         size?: T;
-        boxed?: T;
         richText?: T;
         enableLink?: T;
         link?:

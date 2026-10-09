@@ -4,7 +4,7 @@ import type { Page } from '@/payload-types'
 
 import { contactCta } from './contactCta'
 import { pageLink } from './links'
-import { bulletList, heading, paragraph, richText, table } from './richText'
+import { bulletList, checkList, heading, paragraph, richText, table } from './richText'
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
 
@@ -31,13 +31,10 @@ const serviceHero = ({
   links,
 })
 
-// A section of text, optionally boxed or ending with a button
-const section = (
-  text: ReturnType<typeof richText>,
-  { boxed = false, link }: { boxed?: boolean; link?: Link } = {},
-) => ({
+// A section of text, optionally ending with a button
+const section = (text: ReturnType<typeof richText>, link?: Link) => ({
   blockType: 'content' as const,
-  columns: [{ size: 'full' as const, boxed, richText: text, enableLink: Boolean(link), ...link }],
+  columns: [{ size: 'full' as const, richText: text, enableLink: Boolean(link), ...link }],
 })
 
 // Closing call to action: send photos to find out whether the service suits your case
@@ -47,11 +44,9 @@ const photosCta = (contact: Page, title: string, text: string[], label: string) 
   links: [pageLink(contact, label)],
 })
 
-// Boxed list of the cases the service suits
+// The cases the service suits, ticked off in a check list
 const suitsYouIf = (...items: string[]) =>
-  section(richText(heading('Cette solution peut vous convenir si…', 'h2'), bulletList(...items)), {
-    boxed: true,
-  })
+  section(richText(heading('Cette solution peut vous convenir si…', 'h2'), checkList(...items)))
 
 // Service pages, from Léo's prestations document. Used by the seed and by the migration that brings
 // existing sites up to date.
@@ -151,7 +146,7 @@ export const servicePagesData = ({
               'Les détails sur le déroulement, la cicatrisation et les soins sont expliqués dans la FAQ.',
             ),
           ),
-          { link: readFaq },
+          readFaq,
         ),
         section(
           richText(
@@ -193,7 +188,6 @@ export const servicePagesData = ({
             paragraph('**Effet rasé : à partir de 400 €***'),
             paragraph('* Ce tarif correspond à une petite zone localisée.'),
           ),
-          { boxed: true },
         ),
         photosCta(
           contact,
@@ -244,7 +238,7 @@ export const servicePagesData = ({
               'Elle peut aussi être intéressante après une greffe capillaire lorsque le résultat manque encore de densité visuelle malgré les implants.',
             ),
           ),
-          { link: seeResults },
+          seeResults,
         ),
         section(
           richText(
@@ -297,7 +291,7 @@ export const servicePagesData = ({
               'Les informations plus détaillées sur le déroulement, la préparation et les soins sont disponibles dans la FAQ.',
             ),
           ),
-          { link: readFaq },
+          readFaq,
         ),
         section(
           richText(
@@ -309,7 +303,6 @@ export const servicePagesData = ({
             paragraph('**Effet densité : à partir de 400 €***'),
             paragraph('* Ce tarif correspond à une petite zone localisée.'),
           ),
-          { boxed: true },
         ),
         photosCta(
           contact,
@@ -397,7 +390,7 @@ export const servicePagesData = ({
               'Selon le type de cicatrice et son ancienneté, une **3e séance** peut parfois être nécessaire.',
             ),
           ),
-          { link: readFaq },
+          readFaq,
         ),
         section(
           richText(
@@ -409,7 +402,6 @@ export const servicePagesData = ({
             paragraph('Un devis précis est donné après échange.'),
             paragraph('* Ce tarif correspond à une petite cicatrice.'),
           ),
-          { boxed: true },
         ),
         photosCta(
           contact,

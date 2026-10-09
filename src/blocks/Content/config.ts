@@ -38,14 +38,6 @@ const columnFields: Field[] = [
     ],
   },
   {
-    name: 'boxed',
-    type: 'checkbox',
-    label: 'Encadré',
-    admin: {
-      description: 'Affiche la colonne dans un cadre, pour la mettre en avant.',
-    },
-  },
-  {
     name: 'richText',
     type: 'richText',
     editor: lexicalEditor({
