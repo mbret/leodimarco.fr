@@ -46,13 +46,24 @@ export const paragraph = (value: string) => ({
   version: 1,
 })
 
-export const bulletList = (...items: string[]) => ({
+export const quote = (value: string) => ({
+  type: 'quote' as const,
+  children: inline(value),
+  direction: 'ltr' as const,
+  format: '' as const,
+  indent: 0,
+  version: 1,
+})
+
+// Check list items are all ticked
+const list = (listType: 'bullet' | 'check', items: string[]) => ({
   type: 'list' as const,
-  listType: 'bullet' as const,
+  listType,
   tag: 'ul' as const,
   start: 1,
   children: items.map((item, i) => ({
     type: 'listitem' as const,
+    ...(listType === 'check' && { checked: true }),
     value: i + 1,
     children: inline(item),
     direction: 'ltr' as const,
@@ -66,8 +77,15 @@ export const bulletList = (...items: string[]) => ({
   version: 1,
 })
 
+export const bulletList = (...items: string[]) => list('bullet', items)
+
+export const checkList = (...items: string[]) => list('check', items)
+
 type Node =
-  ReturnType<typeof heading> | ReturnType<typeof paragraph> | ReturnType<typeof bulletList>
+  | ReturnType<typeof heading>
+  | ReturnType<typeof paragraph>
+  | ReturnType<typeof quote>
+  | ReturnType<typeof list>
 
 export const richText = (...children: Node[]) => ({
   root: {

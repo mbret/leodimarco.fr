@@ -10,6 +10,8 @@ import * as migration_20261004_134124_faq_category_buttons from './20261004_1341
 import * as migration_20261004_140155_faq_highlights from './20261004_140155_faq_highlights'
 import * as migration_20261004_141000_faq_final_content from './20261004_141000_faq_final_content'
 import * as migration_20261009_111000_a_propos_content from './20261009_111000_a_propos_content'
+import * as migration_20261009_113328_key_facts_block from './20261009_113328_key_facts_block'
+import * as migration_20261009_113400_a_propos_layout from './20261009_113400_a_propos_layout'
 
 export const migrations = [
   {
@@ -71,5 +73,15 @@ export const migrations = [
     up: migration_20261009_111000_a_propos_content.up,
     down: migration_20261009_111000_a_propos_content.down,
     name: '20261009_111000_a_propos_content',
+  },
+  {
+    up: migration_20261009_113328_key_facts_block.up,
+    down: migration_20261009_113328_key_facts_block.down,
+    name: '20261009_113328_key_facts_block',
+  },
+  {
+    up: migration_20261009_113400_a_propos_layout.up,
+    down: migration_20261009_113400_a_propos_layout.down,
+    name: '20261009_113400_a_propos_layout',
   },
 ]

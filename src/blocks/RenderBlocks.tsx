@@ -7,6 +7,7 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { FAQBlock } from '@/blocks/FAQ/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { GalleryBlock } from '@/blocks/Gallery/Component'
+import { KeyFactsBlock } from '@/blocks/KeyFacts/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ServicesBlock } from '@/blocks/Services/Component'
 
@@ -16,6 +17,7 @@ const blockComponents = {
   faq: FAQBlock,
   formBlock: FormBlock,
   gallery: GalleryBlock,
+  keyFacts: KeyFactsBlock,
   mediaBlock: MediaBlock,
   services: ServicesBlock,
 }
@@ -38,7 +40,7 @@ export const RenderBlocks: React.FC<{
 
             if (Block) {
               return (
-                <div className="my-16" key={index}>
+                <div className="my-10 md:my-16" key={index}>
                   {/* @ts-expect-error there may be some mismatch between the expected types here */}
                   <Block {...block} disableInnerContainer />
                 </div>

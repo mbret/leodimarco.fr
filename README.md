@@ -9,7 +9,8 @@ Everything is edited from the admin panel at `/admin`, which is in French.
 - **Pages**: each page is a hero plus a list of blocks. The site has Accueil (`home`), Prestations, Galerie, À propos, FAQ and Contact.
 - **Réalisations**: the tattoo photos. Drag and drop in the list to change their order. The Gallery block shows them (all of them, or the first few on the homepage).
 - **Blocks** available on pages:
-  - Content: rich text in columns
+  - Content: rich text in columns. Quotes are set in large type, and check lists show a check mark for each ticked item
+  - Repères: short facts shown as cards, each a value such as « 29 ans » with a caption
   - Call to Action
   - Media
   - Gallery: shows the Réalisations
