@@ -194,7 +194,9 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (ContentBlock | CallToActionBlock | MediaBlock | GalleryBlock | ServicesBlock | FAQBlock | FormBlock)[];
+  layout: (
+    ContentBlock | CallToActionBlock | MediaBlock | GalleryBlock | ServicesBlock | FAQBlock | FormBlock | KeyFactsBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -720,6 +722,26 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "KeyFactsBlock".
+ */
+export interface KeyFactsBlock {
+  /**
+   * Affichés en cartes, quatre par ligne sur ordinateur.
+   */
+  items: {
+    /**
+     * Courte, par exemple « 29 ans ».
+     */
+    value: string;
+    label: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'keyFacts';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "realisations".
  */
 export interface Realisation {
@@ -1031,6 +1053,7 @@ export interface PagesSelect<T extends boolean = true> {
         services?: T | ServicesBlockSelect<T>;
         faq?: T | FAQBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        keyFacts?: T | KeyFactsBlockSelect<T>;
       };
   meta?:
     | T
@@ -1175,6 +1198,21 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "KeyFactsBlock_select".
+ */
+export interface KeyFactsBlockSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

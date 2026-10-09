@@ -3,13 +3,14 @@ import type { RequiredDataFromCollectionSlug } from 'payload'
 import type { Page } from '@/payload-types'
 
 import { pageLink } from './links'
-import { heading, paragraph, richText } from './richText'
+import { checkList, heading, paragraph, quote, richText } from './richText'
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
 
-// À propos page content, from Léo's À propos document. Its closing invitation to get in touch
-// becomes the contact call to action. Used by the seed and by the migration that brings existing
-// sites up to date.
+// À propos page content, from Léo's À propos document: key facts first, one sentence set apart as a
+// quote, the hygiene commitments as a check list, and the closing invitation to get in touch as the
+// contact call to action. Used by the seed and by the migration that brings existing sites up to
+// date.
 export const aProposPageData = ({ contact }: { contact: Page }): PageData => ({
   slug: 'a-propos',
   title: 'À propos',
@@ -23,6 +24,15 @@ export const aProposPageData = ({ contact }: { contact: Page }): PageData => ({
   },
   layout: [
     {
+      blockType: 'keyFacts',
+      items: [
+        { value: '29 ans', label: 'L’âge de ma propre tricopigmentation' },
+        { value: 'Médicoderm Académie', label: 'Formé auprès de Samuel Troonen' },
+        { value: 'ARS', label: 'Activité et local déclarés' },
+        { value: 'Pompey', label: 'Studio professionnel près de Nancy' },
+      ],
+    },
+    {
       blockType: 'content',
       columns: [
         {
@@ -31,7 +41,7 @@ export const aProposPageData = ({ contact }: { contact: Page }): PageData => ({
             paragraph(
               'J’ai toujours été attiré par le tatouage et le travail de l’image : les lignes, les contrastes, les détails et tout ce qui touche à l’esthétique de manière générale. C’est un univers qui fait partie de moi depuis longtemps et qui m’a naturellement amené vers la tricopigmentation.',
             ),
-            paragraph(
+            quote(
               'Mais si j’ai choisi de me spécialiser dans ce domaine, c’est aussi parce que je suis directement concerné.',
             ),
             paragraph(
@@ -87,8 +97,11 @@ export const aProposPageData = ({ contact }: { contact: Page }): PageData => ({
             paragraph(
               'J’ai voulu un lieu propre, calme et agréable, dans lequel je peux prendre le temps de vous recevoir, d’échanger avec vous et de travailler dans de bonnes conditions.',
             ),
-            paragraph(
-              'L’hygiène y occupe une place essentielle. Le poste de travail est préparé et désinfecté avant chaque rendez-vous. J’utilise du matériel professionnel, des consommables stériles à usage unique ainsi que des pigments conformes à la réglementation européenne en vigueur.',
+            paragraph('L’hygiène y occupe une place essentielle :'),
+            checkList(
+              'Un poste de travail préparé et désinfecté avant chaque rendez-vous',
+              'Du matériel professionnel et des consommables stériles à usage unique',
+              'Des pigments conformes à la réglementation européenne en vigueur',
             ),
             paragraph(
               'Mon activité et le local sont déclarés auprès de l’ARS, et chaque séance est réalisée dans le respect des règles d’hygiène liées à la pratique de la tricopigmentation.',

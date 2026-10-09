@@ -3,6 +3,7 @@ import {
   DefaultNodeTypes,
   SerializedBlockNode,
   SerializedLinkNode,
+  SerializedListItemNode,
   type DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
 import {
@@ -10,6 +11,7 @@ import {
   LinkJSXConverter,
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
+import { Check } from 'lucide-react'
 
 import type {
   CallToActionBlock as CTABlockProps,
@@ -18,9 +20,7 @@ import type {
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { cn } from '@/utilities/ui'
 
-type NodeTypes =
-  | DefaultNodeTypes
-  | SerializedBlockNode<CTABlockProps | MediaBlockProps>
+type NodeTypes = DefaultNodeTypes | SerializedBlockNode<CTABlockProps | MediaBlockProps>
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value } = linkNode.fields.doc!
@@ -33,6 +33,34 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
+  // Check lists show a check mark, or an empty circle when unticked, instead of the editor's
+  // checkboxes
+  list: (args) => {
+    const { node, nodesToJSX } = args
+    if (node.listType !== 'check') {
+      const { list } = defaultConverters
+      return typeof list === 'function' ? list(args) : list
+    }
+
+    return (
+      <ul className="not-prose mt-4 mb-8 flex flex-col gap-4 rounded-lg border border-border bg-card p-4 sm:p-6">
+        {(node.children as SerializedListItemNode[]).map((item, i) => (
+          <li className="flex gap-3" key={i}>
+            <span
+              aria-hidden
+              className={cn(
+                'mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full',
+                item.checked ? 'bg-foreground text-background' : 'border border-border',
+              )}
+            >
+              {item.checked && <Check className="size-3.5" strokeWidth={3} />}
+            </span>
+            <span>{nodesToJSX({ nodes: item.children })}</span>
+          </li>
+        ))}
+      </ul>
+    )
+  },
   blocks: {
     mediaBlock: ({ node }) => (
       <MediaBlock

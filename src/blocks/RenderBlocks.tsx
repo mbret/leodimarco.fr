@@ -7,6 +7,7 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { FAQBlock } from '@/blocks/FAQ/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { GalleryBlock } from '@/blocks/Gallery/Component'
+import { KeyFactsBlock } from '@/blocks/KeyFacts/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ServicesBlock } from '@/blocks/Services/Component'
 
@@ -16,6 +17,7 @@ const blockComponents = {
   faq: FAQBlock,
   formBlock: FormBlock,
   gallery: GalleryBlock,
+  keyFacts: KeyFactsBlock,
   mediaBlock: MediaBlock,
   services: ServicesBlock,
 }

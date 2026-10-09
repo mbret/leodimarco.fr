@@ -213,6 +213,19 @@
   font-weight: 600;
 }
 
+/* Quotes set a sentence of the text apart, in large type */
+.prose blockquote {
+  margin-block: 1.5em;
+  border-inline-start: 2px solid var(--color-foreground);
+  padding-inline-start: 1em;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
 @variant md {
   .prose h1 {
     font-size: 3.5rem;
@@ -220,5 +233,9 @@
 
   .prose h2 {
     font-size: 1.5rem;
+  }
+
+  .prose blockquote {
+    font-size: 1.875rem;
   }
 }
