@@ -19,6 +19,7 @@ import * as migration_20261009_130000_dot_pattern_everywhere from './20261009_13
 import * as migration_20261009_130834_nested_pages from './20261009_130834_nested_pages'
 import * as migration_20261009_130900_service_pages_content from './20261009_130900_service_pages_content'
 import * as migration_20261009_135406_faq_retouche_interval from './20261009_135406_faq_retouche_interval'
+import * as migration_20261009_140018_blocks_schema_snapshot from './20261009_140018_blocks_schema_snapshot'
 import * as migration_20261009_140500_home_content from './20261009_140500_home_content'
 
 export const migrations = [
@@ -126,6 +127,11 @@ export const migrations = [
     up: migration_20261009_135406_faq_retouche_interval.up,
     down: migration_20261009_135406_faq_retouche_interval.down,
     name: '20261009_135406_faq_retouche_interval',
+  },
+  {
+    up: migration_20261009_140018_blocks_schema_snapshot.up,
+    down: migration_20261009_140018_blocks_schema_snapshot.down,
+    name: '20261009_140018_blocks_schema_snapshot',
   },
   {
     up: migration_20261009_140500_home_content.up,
