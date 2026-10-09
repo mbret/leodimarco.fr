@@ -39,6 +39,16 @@ export const hero: Field = {
       required: true,
     },
     {
+      name: 'dotPattern',
+      type: 'checkbox',
+      label: 'Motif de points',
+      admin: {
+        condition: (_, { type } = {}) => type === 'lowImpact',
+        description:
+          'Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point.',
+      },
+    },
+    {
       name: 'richText',
       type: 'richText',
       editor: lexicalEditor({

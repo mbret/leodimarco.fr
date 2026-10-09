@@ -6,7 +6,7 @@ Website of Léo Di Marco, tattoo artist. Built with [Payload CMS](https://payloa
 
 Everything is edited from the admin panel at `/admin`, which is in French.
 
-- **Pages**: each page is a hero plus a list of blocks. The site has Accueil (`home`), Prestations, Galerie, À propos, FAQ and Contact.
+- **Pages**: each page is a hero plus a list of blocks. The site has Accueil (`home`), Prestations, Galerie, À propos, FAQ and Contact. A Low Impact hero can show « Motif de points »: a patch of dots beside the title, different on every visit, that keeps clear of the text and appears dot by dot as the page loads. Every page has it on, and the end of each page mirrors it with a patch at the bottom left, which appears when visitors reach it.
 - **Réalisations**: the tattoo photos. Drag and drop in the list to change their order. The Gallery block shows them (all of them, or the first few on the homepage).
 - **Blocks** available on pages:
   - Content: rich text in columns. Quotes are set in large type, and check lists show a check mark for each ticked item

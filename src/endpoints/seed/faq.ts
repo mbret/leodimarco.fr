@@ -24,6 +24,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
   _status: 'published',
   hero: {
     type: 'lowImpact',
+    dotPattern: true,
     richText: richText(
       heading('Questions fréquentes'),
       paragraph(

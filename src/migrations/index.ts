@@ -12,6 +12,8 @@ import * as migration_20261004_141000_faq_final_content from './20261004_141000_
 import * as migration_20261009_111000_a_propos_content from './20261009_111000_a_propos_content'
 import * as migration_20261009_113328_key_facts_block from './20261009_113328_key_facts_block'
 import * as migration_20261009_113400_a_propos_layout from './20261009_113400_a_propos_layout'
+import * as migration_20261009_121252_hero_dot_pattern from './20261009_121252_hero_dot_pattern'
+import * as migration_20261009_130000_dot_pattern_everywhere from './20261009_130000_dot_pattern_everywhere'
 
 export const migrations = [
   {
@@ -83,5 +85,15 @@ export const migrations = [
     up: migration_20261009_113400_a_propos_layout.up,
     down: migration_20261009_113400_a_propos_layout.down,
     name: '20261009_113400_a_propos_layout',
+  },
+  {
+    up: migration_20261009_121252_hero_dot_pattern.up,
+    down: migration_20261009_121252_hero_dot_pattern.down,
+    name: '20261009_121252_hero_dot_pattern',
+  },
+  {
+    up: migration_20261009_130000_dot_pattern_everywhere.up,
+    down: migration_20261009_130000_dot_pattern_everywhere.down,
+    name: '20261009_130000_dot_pattern_everywhere',
   },
 ]

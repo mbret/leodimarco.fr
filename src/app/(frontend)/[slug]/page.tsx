@@ -8,9 +8,11 @@ import React, { cache } from 'react'
 import { homeStatic } from '@/endpoints/seed/home-static'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { DotField } from '@/components/DotField'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { cn } from '@/utilities/ui'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -64,9 +66,11 @@ export default async function Page({ params: paramsPromise }: Args) {
   }
 
   const { hero, layout } = page
+  // Pages with dots beside their title get them mirrored at the bottom left too
+  const dots = hero?.type === 'lowImpact' && Boolean(hero.dotPattern)
 
   return (
-    <article className="pt-8 md:pt-16 pb-12 md:pb-24">
+    <article className={cn('pt-8 md:pt-16 pb-12 md:pb-24', dots && 'relative isolate')}>
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
@@ -74,6 +78,12 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       <RenderHero {...hero} />
       <RenderBlocks blocks={layout} />
+      {dots && (
+        <DotField
+          className="container absolute inset-x-0 bottom-0 -z-10 h-60 overflow-hidden"
+          variant="end"
+        />
+      )}
     </article>
   )
 }

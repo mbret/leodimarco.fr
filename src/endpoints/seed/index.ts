@@ -12,6 +12,7 @@ type PageData = RequiredDataFromCollectionSlug<'pages'>
 
 const hero = (title: string, intro?: string): PageData['hero'] => ({
   type: 'lowImpact',
+  dotPattern: true,
   richText: richText(heading(title), ...(intro ? [paragraph(intro)] : [])),
 })
 
@@ -203,6 +204,7 @@ export const seed = async ({
     title: 'Accueil',
     hero: {
       type: 'lowImpact',
+      dotPattern: true,
       richText: richText(
         heading(SITE_NAME),
         paragraph(

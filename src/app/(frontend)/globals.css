@@ -205,3 +205,53 @@
     font-size: 1.875rem;
   }
 }
+
+/* Dots (components/DotField): each group of dots shows once --dot-fill passes its threshold. The
+   script sets it to 1 once the drawing is on screen, and the dots are pigmented in, group by group. */
+@property --dot-fill {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.dot-field-hero {
+  /* Phones and tablets: a patch in the corner beside the title, clear of the text below it and
+     fading out under the menu */
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 30%),
+    radial-gradient(ellipse 75% 70% at 100% 15%, #000 25%, transparent);
+  mask-composite: intersect;
+}
+
+.dot-field {
+  transition: --dot-fill 2.4s ease-out;
+}
+
+.dot-field path {
+  opacity: clamp(0, calc((var(--dot-fill) - var(--dot-threshold)) * var(--dot-groups)), 1);
+}
+
+/* Phones and tablets: the end of the page mirrors the patch beside the title, in the bottom corner */
+.dot-field-end {
+  mask-image:
+    linear-gradient(to top, transparent, #000 30%),
+    radial-gradient(ellipse 75% 70% at 0% 85%, #000 25%, transparent);
+  mask-composite: intersect;
+}
+
+/* Desktops: beside the title column and at the bottom left, fading out at the top and bottom */
+@variant lg {
+  .dot-field-hero,
+  .dot-field-end {
+    mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+    mask-composite: add;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot-field {
+    /* The finished drawing at once, whatever the script sets */
+    --dot-fill: 1 !important;
+    transition: none;
+  }
+}
