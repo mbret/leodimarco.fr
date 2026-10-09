@@ -16,10 +16,11 @@ export const LowImpactHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadc
 }) => {
   return (
     <div className={cn('container md:mt-16', dotPattern && 'relative isolate')}>
-      {/* Behind the text, reaching up into the page's top spacing */}
+      {/* Behind the text, reaching up into the page's top spacing. No taller than on the FAQ, so a
+          longer hero, such as a service page's, keeps the same patch beside its title */}
       {dotPattern && (
         <DotField
-          className="absolute inset-0 -top-8 -z-10 overflow-hidden md:-top-32"
+          className="absolute inset-0 -top-8 -z-10 max-h-96 overflow-hidden md:-top-32 md:max-h-88"
           variant="hero"
         />
       )}
