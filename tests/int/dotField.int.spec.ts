@@ -3,6 +3,7 @@ import React from 'react'
 import { afterEach, beforeAll, describe, expect, it } from 'vitest'
 
 import { DotField, randomDots } from '@/components/DotField'
+import { heading, paragraph, richText } from '@/endpoints/seed/richText'
 import { LowImpactHero } from '@/heros/LowImpact'
 
 beforeAll(() => {
@@ -51,6 +52,37 @@ describe('Dot pattern', () => {
         x > title.left - 7 && x < title.right + 7 && y > title.top - 7 && y < title.bottom + 7,
     )
     expect(near).toEqual([])
+  })
+
+  it('sits the same beside every title, whatever is above or below it', () => {
+    // jsdom has no layout: the text the dots keep clear of has no boxes
+    const original = Range.prototype.getClientRects
+    Range.prototype.getClientRects = () => [] as unknown as DOMRectList
+
+    try {
+      // A service page: a breadcrumb above the title, and a longer intro below it
+      const { container } = render(
+        React.createElement(LowImpactHero, {
+          type: 'lowImpact',
+          dotPattern: true,
+          breadcrumbs: [
+            { url: '/prestations', label: 'Prestations' },
+            { url: '/prestations/effet-rase', label: 'Effet rasé' },
+          ],
+          richText: richText(heading('Effet rasé'), paragraph('Un.'), paragraph('Deux.')),
+        }),
+      )
+      const field = container.querySelector('.dot-field-hero')
+
+      // Placed from the title: the breadcrumb is above the box the dots are drawn in
+      expect(field?.parentElement?.querySelector('h1')).not.toBeNull()
+      expect(field?.parentElement?.querySelector('nav')).toBeNull()
+      // As tall as the patch at the end of the page, rather than the whole header
+      expect(field?.classList).toContain('h-60')
+      expect(field?.classList).not.toContain('inset-0')
+    } finally {
+      Range.prototype.getClientRects = original
+    }
   })
 
   it('draws the patch at the end of the page', () => {

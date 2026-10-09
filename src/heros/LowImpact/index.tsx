@@ -15,29 +15,32 @@ export const LowImpactHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadc
   richText,
 }) => {
   return (
-    <div className={cn('container md:mt-16', dotPattern && 'relative isolate')}>
-      {/* Behind the text, reaching up into the page's top spacing. No taller than on the FAQ, so a
-          longer hero, such as a service page's, keeps the same patch beside its title */}
-      {dotPattern && (
-        <DotField
-          className="absolute inset-0 -top-8 -z-10 max-h-96 overflow-hidden md:-top-32 md:max-h-88"
-          variant="hero"
-        />
-      )}
+    <div className="container md:mt-16">
       <Breadcrumbs breadcrumbs={breadcrumbs} />
-      <div className="max-w-[48rem]">
-        {richText && <RichText data={richText} enableGutter={false} />}
-        {Array.isArray(links) && links.length > 0 && (
-          <ul className="mt-6 flex flex-wrap gap-4">
-            {links.map(({ link }, i) => {
-              return (
-                <li key={i}>
-                  <CMSLink {...link} />
-                </li>
-              )
-            })}
-          </ul>
+      {/* The dots are placed from the title, so a breadcrumb above it does not move them */}
+      <div className={cn(dotPattern && 'relative isolate')}>
+        {/* Behind the text, reaching up into the page's top spacing. As tall as the patch at the
+            end of the page whatever the length of the intro, so every page shows the same patch */}
+        {dotPattern && (
+          <DotField
+            className="absolute inset-x-0 -top-8 -z-10 h-60 overflow-hidden md:-top-32"
+            variant="hero"
+          />
         )}
+        <div className="max-w-[48rem]">
+          {richText && <RichText data={richText} enableGutter={false} />}
+          {Array.isArray(links) && links.length > 0 && (
+            <ul className="mt-6 flex flex-wrap gap-4">
+              {links.map(({ link }, i) => {
+                return (
+                  <li key={i}>
+                    <CMSLink {...link} />
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   )
