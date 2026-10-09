@@ -1,11 +1,10 @@
 import type { Payload, PayloadRequest, RequiredDataFromCollectionSlug } from 'payload'
 
 import type { Form, Page } from '@/payload-types'
-import { SITE_NAME } from '@/utilities/siteName'
 
 import { aProposPageData } from './aPropos'
-import { contactCta } from './contactCta'
 import { faqPageData } from './faq'
+import { homePageData } from './home'
 import { pageLink } from './links'
 import { prestationsPageData, servicePagesData } from './prestations'
 import { heading, paragraph, richText } from './richText'
@@ -169,29 +168,7 @@ export const seed = async ({
     })
   }
 
-  const home = await ensurePage({
-    slug: 'home',
-    title: 'Accueil',
-    hero: {
-      type: 'lowImpact',
-      dotPattern: true,
-      richText: richText(
-        heading(SITE_NAME),
-        paragraph(
-          'Tricopigmentation à Pompey, près de Nancy. Effet crâne rasé, densification et camouflage de cicatrices, dans un studio privé sur rendez-vous.',
-        ),
-      ),
-      links: [
-        pageLink(contact, 'Prendre rendez-vous', 'default'),
-        pageLink(galerie, 'Voir les résultats', 'outline'),
-      ],
-    },
-    layout: [{ blockType: 'gallery', heading: 'Avant / après', limit: 6 }, contactCta(contact)],
-    meta: meta(
-      'Tricopigmentation à Pompey, près de Nancy',
-      'Léo Di Marco, tricopigmentation (micropigmentation capillaire) à Pompey (54), près de Nancy : effet crâne rasé, densification et camouflage de cicatrices.',
-    ),
-  })
+  const home = await ensurePage(homePageData({ aPropos, faq, galerie }))
 
   const header = await payload.findGlobal({ slug: 'header', depth: 0, req })
   if (!hasValidLinks(header.navItems)) {

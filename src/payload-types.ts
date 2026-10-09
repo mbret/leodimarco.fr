@@ -199,7 +199,15 @@ export interface Page {
     media?: (number | null) | Media;
   };
   layout: (
-    ContentBlock | CallToActionBlock | MediaBlock | GalleryBlock | ServicesBlock | FAQBlock | FormBlock | KeyFactsBlock
+    | ContentBlock
+    | CallToActionBlock
+    | MediaBlock
+    | GalleryBlock
+    | ServicesBlock
+    | TestimonialsBlock
+    | FAQBlock
+    | FormBlock
+    | KeyFactsBlock
   )[];
   meta?: {
     title?: string | null;
@@ -500,6 +508,39 @@ export interface ServicesBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'services';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock".
+ */
+export interface TestimonialsBlock {
+  heading?: string | null;
+  intro?: string | null;
+  /**
+   * La section s’affiche sur le site dès qu’un avis est ajouté.
+   */
+  reviews?:
+    | {
+        rating: number;
+        text: string;
+        author?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  enableLink?: boolean | null;
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    url?: string | null;
+    label: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonials';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1083,6 +1124,7 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         gallery?: T | GalleryBlockSelect<T>;
         services?: T | ServicesBlockSelect<T>;
+        testimonials?: T | TestimonialsBlockSelect<T>;
         faq?: T | FAQBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
         keyFacts?: T | KeyFactsBlockSelect<T>;
@@ -1203,6 +1245,34 @@ export interface ServicesBlockSelect<T extends boolean = true> {
               appearance?: T;
             };
         id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock_select".
+ */
+export interface TestimonialsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  reviews?:
+    | T
+    | {
+        rating?: T;
+        text?: T;
+        author?: T;
+        id?: T;
+      };
+  enableLink?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
       };
   id?: T;
   blockName?: T;

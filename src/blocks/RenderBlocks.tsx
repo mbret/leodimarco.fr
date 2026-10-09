@@ -10,6 +10,7 @@ import { GalleryBlock } from '@/blocks/Gallery/Component'
 import { KeyFactsBlock } from '@/blocks/KeyFacts/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ServicesBlock } from '@/blocks/Services/Component'
+import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 
 const blockComponents = {
   content: ContentBlock,
@@ -20,6 +21,7 @@ const blockComponents = {
   keyFacts: KeyFactsBlock,
   mediaBlock: MediaBlock,
   services: ServicesBlock,
+  testimonials: TestimonialsBlock,
 }
 
 export const RenderBlocks: React.FC<{
