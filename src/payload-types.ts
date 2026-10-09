@@ -351,6 +351,10 @@ export interface ContentBlock {
   columns?:
     | {
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
+        /**
+         * Affiche la colonne dans un cadre, pour la mettre en avant.
+         */
+        boxed?: boolean | null;
         richText?: {
           root: {
             type: string;
@@ -468,6 +472,21 @@ export interface ServicesBlock {
      * Texte libre, par exemple « À partir de 80 € » ou « Sur devis ».
      */
     price?: string | null;
+    enableLink?: boolean | null;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?: {
+        relationTo: 'pages';
+        value: number | Page;
+      } | null;
+      url?: string | null;
+      label: string;
+      /**
+       * Choose how the link should be rendered.
+       */
+      appearance?: ('default' | 'outline') | null;
+    };
     id?: string | null;
   }[];
   id?: string | null;
@@ -1083,6 +1102,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
     | T
     | {
         size?: T;
+        boxed?: T;
         richText?: T;
         enableLink?: T;
         link?:
@@ -1155,6 +1175,17 @@ export interface ServicesBlockSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         price?: T;
+        enableLink?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
         id?: T;
       };
   id?: T;

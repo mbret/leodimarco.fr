@@ -3,10 +3,12 @@ import type { Block, Field } from 'payload'
 import {
   BlockquoteFeature,
   ChecklistFeature,
+  EXPERIMENTAL_TableFeature,
   FixedToolbarFeature,
   HeadingFeature,
   InlineToolbarFeature,
   lexicalEditor,
+  UnorderedListFeature,
 } from '@payloadcms/richtext-lexical'
 
 import { link } from '@/fields/link'
@@ -36,6 +38,14 @@ const columnFields: Field[] = [
     ],
   },
   {
+    name: 'boxed',
+    type: 'checkbox',
+    label: 'Encadré',
+    admin: {
+      description: 'Affiche la colonne dans un cadre, pour la mettre en avant.',
+    },
+  },
+  {
     name: 'richText',
     type: 'richText',
     editor: lexicalEditor({
@@ -44,7 +54,9 @@ const columnFields: Field[] = [
           ...rootFeatures,
           HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
           BlockquoteFeature(),
+          UnorderedListFeature(),
           ChecklistFeature(),
+          EXPERIMENTAL_TableFeature(),
           FixedToolbarFeature(),
           InlineToolbarFeature(),
         ]

@@ -22,7 +22,7 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
         {columns &&
           columns.length > 0 &&
           columns.map((col, index) => {
-            const { enableLink, link, richText, size } = col
+            const { boxed, enableLink, link, richText, size } = col
 
             return (
               <div
@@ -30,12 +30,17 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
                   'md:col-span-2': size !== 'full',
                   // Keeps long text readable, no wider than the hero text
                   'max-w-[48rem]': size === 'full',
+                  'rounded-lg border border-border bg-card p-6 md:p-8': boxed,
                 })}
                 key={index}
               >
                 {richText && <RichText data={richText} enableGutter={false} />}
 
-                {enableLink && <CMSLink {...link} />}
+                {enableLink && (
+                  <div className="mt-6">
+                    <CMSLink {...link} />
+                  </div>
+                )}
               </div>
             )
           })}
