@@ -3,6 +3,7 @@ import type { Payload, PayloadRequest, RequiredDataFromCollectionSlug } from 'pa
 import type { Form, Page } from '@/payload-types'
 import { SITE_NAME } from '@/utilities/siteName'
 
+import { aProposPageData } from './aPropos'
 import { faqPageData } from './faq'
 import { pageLink } from './links'
 import { heading, paragraph, richText } from './richText'
@@ -193,33 +194,7 @@ export const seed = async ({
     ),
   })
 
-  const aPropos = await ensurePage({
-    slug: 'a-propos',
-    title: 'À propos',
-    hero: hero('À propos'),
-    layout: [
-      {
-        blockType: 'content',
-        columns: [
-          {
-            size: 'full',
-            richText: richText(
-              paragraph(
-                'Je suis Léo, praticien en tricopigmentation, formé et certifié par la Medico Derm Academy. Je vous accueille dans mon studio privé à Pompey, près de Nancy, sur rendez-vous.',
-              ),
-              paragraph(
-                'Lorsque la ligne frontale recule, les proportions du visage changent. Je n’aime pas l’idée de transformer un visage : j’aime l’idée de le rééquilibrer. Un résultat naturel se construit point après point, dans le détail.',
-              ),
-            ),
-          },
-        ],
-      },
-    ],
-    meta: meta(
-      'À propos',
-      'Léo Di Marco, praticien en tricopigmentation formé à la Medico Derm Academy, studio privé à Pompey, près de Nancy.',
-    ),
-  })
+  const aPropos = await ensurePage(aProposPageData({ contact }))
 
   const faq = await ensurePage(faqPageData({ aPropos, contact, galerie, prestations }))
 

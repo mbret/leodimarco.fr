@@ -28,6 +28,8 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
               <div
                 className={cn(`col-span-4 lg:col-span-${colsSpanClasses[size!]}`, {
                   'md:col-span-2': size !== 'full',
+                  // Keeps long text readable, no wider than the hero text
+                  'max-w-[48rem]': size === 'full',
                 })}
                 key={index}
               >
