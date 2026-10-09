@@ -17,6 +17,7 @@ import * as migration_20261009_121347_service_buttons from './20261009_121347_se
 import * as migration_20261009_130000_dot_pattern_everywhere from './20261009_130000_dot_pattern_everywhere'
 import * as migration_20261009_130834_nested_pages from './20261009_130834_nested_pages'
 import * as migration_20261009_130900_service_pages_content from './20261009_130900_service_pages_content'
+import * as migration_20261009_135406_faq_retouche_interval from './20261009_135406_faq_retouche_interval'
 
 export const migrations = [
   {
@@ -113,5 +114,10 @@ export const migrations = [
     up: migration_20261009_130900_service_pages_content.up,
     down: migration_20261009_130900_service_pages_content.down,
     name: '20261009_130900_service_pages_content',
+  },
+  {
+    up: migration_20261009_135406_faq_retouche_interval.up,
+    down: migration_20261009_135406_faq_retouche_interval.down,
+    name: '20261009_135406_faq_retouche_interval',
   },
 ]
