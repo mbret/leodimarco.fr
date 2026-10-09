@@ -215,7 +215,6 @@
 }
 
 .dot-field {
-  animation: dot-field-in 1.6s ease-out;
   /* Phones and tablets: a patch in the corner beside the title, clear of the text below it and
      fading out under the menu */
   mask-image:
@@ -226,6 +225,13 @@
 
 .dot-field path {
   opacity: clamp(0, calc((var(--dot-fill) - var(--dot-threshold)) * var(--dot-groups)), 1);
+}
+
+/* The browser marks the field ready once it has placed the dots */
+@media (prefers-reduced-motion: no-preference) {
+  .dot-field[data-ready] {
+    animation: dot-field-in 1.6s ease-out;
+  }
 }
 
 @keyframes dot-field-in {
@@ -246,6 +252,5 @@
   .dot-field {
     /* Wins over the value the scroll script sets: the finished field, without movement */
     --dot-fill: 1 !important;
-    animation: none;
   }
 }
