@@ -7,20 +7,20 @@ import { cn } from '@/utilities/ui'
 // Dots like a tricopigmentation, drawn by the browser in a new arrangement every time the page is
 // shown. Two kinds:
 // - hero: a patch beside the page title, dense on the right and fading out to the left with an
-//   uneven edge, as a frontal hairline does. It keeps clear of the title, text and buttons. A share
-//   of the dots shows once the page has loaded, and the rest fill in as the visitor scrolls the
-//   title away.
-// - band: a dense strip, the finished result, filling in as it comes into view.
-// Dots that have filled in stay, like pigment. Visitors who reduce motion get the full drawing from
-// the stylesheet instead.
+//   uneven edge, as a frontal hairline does. It keeps clear of the title, text and buttons.
+// - end: the same patch mirrored, at the bottom left of the page, behind the content.
+// Once a drawing is on screen, its dots are pigmented in group by group, and then stay. Visitors who
+// reduce motion get the full drawing from the stylesheet instead.
 
-type Variant = 'hero' | 'band'
+type Variant = 'hero' | 'end'
 type Box = { left: number; right: number; top: number; bottom: number }
 
-const HERO_WIDTH = 560
+const WIDTH = 560
 const GROUPS = 16 // dots appear group by group, each group with its own dot size
-const START: Record<Variant, number> = { hero: 0.4, band: 0 } // share shown before scrolling
-const SPACING: Record<Variant, number> = { hero: 9, band: 7 } // minimum distance between dots
+const SPACING = 9 // minimum distance between two dots
+// Share of the placed dots that is drawn: drawing them all reads as too busy, and the spacing still
+// comes from all of them
+const SHOWN = 0.6
 
 const between = (min: number, max: number) => min + Math.random() * (max - min)
 
@@ -42,40 +42,28 @@ const clearance = (avoid: Box[], x: number, y: number) => {
 
 // Chance of a dot at (u, v), both from 0 to 1 across the drawing, with a random shape each time
 const randomShape = (variant: Variant) => {
-  if (variant === 'band') {
-    // A strip that meanders a little, fading out at both ends and clear of its top and bottom
-    const amplitude = between(0.06, 0.12)
-    const frequency = between(4, 8)
-    const phase = between(0, 2 * Math.PI)
-    return (u: number, v: number) => {
-      const middle = 0.5 + amplitude * Math.sin(u * frequency + phase)
-      const across = 1 - smoothstep(0.15, 0.45, Math.abs(v - middle))
-      const ends = smoothstep(0, 0.2, u) * (1 - smoothstep(0.8, 1, u))
-      return across * ends * smoothstep(0, 0.2, v) * (1 - smoothstep(0.8, 1, v))
-    }
-  }
-
   // Where the dots start to thicken, and two waves that make that edge uneven
   const edge = between(0.25, 0.38)
   const waves = [
     { amplitude: between(0.06, 0.1), frequency: between(5, 9), phase: between(0, 2 * Math.PI) },
     { amplitude: between(0.02, 0.04), frequency: between(13, 19), phase: between(0, 2 * Math.PI) },
   ]
-  return (u: number, v: number) => {
+  const shape = (u: number, v: number) => {
     const at = waves.reduce(
       (sum, { amplitude, frequency, phase }) => sum + amplitude * Math.sin(v * frequency + phase),
       edge,
     )
     return smoothstep(at - 0.2, at + 0.3, u) * (1 - smoothstep(0.88, 1, u))
   }
+  // Dense on the left at the end of the page
+  return variant === 'hero' ? shape : (u: number, v: number) => shape(1 - u, v)
 }
 
 // Random points, kept according to the shape and only when no other dot is too close. Each group
 // is one path of zero-length segments, which round line caps draw as dots.
 export const randomDots = (variant: Variant, width: number, height: number, avoid: Box[] = []) => {
   const shape = randomShape(variant)
-  const spacing = SPACING[variant]
-  const cell = spacing / Math.SQRT2 // small enough to hold one dot at most
+  const cell = SPACING / Math.SQRT2 // small enough to hold one dot at most
   const columns = Math.ceil(width / cell)
   const grid: [number, number][] = []
   const paths = Array.from({ length: GROUPS }, () => '')
@@ -92,13 +80,15 @@ export const randomDots = (variant: Variant, width: number, height: number, avoi
     for (let j = row - 2; j <= row + 2 && !tooClose; j++) {
       for (let i = column - 2; i <= column + 2 && !tooClose; i++) {
         const other = grid[j * columns + i]
-        tooClose = Boolean(other && (other[0] - x) ** 2 + (other[1] - y) ** 2 < spacing ** 2)
+        tooClose = Boolean(other && (other[0] - x) ** 2 + (other[1] - y) ** 2 < SPACING ** 2)
       }
     }
     if (tooClose) continue
 
     grid[row * columns + column] = [x, y]
-    paths[Math.floor(Math.random() * GROUPS)] += `M${Math.round(x)} ${Math.round(y)}h0`
+    if (Math.random() < SHOWN) {
+      paths[Math.floor(Math.random() * GROUPS)] += `M${Math.round(x)} ${Math.round(y)}h0`
+    }
   }
 
   return paths.map((d, i) => ({ d, threshold: i / GROUPS, width: between(2.2, 3.4) }))
@@ -126,14 +116,6 @@ const textBoxes = (container: Element, origin: DOMRect): Box[] => {
   }))
 }
 
-// How far the visitor has scrolled through the effect, from 0 to 1
-const progress: Record<Variant, (box: DOMRect) => number> = {
-  // Scrolled share of the way to the patch's bottom
-  hero: (box) => window.scrollY / Math.max(box.bottom + window.scrollY, 1),
-  // Into view, complete a quarter of a screen after the band has fully appeared
-  band: (box) => (window.innerHeight - box.top) / (box.height + window.innerHeight / 4),
-}
-
 export const DotField: React.FC<{ className?: string; variant: Variant }> = ({
   className,
   variant,
@@ -148,7 +130,7 @@ export const DotField: React.FC<{ className?: string; variant: Variant }> = ({
 
     const draw = () => {
       const box = svg.getBoundingClientRect()
-      const width = Math.round(box.width) || HERO_WIDTH
+      const width = Math.round(box.width) || WIDTH
       const height = Math.round(box.height) || 240
       const avoid = variant === 'hero' ? textBoxes(container, box) : []
 
@@ -165,53 +147,47 @@ export const DotField: React.FC<{ className?: string; variant: Variant }> = ({
     }
 
     draw()
-    // Starts the load animation now that there are dots to show
-    element.dataset.ready = ''
 
-    // Draws again when the text moves: once late fonts have loaded, or when the layout resizes
+    // Draws again when the text moves: once late fonts have loaded, or when the drawing resizes
     let active = true
     if (document.fonts?.status === 'loading') document.fonts.ready.then(() => active && draw())
-    let size = `${container.clientWidth}x${container.clientHeight}`
+    let size = `${element.clientWidth}x${element.clientHeight}`
     let timer = 0
     const resizeObserver =
       typeof ResizeObserver === 'undefined'
         ? undefined
         : new ResizeObserver(() => {
-            const next = `${container.clientWidth}x${container.clientHeight}`
+            const next = `${element.clientWidth}x${element.clientHeight}`
             if (next === size) return
             size = next
             window.clearTimeout(timer)
             timer = window.setTimeout(draw, 150)
           })
-    resizeObserver?.observe(container)
+    resizeObserver?.observe(element)
 
-    let fill = START[variant]
-    let frame = 0
-    const update = () => {
-      frame = 0
-      const share = Math.min(Math.max(progress[variant](element.getBoundingClientRect()), 0), 1)
-      const next = START[variant] + (1 - START[variant]) * share
-      if (next <= fill) return
-
-      fill = next
-      element.style.setProperty('--dot-fill', String(fill))
-      if (fill >= 1) window.removeEventListener('scroll', onScroll)
-    }
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update)
-    }
-
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      window.addEventListener('scroll', onScroll, { passive: true })
-      update()
-    }
+    // Pigments the dots in once most of the drawing is on screen: the stylesheet animates
+    // --dot-fill from 0 to 1. The title's patch is on screen as the page loads, the end's once the
+    // visitor reaches it.
+    const reveal = () => element.style.setProperty('--dot-fill', '1')
+    const intersectionObserver =
+      typeof IntersectionObserver === 'undefined'
+        ? undefined
+        : new IntersectionObserver(
+            ([entry], observer) => {
+              if (!entry?.isIntersecting) return
+              reveal()
+              observer.disconnect()
+            },
+            { threshold: 0.75 },
+          )
+    if (intersectionObserver) intersectionObserver.observe(element)
+    else reveal()
 
     return () => {
       active = false
       resizeObserver?.disconnect()
+      intersectionObserver?.disconnect()
       window.clearTimeout(timer)
-      window.removeEventListener('scroll', onScroll)
-      cancelAnimationFrame(frame)
     }
   }, [variant])
 
@@ -220,18 +196,18 @@ export const DotField: React.FC<{ className?: string; variant: Variant }> = ({
       aria-hidden
       className={cn(
         'dot-field pointer-events-none text-foreground/30',
-        variant === 'hero' && 'dot-field-hero',
+        `dot-field-${variant}`,
         className,
       )}
       ref={ref}
-      style={{ '--dot-fill': START[variant], '--dot-groups': GROUPS } as React.CSSProperties}
+      style={{ '--dot-fill': 0, '--dot-groups': GROUPS } as React.CSSProperties}
     >
       <svg
-        className={cn('absolute top-0 right-0 h-full', variant === 'band' && 'w-full')}
+        className={cn('absolute top-0 h-full', variant === 'hero' ? 'right-0' : 'left-0')}
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
-        style={variant === 'hero' ? { width: HERO_WIDTH } : undefined}
+        style={{ width: WIDTH }}
       />
     </div>
   )

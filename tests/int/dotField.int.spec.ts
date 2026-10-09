@@ -53,9 +53,34 @@ describe('Dot pattern', () => {
     expect(near).toEqual([])
   })
 
-  it('draws the footer band', () => {
-    const { container } = render(React.createElement(DotField, { variant: 'band' }))
+  it('draws the patch at the end of the page', () => {
+    const { container } = render(React.createElement(DotField, { variant: 'end' }))
 
     expect(container.querySelectorAll('.dot-field path').length).toBeGreaterThan(0)
+  })
+
+  it('pigments the dots in only once the drawing is on screen', () => {
+    // jsdom has no IntersectionObserver: this one reports when the test says so
+    let onScreen: IntersectionObserverCallback = () => {}
+    const original = window.IntersectionObserver
+    window.IntersectionObserver = class {
+      constructor(callback: IntersectionObserverCallback) {
+        onScreen = callback
+      }
+      observe() {}
+      disconnect() {}
+    } as unknown as typeof IntersectionObserver
+
+    try {
+      const field = render(React.createElement(DotField, { variant: 'end' })).container
+        .firstElementChild as HTMLElement
+      expect(field.style.getPropertyValue('--dot-fill')).toBe('0')
+
+      const entry = { isIntersecting: true } as IntersectionObserverEntry
+      onScreen([entry], { disconnect() {} } as IntersectionObserver)
+      expect(field.style.getPropertyValue('--dot-fill')).toBe('1')
+    } finally {
+      window.IntersectionObserver = original
+    }
   })
 })

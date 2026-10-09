@@ -45,7 +45,7 @@ export const hero: Field = {
       admin: {
         condition: (_, { type } = {}) => type === 'lowImpact',
         description:
-          'Des points discrets à côté du titre, différents à chaque visite, qui se densifient quand on fait défiler la page.',
+          'Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point.',
       },
     },
     {

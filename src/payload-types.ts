@@ -159,7 +159,7 @@ export interface Page {
   hero: {
     type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
     /**
-     * Des points discrets à côté du titre, différents à chaque visite, qui se densifient quand on fait défiler la page.
+     * Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point.
      */
     dotPattern?: boolean | null;
     richText?: {
