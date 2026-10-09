@@ -21,12 +21,11 @@ export const ServicesBlock: React.FC<ServicesBlockProps> = ({ heading, items }) 
   return (
     <div className="container">
       {heading && <h2 className="mb-8 text-3xl font-semibold">{heading}</h2>}
-      {/* Rows of three on large screens when the services fill them, otherwise two columns */}
+      {/* Two columns from tablets, and rows of three on large screens when the services fill them */}
       <div
-        className={cn(
-          'grid gap-4',
-          services.length % 3 === 0 ? 'lg:grid-cols-3' : 'md:grid-cols-2',
-        )}
+        className={cn('grid gap-4 md:grid-cols-2', {
+          'lg:grid-cols-3': services.length % 3 === 0,
+        })}
       >
         {services.map((item) => (
           <Card key={item.id}>
