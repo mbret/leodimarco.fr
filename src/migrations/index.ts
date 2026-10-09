@@ -22,6 +22,7 @@ import * as migration_20261009_135406_faq_retouche_interval from './20261009_135
 import * as migration_20261009_140018_blocks_schema_snapshot from './20261009_140018_blocks_schema_snapshot'
 import * as migration_20261009_140500_home_content from './20261009_140500_home_content'
 import * as migration_20261009_143400_studio_phone from './20261009_143400_studio_phone'
+import * as migration_20261009_143500_home_service_buttons from './20261009_143500_home_service_buttons'
 
 export const migrations = [
   {
@@ -143,5 +144,10 @@ export const migrations = [
     up: migration_20261009_143400_studio_phone.up,
     down: migration_20261009_143400_studio_phone.down,
     name: '20261009_143400_studio_phone',
+  },
+  {
+    up: migration_20261009_143500_home_service_buttons.up,
+    down: migration_20261009_143500_home_service_buttons.down,
+    name: '20261009_143500_home_service_buttons',
   },
 ]
