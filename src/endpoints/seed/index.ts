@@ -153,7 +153,7 @@ export const seed = async ({
 
   const faq = await ensurePage(faqPageData({ aPropos, contact, galerie, prestations }))
 
-  const servicePages = servicePagesData({ contact, faq, galerie })
+  const servicePages = servicePagesData({ contact, faq, galerie, prestations })
   const services = {
     effetRase: await ensurePage(servicePages.effetRase),
     densification: await ensurePage(servicePages.densification),

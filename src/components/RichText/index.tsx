@@ -19,8 +19,10 @@ import { Check } from 'lucide-react'
 import type {
   CallToActionBlock as CTABlockProps,
   MediaBlock as MediaBlockProps,
+  Page,
 } from '@/payload-types'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { pagePath } from '@/utilities/pagePath'
 import { cn } from '@/utilities/ui'
 
 type NodeTypes =
@@ -35,7 +37,10 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   if (typeof value !== 'object') {
     throw new Error('Expected value to be an object')
   }
-  return value.slug === 'home' ? '/' : `/${value.slug}`
+  return pagePath({
+    slug: value.slug as string,
+    breadcrumbs: value.breadcrumbs as Page['breadcrumbs'],
+  })
 }
 
 // Lexical table header flags: the cell is in the header row, or in the header column

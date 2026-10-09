@@ -14,8 +14,9 @@ import * as migration_20261009_113328_key_facts_block from './20261009_113328_ke
 import * as migration_20261009_113400_a_propos_layout from './20261009_113400_a_propos_layout'
 import * as migration_20261009_121252_hero_dot_pattern from './20261009_121252_hero_dot_pattern'
 import * as migration_20261009_121347_service_buttons from './20261009_121347_service_buttons'
-import * as migration_20261009_121400_service_pages_content from './20261009_121400_service_pages_content'
 import * as migration_20261009_130000_dot_pattern_everywhere from './20261009_130000_dot_pattern_everywhere'
+import * as migration_20261009_130834_nested_pages from './20261009_130834_nested_pages'
+import * as migration_20261009_130900_service_pages_content from './20261009_130900_service_pages_content'
 
 export const migrations = [
   {
@@ -99,13 +100,18 @@ export const migrations = [
     name: '20261009_121347_service_buttons',
   },
   {
-    up: migration_20261009_121400_service_pages_content.up,
-    down: migration_20261009_121400_service_pages_content.down,
-    name: '20261009_121400_service_pages_content',
-  },
-  {
     up: migration_20261009_130000_dot_pattern_everywhere.up,
     down: migration_20261009_130000_dot_pattern_everywhere.down,
     name: '20261009_130000_dot_pattern_everywhere',
+  },
+  {
+    up: migration_20261009_130834_nested_pages.up,
+    down: migration_20261009_130834_nested_pages.down,
+    name: '20261009_130834_nested_pages',
+  },
+  {
+    up: migration_20261009_130900_service_pages_content.up,
+    down: migration_20261009_130900_service_pages_content.down,
+    name: '20261009_130900_service_pages_content',
   },
 ]

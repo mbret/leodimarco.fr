@@ -12,7 +12,10 @@ const heroes = {
   mediumImpact: MediumImpactHero,
 }
 
-export const RenderHero: React.FC<Page['hero']> = (props) => {
+// The breadcrumbs of a page that sits under another one show above its title
+export const RenderHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumbs'] }> = (
+  props,
+) => {
   const { type } = props || {}
 
   if (!type || type === 'none') return null

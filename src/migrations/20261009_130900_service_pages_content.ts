@@ -6,8 +6,10 @@ import type { Page } from '@/payload-types'
 import { prestationsPageData, servicePagesData } from '../endpoints/seed/prestations'
 
 // Adds the effet rasé, densification capillaire and camouflage de cicatrices pages from Léo's
-// prestations document, and turns the Prestations page into their overview, with a card leading to
-// each. Sites that were not seeded yet get them from the starter pages button instead.
+// prestations document under Prestations (/prestations/effet-rase), and turns the Prestations page
+// into their overview, with a card leading to each. Sites that were not seeded yet get them from the
+// starter pages button instead. Runs after 20261009_130834_nested_pages, which lets pages have a
+// parent; the preview database ran an earlier version that left the pages at the root.
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   // Checking for pages with SQL rather than Payload keeps this migration working on a new site
   // after later schema changes
@@ -41,7 +43,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
       : payload.create({ collection: 'pages', data, depth: 0, req, context })
   }
 
-  const servicePages = servicePagesData({ contact, faq, galerie })
+  const servicePages = servicePagesData({ contact, faq, galerie, prestations })
   const services = {
     effetRase: await savePage(servicePages.effetRase),
     densification: await savePage(servicePages.densification),

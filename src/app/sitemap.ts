@@ -5,6 +5,7 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 
 import { getServerSideURL } from '@/utilities/getURL'
+import { pagePath } from '@/utilities/pagePath'
 
 // Tagged so that publishing a page (see revalidatePage) refreshes the sitemap
 const getPublishedPages = unstable_cache(
@@ -25,6 +26,7 @@ const getPublishedPages = unstable_cache(
       },
       select: {
         slug: true,
+        breadcrumbs: true,
         updatedAt: true,
       },
     })
@@ -44,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return pages
     .filter((page) => Boolean(page.slug))
     .map((page) => ({
-      url: page.slug === 'home' ? `${url}/` : `${url}/${page.slug}`,
+      url: `${url}${pagePath(page)}`,
       lastModified: page.updatedAt,
     }))
 }

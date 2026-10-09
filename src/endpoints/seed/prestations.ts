@@ -8,8 +8,8 @@ import { bulletList, checkList, heading, paragraph, richText, table } from './ri
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
 
-// Pages that the service pages link to
-type LinkedPages = { contact: Page; faq: Page; galerie: Page }
+// Pages that the service pages link to, and Prestations, which they sit under
+type LinkedPages = { contact: Page; faq: Page; galerie: Page; prestations: Page }
 
 export type ServicePages<T = Page> = { effetRase: T; densification: T; camouflage: T }
 
@@ -48,12 +48,13 @@ const photosCta = (contact: Page, title: string, text: string[], label: string) 
 const suitsYouIf = (...items: string[]) =>
   section(richText(heading('Cette solution peut vous convenir si…', 'h2'), checkList(...items)))
 
-// Service pages, from Léo's prestations document. Used by the seed and by the migration that brings
-// existing sites up to date.
+// Service pages, from Léo's prestations document, under Prestations (/prestations/effet-rase). Used
+// by the seed and by the migration that brings existing sites up to date.
 export const servicePagesData = ({
   contact,
   faq,
   galerie,
+  prestations,
 }: LinkedPages): ServicePages<PageData> => {
   const readFaq = pageLink(faq, 'Lire la FAQ', 'outline')
   const seeResults = pageLink(galerie, 'Voir les résultats', 'default')
@@ -63,6 +64,7 @@ export const servicePagesData = ({
       slug: 'effet-rase',
       title: 'Effet rasé',
       _status: 'published',
+      parent: prestations.id,
       hero: serviceHero({
         title: 'Effet rasé',
         subtitle: 'Recréer l’apparence d’un crâne rasé de près',
@@ -209,6 +211,7 @@ export const servicePagesData = ({
       slug: 'densification-capillaire',
       title: 'Densification capillaire',
       _status: 'published',
+      parent: prestations.id,
       hero: serviceHero({
         title: 'Densification capillaire',
         subtitle: 'Réduire visuellement la transparence du cuir chevelu',
@@ -325,6 +328,7 @@ export const servicePagesData = ({
       slug: 'camouflage-de-cicatrices',
       title: 'Camouflage de cicatrices',
       _status: 'published',
+      parent: prestations.id,
       hero: serviceHero({
         title: 'Camouflage de cicatrices',
         subtitle: 'Atténuer visuellement une cicatrice du cuir chevelu',

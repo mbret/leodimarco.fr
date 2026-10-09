@@ -9,8 +9,15 @@ import { ServicesBlock } from '@/blocks/Services/Component'
 afterEach(cleanup)
 
 describe('Prestations', () => {
-  it('links a service card to its page', () => {
-    const page = { id: 1, slug: 'effet-rase' } as Page
+  it('links a service card to its page, under Prestations', () => {
+    const page = {
+      id: 1,
+      slug: 'effet-rase',
+      breadcrumbs: [
+        { url: '/prestations', label: 'Prestations' },
+        { url: '/prestations/effet-rase', label: 'Effet rasé' },
+      ],
+    } as Page
 
     render(
       React.createElement(ServicesBlock, {
@@ -31,7 +38,7 @@ describe('Prestations', () => {
     )
 
     expect(screen.getByRole('link', { name: 'Découvrir l’effet rasé' }).getAttribute('href')).toBe(
-      '/effet-rase',
+      '/prestations/effet-rase',
     )
   })
 })
