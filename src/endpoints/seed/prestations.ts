@@ -27,6 +27,7 @@ const serviceHero = ({
   links?: Link[]
 }): PageData['hero'] => ({
   type: 'lowImpact',
+  dotPattern: true,
   richText: richText(heading(title), heading(subtitle, 'h2'), ...intro.map(paragraph)),
   links,
 })
@@ -443,6 +444,7 @@ export const prestationsPageData = ({
   _status: 'published',
   hero: {
     type: 'lowImpact',
+    dotPattern: true,
     richText: richText(
       heading('Prestations'),
       paragraph(

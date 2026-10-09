@@ -1755,6 +1755,12 @@
           "notNull": false,
           "default": "'lowImpact'"
         },
+        "hero_dot_pattern": {
+          "name": "hero_dot_pattern",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
         "hero_rich_text": {
           "name": "hero_rich_text",
           "type": "jsonb",
@@ -3932,6 +3938,12 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'lowImpact'"
+        },
+        "version_hero_dot_pattern": {
+          "name": "version_hero_dot_pattern",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
         },
         "version_hero_rich_text": {
           "name": "version_hero_rich_text",
