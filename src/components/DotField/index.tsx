@@ -195,7 +195,8 @@ export const DotField: React.FC<{ className?: string; variant: Variant }> = ({
     <div
       aria-hidden
       className={cn(
-        'dot-field pointer-events-none text-foreground/30',
+        // Stronger on phones and tablets, where the patch is a small corner
+        'dot-field pointer-events-none text-foreground/50 lg:text-foreground/30',
         `dot-field-${variant}`,
         className,
       )}
