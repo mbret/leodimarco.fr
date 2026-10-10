@@ -3,12 +3,20 @@ import type { RequiredDataFromCollectionSlug } from 'payload'
 import type { Page } from '@/payload-types'
 
 import { pageLink } from './links'
+import type { ServicePages } from './prestations'
 import { heading, paragraph, richText } from './richText'
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
 
-// Pages that the home page buttons lead to
-type LinkedPages = { aPropos: Page; contact: Page; faq: Page; galerie: Page }
+// Pages that the home page buttons lead to. Without the service pages, the effect cards have no
+// button.
+type LinkedPages = {
+  aPropos: Page
+  contact: Page
+  faq: Page
+  galerie: Page
+  services?: ServicePages
+}
 
 // Ways to send photos to Léo besides the contact form: WhatsApp on 07 44 42 94 88 and a direct
 // message on Instagram
@@ -23,9 +31,40 @@ const externalLink = (url: string, label: string) => ({
   link: { type: 'custom' as const, url, newTab: true, label },
 })
 
+// Button to a service's page, as on the Prestations cards
+const serviceButton = (page: Page, label: string) => ({
+  enableLink: true,
+  ...pageLink(page, label, 'outline'),
+})
+
+// The three effects below the title, each leading to its service's page
+export const effectCards = (services?: ServicePages) => [
+  {
+    title: 'Effet rasé',
+    description: 'Recréer l’apparence d’un cuir chevelu rasé net et homogène',
+    ...(services && serviceButton(services.effetRase, 'Découvrir l’effet rasé')),
+  },
+  {
+    title: 'Effet densité',
+    description: 'Réduire visuellement la transparence sur une zone clairsemée',
+    ...(services && serviceButton(services.densification, 'Découvrir la densification')),
+  },
+  {
+    title: 'Camouflage de cicatrice',
+    description: 'Atténuer visuellement le contraste d’une cicatrice du cuir chevelu',
+    ...(services && serviceButton(services.camouflage, 'Découvrir le camouflage')),
+  },
+]
+
 // Home page content, from Léo's home page document. Used by the seed and by the migration that
 // brings existing sites up to date.
-export const homePageData = ({ aPropos, contact, faq, galerie }: LinkedPages): PageData => ({
+export const homePageData = ({
+  aPropos,
+  contact,
+  faq,
+  galerie,
+  services,
+}: LinkedPages): PageData => ({
   slug: 'home',
   title: 'Accueil',
   _status: 'published',
@@ -43,20 +82,7 @@ export const homePageData = ({ aPropos, contact, faq, galerie }: LinkedPages): P
   layout: [
     {
       blockType: 'services',
-      items: [
-        {
-          title: 'Effet rasé',
-          description: 'Recréer l’apparence d’un cuir chevelu rasé net et homogène',
-        },
-        {
-          title: 'Effet densité',
-          description: 'Réduire visuellement la transparence sur une zone clairsemée',
-        },
-        {
-          title: 'Camouflage de cicatrice',
-          description: 'Atténuer visuellement le contraste d’une cicatrice du cuir chevelu',
-        },
-      ],
+      items: effectCards(services),
     },
     {
       blockType: 'content',
