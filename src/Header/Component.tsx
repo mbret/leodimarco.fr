@@ -10,7 +10,9 @@ export async function Header() {
 
   return (
     <header className="container relative z-20">
-      <div className="py-8 flex items-center justify-between">
+      {/* As much space above and below the menu as on its sides, like the container: 16px on
+          phones, 32px from tablets */}
+      <div className="py-4 md:py-8 flex items-center justify-between">
         <Link href="/">
           <Logo />
         </Link>
