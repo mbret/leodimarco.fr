@@ -15,6 +15,7 @@ import { Studio } from './Studio/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { DEFAULT_SENDER } from './utilities/sender'
 import { SITE_NAME } from './utilities/siteName'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { en } from '@payloadcms/translations/languages/en'
@@ -73,20 +74,20 @@ export default buildConfig({
       connectionString: getDatabaseURL(),
     },
   }),
-  // Sends the contact form's emails from the site's own Gmail account, with an app password. Without
-  // one (local development), Payload only writes emails to the console.
+  // Sends the contact form's emails through Amazon SES's SMTP interface. Without its credentials
+  // (local development), Payload only writes emails to the console.
   email:
-    process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD
+    process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS
       ? nodemailerAdapter({
-          defaultFromAddress: process.env.GMAIL_USER,
+          defaultFromAddress: DEFAULT_SENDER,
           defaultFromName: `Site ${SITE_NAME}`,
           // Connects when sending only, rather than on every cold start
           skipVerify: true,
           transportOptions: {
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
+            host: process.env.SMTP_HOST,
+            port: 587,
+            requireTLS: true,
+            auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
           },
         })
       : undefined,

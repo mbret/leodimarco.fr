@@ -769,6 +769,9 @@ export interface Form {
         cc?: string | null;
         bcc?: string | null;
         replyTo?: string | null;
+        /**
+         * Laissez vide pour envoyer depuis contact@leodimarco.fr. L’adresse doit être sur leodimarco.fr, le domaine vérifié dans Amazon SES.
+         */
         emailFrom?: string | null;
         subject: string;
         message?: {
