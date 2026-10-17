@@ -5,12 +5,13 @@ import type { PayloadAdminBarProps, PayloadMeUser } from '@payloadcms/admin-bar'
 import { cn } from '@/utilities/ui'
 import { useSelectedLayoutSegments } from 'next/navigation'
 import { PayloadAdminBar } from '@payloadcms/admin-bar'
-import React, { useState } from 'react'
+import React, { useState, useSyncExternalStore } from 'react'
 import { useRouter } from 'next/navigation'
 
 import './index.scss'
 
 import { getClientSideURL } from '@/utilities/getURL'
+import { SIGNED_IN_COOKIE } from '@/utilities/signedInCookie'
 
 const baseClass = 'admin-bar'
 
@@ -23,7 +24,22 @@ const collectionLabels = {
 
 const Title: React.FC = () => <span>Dashboard</span>
 
+const subscribe = () => () => {}
+
+const hasSignedInCookie = () =>
+  document.cookie.split('; ').some((cookie) => cookie.startsWith(`${SIGNED_IN_COOKIE}=`))
+
 export const AdminBar: React.FC<{
+  adminBarProps?: PayloadAdminBarProps
+}> = (props) => {
+  // Mounting PayloadAdminBar requests /api/users/me, an uncached function call, so only mount it
+  // when the visitor might be signed in
+  const mightBeSignedIn = useSyncExternalStore(subscribe, hasSignedInCookie, () => false)
+
+  return mightBeSignedIn ? <SignedInAdminBar {...props} /> : null
+}
+
+const SignedInAdminBar: React.FC<{
   adminBarProps?: PayloadAdminBarProps
 }> = (props) => {
   const { adminBarProps } = props || {}
@@ -36,6 +52,11 @@ export const AdminBar: React.FC<{
 
   const onAuthChange = React.useCallback((user: PayloadMeUser) => {
     setShow(Boolean(user?.id))
+    // `null` once /api/users/me reports no user (`undefined` until it answers): drop the stale
+    // cookie so later page loads skip the request
+    if (user === null) {
+      document.cookie = `${SIGNED_IN_COOKIE}=; Path=/; Max-Age=0`
+    }
   }, [])
 
   return (

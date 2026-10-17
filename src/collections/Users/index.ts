@@ -1,6 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
+import {
+  expireSignedInCookie,
+  setSignedInCookieAfterLogin,
+  setSignedInCookieAfterRefresh,
+} from './hooks/signedInCookie'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -22,5 +27,10 @@ export const Users: CollectionConfig = {
       type: 'text',
     },
   ],
+  hooks: {
+    afterLogin: [setSignedInCookieAfterLogin],
+    afterLogout: [expireSignedInCookie],
+    afterRefresh: [setSignedInCookieAfterRefresh],
+  },
   timestamps: true,
 }
