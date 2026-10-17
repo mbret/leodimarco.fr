@@ -158,6 +158,10 @@ export interface Page {
   title: string;
   hero: {
     type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
+    /**
+     * Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point.
+     */
+    dotPattern?: boolean | null;
     richText?: {
       root: {
         type: string;
@@ -194,7 +198,17 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (ContentBlock | CallToActionBlock | MediaBlock | GalleryBlock | ServicesBlock | FAQBlock | FormBlock)[];
+  layout: (
+    | ContentBlock
+    | CallToActionBlock
+    | MediaBlock
+    | GalleryBlock
+    | ServicesBlock
+    | TestimonialsBlock
+    | FAQBlock
+    | FormBlock
+    | KeyFactsBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -209,6 +223,18 @@ export interface Page {
    */
   generateSlug?: boolean | null;
   slug: string;
+  /**
+   * La page s’affiche sous sa page parente, avec un fil d’Ariane.
+   */
+  parent?: (number | null) | Page;
+  breadcrumbs?:
+    | {
+        doc?: (number | null) | Page;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -219,6 +245,9 @@ export interface Page {
  */
 export interface Media {
   id: number;
+  /**
+   * Décrit l’image pour Google et les lecteurs d’écran, par exemple « Tricopigmentation effet crâne rasé, vue de profil ».
+   */
   alt?: string | null;
   caption?: {
     root: {
@@ -459,11 +488,59 @@ export interface ServicesBlock {
      * Texte libre, par exemple « À partir de 80 € » ou « Sur devis ».
      */
     price?: string | null;
+    enableLink?: boolean | null;
+    link?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?: {
+        relationTo: 'pages';
+        value: number | Page;
+      } | null;
+      url?: string | null;
+      label: string;
+      /**
+       * Choose how the link should be rendered.
+       */
+      appearance?: ('default' | 'outline') | null;
+    };
     id?: string | null;
   }[];
   id?: string | null;
   blockName?: string | null;
   blockType: 'services';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock".
+ */
+export interface TestimonialsBlock {
+  heading?: string | null;
+  intro?: string | null;
+  /**
+   * Par exemple des avis Google, recopiés ici. Trois avis remplissent une ligne.
+   */
+  reviews?:
+    | {
+        rating: number;
+        text: string;
+        author?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  enableLink?: boolean | null;
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    url?: string | null;
+    label: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonials';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -714,6 +791,26 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "KeyFactsBlock".
+ */
+export interface KeyFactsBlock {
+  /**
+   * Affichés en cartes, quatre par ligne sur ordinateur.
+   */
+  items: {
+    /**
+     * Courte, par exemple « 29 ans ».
+     */
+    value: string;
+    label: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'keyFacts';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1000,6 +1097,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         type?: T;
+        dotPattern?: T;
         richText?: T;
         links?:
           | T
@@ -1026,8 +1124,10 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         gallery?: T | GalleryBlockSelect<T>;
         services?: T | ServicesBlockSelect<T>;
+        testimonials?: T | TestimonialsBlockSelect<T>;
         faq?: T | FAQBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        keyFacts?: T | KeyFactsBlockSelect<T>;
       };
   meta?:
     | T
@@ -1039,6 +1139,15 @@ export interface PagesSelect<T extends boolean = true> {
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;
+  parent?: T;
+  breadcrumbs?:
+    | T
+    | {
+        doc?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1124,7 +1233,46 @@ export interface ServicesBlockSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         price?: T;
+        enableLink?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
         id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock_select".
+ */
+export interface TestimonialsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  reviews?:
+    | T
+    | {
+        rating?: T;
+        text?: T;
+        author?: T;
+        id?: T;
+      };
+  enableLink?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
       };
   id?: T;
   blockName?: T;
@@ -1172,6 +1320,21 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "KeyFactsBlock_select".
+ */
+export interface KeyFactsBlockSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

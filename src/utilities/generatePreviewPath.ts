@@ -7,20 +7,21 @@ const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
 
 type Props = {
   collection: keyof typeof collectionPrefixMap
-  slug: string
+  // Path of the document on the site, such as /prestations/effet-rase
+  path: string | null
   req: PayloadRequest
 }
 
-export const generatePreviewPath = ({ collection, slug }: Props) => {
-  if (slug === undefined || slug === null) {
+export const generatePreviewPath = ({ collection, path }: Props) => {
+  if (!path) {
     return null
   }
 
   // Encode to support slugs with special characters
-  const encodedSlug = encodeURIComponent(slug)
+  const encodedPath = path.split('/').map(encodeURIComponent).join('/')
 
   const encodedParams = new URLSearchParams({
-    path: `${collectionPrefixMap[collection]}/${encodedSlug}`,
+    path: `${collectionPrefixMap[collection]}${encodedPath}`,
     previewSecret: process.env.PREVIEW_SECRET || '',
   } satisfies PreviewSearchParams)
 

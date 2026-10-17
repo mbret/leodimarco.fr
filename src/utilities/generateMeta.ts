@@ -31,13 +31,14 @@ export const generateMeta = async (args: {
     description: doc?.meta?.description,
     openGraph: mergeOpenGraph({
       description: doc?.meta?.description || '',
-      images: ogImage
-        ? [
-            {
-              url: ogImage,
-            },
-          ]
-        : undefined,
+      // Without an SEO image on the page, the site's default share image applies
+      ...(ogImage && {
+        images: [
+          {
+            url: ogImage,
+          },
+        ],
+      }),
       title,
       url: path,
     }),

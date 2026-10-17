@@ -32,7 +32,7 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({ categories, highlightsTitle 
   }
 
   return (
-    <div className="container flex max-w-3xl flex-col gap-16">
+    <div className="container flex flex-col gap-16">
       {highlights.length > 0 && (
         <section>
           {highlightsTitle && (

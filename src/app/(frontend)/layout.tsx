@@ -9,6 +9,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { AdminBar } from '@/components/AdminBar'
+import { FaviconThemeListener } from '@/components/FaviconThemeListener'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { StudioStructuredData } from '@/components/StudioStructuredData'
@@ -32,6 +33,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
       </head>
       <body>
         <AdminBar
@@ -44,6 +46,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {children}
         <Footer />
         <StudioStructuredData />
+        <FaviconThemeListener />
         <Analytics />
         <SpeedInsights />
       </body>

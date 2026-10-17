@@ -1,5 +1,7 @@
 import type { Block } from 'payload'
 
+import { link } from '@/fields/link'
+
 export const Services: Block = {
   slug: 'services',
   interfaceName: 'ServicesBlock',
@@ -46,6 +48,19 @@ export const Services: Block = {
             description: 'Texte libre, par exemple « À partir de 80 € » ou « Sur devis ».',
           },
         },
+        // Button at the bottom of the card, usually to the service's own page
+        {
+          name: 'enableLink',
+          type: 'checkbox',
+          label: 'Ajouter un bouton',
+        },
+        link({
+          overrides: {
+            admin: {
+              condition: (_data, siblingData) => Boolean(siblingData?.enableLink),
+            },
+          },
+        }),
       ],
     },
   ],

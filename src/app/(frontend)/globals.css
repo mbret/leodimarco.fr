@@ -52,43 +52,9 @@
   --font-sans: var(--font-geist-sans);
 }
 
-@layer utilities {
-  .container {
-    width: 100%;
-    margin-inline: auto;
-    padding-inline: 1rem;
-  }
-
-  @variant sm {
-    .container {
-      max-width: var(--breakpoint-sm);
-    }
-  }
-
-  @variant md {
-    .container {
-      max-width: var(--breakpoint-md);
-      padding-inline: 2rem;
-    }
-  }
-
-  @variant lg {
-    .container {
-      max-width: var(--breakpoint-lg);
-    }
-  }
-
-  @variant xl {
-    .container {
-      max-width: var(--breakpoint-xl);
-    }
-  }
-
-  @variant 2xl {
-    .container {
-      max-width: var(--breakpoint-2xl);
-    }
-  }
+/* Page column: full width on small screens, centered and capped at 64rem (1024px) on large ones */
+@utility container {
+  @apply mx-auto max-w-5xl px-4 md:px-8;
 }
 
 /* shadcn/ui neutral dark theme. The site is dark only: <html> always has the `dark` class. */
@@ -203,7 +169,8 @@
 
 .prose h1 {
   margin-bottom: 0.25em;
-  font-size: 2.5rem;
+  /* Smaller on narrow phones so a long word like "Tricopigmentation" still fits on one line */
+  font-size: min(2.5rem, 10vw);
   font-weight: 600;
   letter-spacing: -0.03em;
 }
@@ -213,6 +180,61 @@
   font-weight: 600;
 }
 
+/* Quotes set a sentence of the text apart, in large type */
+.prose blockquote {
+  margin-block: 1.5em;
+  border-inline-start: 2px solid var(--color-foreground);
+  padding-inline-start: 1em;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+/* A heading right below the page title reads as its subtitle */
+.prose h1 + h2 {
+  margin-top: 0;
+}
+
+/* Tables: column headings as small labels, row headings in full colour, the rest muted */
+.prose .lexical-table-container {
+  margin-block: 2em;
+  overflow-x: auto;
+}
+
+.prose .lexical-table-container table {
+  margin-block: 0;
+}
+
+.prose :is(th, td) > p {
+  margin: 0;
+}
+
+.prose thead th {
+  color: var(--color-muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.prose tbody :is(th, td) {
+  padding-block: 0.75em;
+  vertical-align: baseline;
+}
+
+.prose tbody th {
+  padding-inline: 0 1.5em;
+  color: var(--tw-prose-headings);
+  font-weight: 600;
+}
+
+.prose tbody td {
+  color: var(--color-muted-foreground);
+}
+
 @variant md {
   .prose h1 {
     font-size: 3.5rem;
@@ -220,5 +242,59 @@
 
   .prose h2 {
     font-size: 1.5rem;
+  }
+
+  .prose blockquote {
+    font-size: 1.875rem;
+  }
+}
+
+/* Dots (components/DotField): each group of dots shows once --dot-fill passes its threshold. The
+   script sets it to 1 once the drawing is on screen, and the dots are pigmented in, group by group. */
+@property --dot-fill {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+.dot-field-hero {
+  /* Phones and tablets: a patch in the corner beside the title, clear of the text below it and
+     fading out under the menu */
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 30%),
+    radial-gradient(ellipse 75% 70% at 100% 15%, #000 25%, transparent);
+  mask-composite: intersect;
+}
+
+.dot-field {
+  transition: --dot-fill 2.4s ease-out;
+}
+
+.dot-field path {
+  opacity: clamp(0, calc((var(--dot-fill) - var(--dot-threshold)) * var(--dot-groups)), 1);
+}
+
+/* Phones and tablets: the end of the page mirrors the patch beside the title, in the bottom corner */
+.dot-field-end {
+  mask-image:
+    linear-gradient(to top, transparent, #000 30%),
+    radial-gradient(ellipse 75% 70% at 0% 85%, #000 25%, transparent);
+  mask-composite: intersect;
+}
+
+/* Desktops: beside the title column and at the bottom left, fading out at the top and bottom */
+@variant lg {
+  .dot-field-hero,
+  .dot-field-end {
+    mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+    mask-composite: add;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot-field {
+    /* The finished drawing at once, whatever the script sets */
+    --dot-fill: 1 !important;
+    transition: none;
   }
 }

@@ -9,7 +9,21 @@ import * as migration_20260929_190000_pompey_wording from './20260929_190000_pom
 import * as migration_20261004_134124_faq_category_buttons from './20261004_134124_faq_category_buttons'
 import * as migration_20261004_140155_faq_highlights from './20261004_140155_faq_highlights'
 import * as migration_20261004_141000_faq_final_content from './20261004_141000_faq_final_content'
-import * as migration_20261004_150000_contact_form_email from './20261004_150000_contact_form_email'
+import * as migration_20261009_111000_a_propos_content from './20261009_111000_a_propos_content'
+import * as migration_20261009_111606_testimonials_block from './20261009_111606_testimonials_block'
+import * as migration_20261009_113328_key_facts_block from './20261009_113328_key_facts_block'
+import * as migration_20261009_113400_a_propos_layout from './20261009_113400_a_propos_layout'
+import * as migration_20261009_121252_hero_dot_pattern from './20261009_121252_hero_dot_pattern'
+import * as migration_20261009_121347_service_buttons from './20261009_121347_service_buttons'
+import * as migration_20261009_130000_dot_pattern_everywhere from './20261009_130000_dot_pattern_everywhere'
+import * as migration_20261009_130834_nested_pages from './20261009_130834_nested_pages'
+import * as migration_20261009_130900_service_pages_content from './20261009_130900_service_pages_content'
+import * as migration_20261009_135406_faq_retouche_interval from './20261009_135406_faq_retouche_interval'
+import * as migration_20261009_140018_blocks_schema_snapshot from './20261009_140018_blocks_schema_snapshot'
+import * as migration_20261009_140500_home_content from './20261009_140500_home_content'
+import * as migration_20261009_143400_studio_phone from './20261009_143400_studio_phone'
+import * as migration_20261009_143500_home_service_buttons from './20261009_143500_home_service_buttons'
+import * as migration_20261017_120000_contact_form_email from './20261017_120000_contact_form_email'
 
 export const migrations = [
   {
@@ -68,8 +82,78 @@ export const migrations = [
     name: '20261004_141000_faq_final_content',
   },
   {
-    up: migration_20261004_150000_contact_form_email.up,
-    down: migration_20261004_150000_contact_form_email.down,
-    name: '20261004_150000_contact_form_email',
+    up: migration_20261009_111000_a_propos_content.up,
+    down: migration_20261009_111000_a_propos_content.down,
+    name: '20261009_111000_a_propos_content',
+  },
+  {
+    up: migration_20261009_111606_testimonials_block.up,
+    down: migration_20261009_111606_testimonials_block.down,
+    name: '20261009_111606_testimonials_block',
+  },
+  {
+    up: migration_20261009_113328_key_facts_block.up,
+    down: migration_20261009_113328_key_facts_block.down,
+    name: '20261009_113328_key_facts_block',
+  },
+  {
+    up: migration_20261009_113400_a_propos_layout.up,
+    down: migration_20261009_113400_a_propos_layout.down,
+    name: '20261009_113400_a_propos_layout',
+  },
+  {
+    up: migration_20261009_121252_hero_dot_pattern.up,
+    down: migration_20261009_121252_hero_dot_pattern.down,
+    name: '20261009_121252_hero_dot_pattern',
+  },
+  {
+    up: migration_20261009_121347_service_buttons.up,
+    down: migration_20261009_121347_service_buttons.down,
+    name: '20261009_121347_service_buttons',
+  },
+  {
+    up: migration_20261009_130000_dot_pattern_everywhere.up,
+    down: migration_20261009_130000_dot_pattern_everywhere.down,
+    name: '20261009_130000_dot_pattern_everywhere',
+  },
+  {
+    up: migration_20261009_130834_nested_pages.up,
+    down: migration_20261009_130834_nested_pages.down,
+    name: '20261009_130834_nested_pages',
+  },
+  {
+    up: migration_20261009_130900_service_pages_content.up,
+    down: migration_20261009_130900_service_pages_content.down,
+    name: '20261009_130900_service_pages_content',
+  },
+  {
+    up: migration_20261009_135406_faq_retouche_interval.up,
+    down: migration_20261009_135406_faq_retouche_interval.down,
+    name: '20261009_135406_faq_retouche_interval',
+  },
+  {
+    up: migration_20261009_140018_blocks_schema_snapshot.up,
+    down: migration_20261009_140018_blocks_schema_snapshot.down,
+    name: '20261009_140018_blocks_schema_snapshot',
+  },
+  {
+    up: migration_20261009_140500_home_content.up,
+    down: migration_20261009_140500_home_content.down,
+    name: '20261009_140500_home_content',
+  },
+  {
+    up: migration_20261009_143400_studio_phone.up,
+    down: migration_20261009_143400_studio_phone.down,
+    name: '20261009_143400_studio_phone',
+  },
+  {
+    up: migration_20261009_143500_home_service_buttons.up,
+    down: migration_20261009_143500_home_service_buttons.down,
+    name: '20261009_143500_home_service_buttons',
+  },
+  {
+    up: migration_20261017_120000_contact_form_email.up,
+    down: migration_20261017_120000_contact_form_email.down,
+    name: '20261017_120000_contact_form_email',
   },
 ]

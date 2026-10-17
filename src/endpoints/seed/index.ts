@@ -1,27 +1,21 @@
 import type { Payload, PayloadRequest, RequiredDataFromCollectionSlug } from 'payload'
 
 import type { Form, Page } from '@/payload-types'
-import { SITE_NAME } from '@/utilities/siteName'
 
+import { aProposPageData } from './aPropos'
 import { contactFormData } from './contactForm'
 import { faqPageData } from './faq'
+import { homePageData } from './home'
 import { pageLink } from './links'
+import { prestationsPageData, servicePagesData } from './prestations'
 import { heading, paragraph, richText } from './richText'
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
 
 const hero = (title: string, intro?: string): PageData['hero'] => ({
   type: 'lowImpact',
+  dotPattern: true,
   richText: richText(heading(title), ...(intro ? [paragraph(intro)] : [])),
-})
-
-const contactCta = (contact: Page) => ({
-  blockType: 'cta' as const,
-  richText: richText(
-    heading('Envie d’en savoir plus ?', 'h3'),
-    paragraph('Décrivez votre situation, je vous réponds pour en discuter.'),
-  ),
-  links: [pageLink(contact, 'Me contacter')],
 })
 
 const INSTAGRAM_URL = 'https://www.instagram.com/leodimarcotricopigmentation/'
@@ -128,102 +122,32 @@ export const seed = async ({
     ),
   })
 
-  const prestations = await ensurePage({
-    slug: 'prestations',
-    title: 'Prestations',
-    hero: hero(
-      'Prestations',
-      'Chaque projet commence par un rendez-vous pour étudier votre situation, définir la ligne frontale et choisir la teinte.',
-    ),
-    layout: [
-      {
-        blockType: 'services',
-        items: [
-          {
-            title: 'Effet crâne rasé',
-            description:
-              'Recrée l’aspect d’une coupe rasée de près sur un crâne dégarni ou chauve, avec une ligne frontale adaptée à votre visage.',
-            price: 'Sur devis',
-          },
-          {
-            title: 'Densification',
-            description:
-              'Pour les cheveux clairsemés : des points de pigment entre les cheveux réduisent le contraste avec le cuir chevelu et donnent un effet de densité.',
-            price: 'Sur devis',
-          },
-          {
-            title: 'Camouflage de cicatrices',
-            description:
-              'Atténue les cicatrices de greffe (FUE, FUT) ou d’accident en les fondant dans la zone environnante.',
-            price: 'Sur devis',
-          },
-          {
-            title: 'Retouche',
-            description: 'Raviver une tricopigmentation qui a pâli avec le temps.',
-            price: 'Sur devis',
-          },
-        ],
-      },
-      contactCta(contact),
-    ],
-    meta: meta(
-      'Prestations',
-      'Tricopigmentation à Pompey, près de Nancy : effet crâne rasé, densification des cheveux clairsemés, camouflage de cicatrices et retouches.',
-    ),
-  })
+  // The FAQ links to the prestations page, which leads to the service pages, which link back to the
+  // FAQ: a new prestations page gets its links to the service pages once they exist
+  const prestationsExisted = Boolean(await findPage('prestations'))
+  const prestations = await ensurePage(prestationsPageData({ contact }))
 
-  const aPropos = await ensurePage({
-    slug: 'a-propos',
-    title: 'À propos',
-    hero: hero('À propos'),
-    layout: [
-      {
-        blockType: 'content',
-        columns: [
-          {
-            size: 'full',
-            richText: richText(
-              paragraph(
-                'Je suis Léo, praticien en tricopigmentation, formé et certifié par la Medico Derm Academy. Je vous accueille dans mon studio privé à Pompey, près de Nancy, sur rendez-vous.',
-              ),
-              paragraph(
-                'Lorsque la ligne frontale recule, les proportions du visage changent. Je n’aime pas l’idée de transformer un visage : j’aime l’idée de le rééquilibrer. Un résultat naturel se construit point après point, dans le détail.',
-              ),
-            ),
-          },
-        ],
-      },
-    ],
-    meta: meta(
-      'À propos',
-      'Léo Di Marco, praticien en tricopigmentation formé à la Medico Derm Academy, studio privé à Pompey, près de Nancy.',
-    ),
-  })
+  const aPropos = await ensurePage(aProposPageData({ contact }))
 
   const faq = await ensurePage(faqPageData({ aPropos, contact, galerie, prestations }))
 
-  const home = await ensurePage({
-    slug: 'home',
-    title: 'Accueil',
-    hero: {
-      type: 'lowImpact',
-      richText: richText(
-        heading(SITE_NAME),
-        paragraph(
-          'Tricopigmentation à Pompey, près de Nancy. Effet crâne rasé, densification et camouflage de cicatrices, dans un studio privé sur rendez-vous.',
-        ),
-      ),
-      links: [
-        pageLink(contact, 'Prendre rendez-vous', 'default'),
-        pageLink(galerie, 'Voir les résultats', 'outline'),
-      ],
-    },
-    layout: [{ blockType: 'gallery', heading: 'Avant / après', limit: 6 }, contactCta(contact)],
-    meta: meta(
-      'Tricopigmentation à Pompey, près de Nancy',
-      'Léo Di Marco, tricopigmentation (micropigmentation capillaire) à Pompey (54), près de Nancy : effet crâne rasé, densification et camouflage de cicatrices.',
-    ),
-  })
+  const servicePages = servicePagesData({ contact, faq, galerie, prestations })
+  const services = {
+    effetRase: await ensurePage(servicePages.effetRase),
+    densification: await ensurePage(servicePages.densification),
+    camouflage: await ensurePage(servicePages.camouflage),
+  }
+  if (!prestationsExisted) {
+    await payload.update({
+      collection: 'pages',
+      id: prestations.id,
+      data: prestationsPageData({ contact, services }),
+      depth: 0,
+      req,
+    })
+  }
+
+  const home = await ensurePage(homePageData({ aPropos, contact, faq, galerie, services }))
 
   const header = await payload.findGlobal({ slug: 'header', depth: 0, req })
   if (!hasValidLinks(header.navItems)) {
@@ -257,7 +181,7 @@ export const seed = async ({
   // Fill in each studio detail only where nothing has been entered yet
   const studio = await payload.findGlobal({ slug: 'studio', depth: 0, req })
   const studioDefaults = {
-    phone: '+33618510548',
+    phone: '+33744429488',
     street: '74 rue des Jardins Fleuris',
     postalCode: '54340',
     city: 'Pompey',

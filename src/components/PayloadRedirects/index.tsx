@@ -1,6 +1,7 @@
 import type React from 'react'
 
 import { getCachedRedirects } from '@/utilities/getRedirects'
+import { pagePath } from '@/utilities/pagePath'
 import { notFound, redirect } from 'next/navigation'
 
 interface Props {
@@ -23,7 +24,7 @@ export const PayloadRedirects: React.FC<Props> = async ({ disableNotFound, url }
     const page = redirectItem.to?.reference?.value
 
     if (typeof page === 'object' && page?.slug) {
-      redirect(page.slug === 'home' ? '/' : `/${page.slug}`)
+      redirect(pagePath(page))
     }
   }
 

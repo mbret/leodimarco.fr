@@ -4,6 +4,7 @@ import Link from 'next/link'
 import React from 'react'
 
 import type { Page } from '@/payload-types'
+import { pagePath } from '@/utilities/pagePath'
 
 type ButtonProps = React.ComponentProps<typeof Button>
 
@@ -37,9 +38,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   const href =
     type === 'reference' && typeof reference?.value === 'object' && reference.value.slug
-      ? reference.value.slug === 'home'
-        ? '/'
-        : `/${reference.value.slug}`
+      ? pagePath(reference.value)
       : url
 
   if (!href) return null
