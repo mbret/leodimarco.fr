@@ -23,6 +23,7 @@ import * as migration_20261009_140018_blocks_schema_snapshot from './20261009_14
 import * as migration_20261009_140500_home_content from './20261009_140500_home_content'
 import * as migration_20261009_143400_studio_phone from './20261009_143400_studio_phone'
 import * as migration_20261009_143500_home_service_buttons from './20261009_143500_home_service_buttons'
+import * as migration_20261017_120000_contact_form_email from './20261017_120000_contact_form_email'
 
 export const migrations = [
   {
@@ -149,5 +150,10 @@ export const migrations = [
     up: migration_20261009_143500_home_service_buttons.up,
     down: migration_20261009_143500_home_service_buttons.down,
     name: '20261009_143500_home_service_buttons',
+  },
+  {
+    up: migration_20261017_120000_contact_form_email.up,
+    down: migration_20261017_120000_contact_form_email.down,
+    name: '20261017_120000_contact_form_email',
   },
 ]

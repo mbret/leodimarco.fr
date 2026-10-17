@@ -20,7 +20,7 @@ Everything is edited from the admin panel at `/admin`, which is in French.
   - Form: a form built in the Forms collection
 - **Header / Footer**: the menu links.
 - **Coordonnées du studio**: phone, address and social links. They are shown in the footer and published to search engines as local business data.
-- **Forms / Form Submissions**: the contact form and the messages it receives.
+- **Forms / Form Submissions**: the contact form and the messages it receives. Each message is also emailed to the recipient set in the form's Emails list, from the sender set there (on `leodimarco.fr`, `contact@leodimarco.fr` when empty); replying to that email answers the visitor. Past 50 messages in an hour, they are only saved.
 - **Redirects**: redirect old URLs to new pages.
 
 On an empty site, the dashboard offers a button that creates the starter pages, menus and contact form with placeholder text. It only creates what is missing and never overwrites existing content.
@@ -39,6 +39,15 @@ Services:
   - `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY`: from the R2 API token
 
   Without `R2_BUCKET`, uploads are written to `public/media`, which fails on Vercel's read-only filesystem.
+
+- **Amazon SES** (`us-east-1`): sends the contact form's emails from an `@leodimarco.fr` address.
+  1. Create a domain identity for `leodimarco.fr` with Easy DKIM, and add the three DKIM CNAME records it lists to the domain's DNS at OVH.
+  2. While the account is in the SES sandbox, it can only send to verified addresses: also create an email address identity for the recipient set in the form, and confirm it from the email SES sends.
+  3. Under SMTP settings, create SMTP credentials, then add these environment variables to the Vercel project (Production):
+     - `SMTP_HOST`: `email-smtp.us-east-1.amazonaws.com`
+     - `SMTP_USER` and `SMTP_PASS`: the SMTP credentials
+
+  Without them, messages are still saved in Form Submissions, but no email is sent.
 
 Secrets, which should be long random strings:
 

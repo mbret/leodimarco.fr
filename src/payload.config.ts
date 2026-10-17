@@ -1,4 +1,5 @@
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -14,6 +15,8 @@ import { Studio } from './Studio/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { DEFAULT_SENDER } from './utilities/sender'
+import { SITE_NAME } from './utilities/siteName'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { en } from '@payloadcms/translations/languages/en'
 import { fr } from '@payloadcms/translations/languages/fr'
@@ -71,6 +74,23 @@ export default buildConfig({
       connectionString: getDatabaseURL(),
     },
   }),
+  // Sends the contact form's emails through Amazon SES's SMTP interface. Without its credentials
+  // (local development), Payload only writes emails to the console.
+  email:
+    process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS
+      ? nodemailerAdapter({
+          defaultFromAddress: DEFAULT_SENDER,
+          defaultFromName: `Site ${SITE_NAME}`,
+          // Connects when sending only, rather than on every cold start
+          skipVerify: true,
+          transportOptions: {
+            host: process.env.SMTP_HOST,
+            port: 587,
+            requireTLS: true,
+            auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+          },
+        })
+      : undefined,
   collections: [Pages, Realisations, Media, Users],
   cors: [getServerSideURL()].filter(Boolean),
   plugins: [
