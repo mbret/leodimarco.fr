@@ -7,10 +7,10 @@ import { checkList, heading, paragraph, quote, richText } from './richText'
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
 
-// À propos page content, from Léo's À propos document: the dot pattern beside the title, key facts
-// first, one sentence set apart as a quote, the hygiene commitments as a check list, and the
-// closing invitation to get in touch as the contact call to action. Used by the seed and by the
-// migration that brings existing sites up to date.
+// À propos page content, from Léo's reworded À propos document: the dot pattern beside the title,
+// key facts first, the paragraph on his own tricopigmentation set apart as a quote, the hygiene
+// commitments as a check list, and the closing invitation to get in touch as the contact call to
+// action. Used by the seed and by the migrations that bring existing sites up to date.
 export const aProposPageData = ({ contact }: { contact: Page }): PageData => ({
   slug: 'a-propos',
   title: 'À propos',
@@ -19,8 +19,10 @@ export const aProposPageData = ({ contact }: { contact: Page }): PageData => ({
     type: 'lowImpact',
     dotPattern: true,
     richText: richText(
-      heading('À propos'),
-      paragraph('Je m’appelle Léo Di Marco et je suis praticien en tricopigmentation.'),
+      heading('À propos de moi'),
+      paragraph(
+        'Je m’appelle Léo Di Marco et je suis praticien spécialisé en tricopigmentation, aussi appelée micropigmentation capillaire.',
+      ),
     ),
   },
   layout: [
@@ -39,57 +41,54 @@ export const aProposPageData = ({ contact }: { contact: Page }): PageData => ({
         {
           size: 'full',
           richText: richText(
-            paragraph(
-              'J’ai toujours été attiré par le tatouage et le travail de l’image : les lignes, les contrastes, les détails et tout ce qui touche à l’esthétique de manière générale. C’est un univers qui fait partie de moi depuis longtemps et qui m’a naturellement amené vers la tricopigmentation.',
-            ),
             quote(
-              'Mais si j’ai choisi de me spécialiser dans ce domaine, c’est aussi parce que je suis directement concerné.',
+              'Avant de pratiquer cette technique, j’y ai moi-même eu recours. C’est une expérience qui a beaucoup compté dans mon choix d’en faire aujourd’hui mon métier.',
+            ),
+            heading('Comment j’en suis arrivé à la tricopigmentation', 'h2'),
+            paragraph('J’ai commencé à perdre mes cheveux assez jeune.'),
+            paragraph(
+              'Pendant plusieurs années, je me suis intéressé aux différentes solutions qui existaient. La greffe ne correspondait pas à ma situation et je ne souhaitais pas m’engager dans un traitement sur le long terme.',
+            ),
+            paragraph('À 29 ans, j’ai finalement décidé de faire une tricopigmentation.'),
+            paragraph(
+              'J’ai donc découvert cette technique en tant que client, avec toutes les questions qui peuvent accompagner ce choix. Le naturel du résultat, la ligne frontale, la façon dont les pigments vont évoluer avec le temps… Ce sont des sujets auxquels je suis particulièrement attentif aujourd’hui.',
             ),
             paragraph(
-              'J’ai commencé à perdre mes cheveux assez jeune et, comme beaucoup d’hommes dans cette situation, j’ai cherché pendant longtemps la solution qui me correspondait vraiment. La greffe n’était pas adaptée à mon cas et je ne souhaitais pas dépendre d’un traitement sur le long terme.',
+              'En découvrant la tricopigmentation, j’ai eu envie de comprendre comment elle fonctionnait et d’apprendre à la pratiquer.',
             ),
-            paragraph('À 29 ans, j’ai finalement choisi de faire une tricopigmentation.'),
-            paragraph(
-              'Je sais donc ce que peut représenter la perte de cheveux, les questions qu’on peut se poser avant de se lancer, mais aussi l’importance d’obtenir un résultat dans lequel on se reconnaît.',
-            ),
-            paragraph(
-              'Aujourd’hui, cette expérience personnelle fait aussi partie de ma manière de travailler. Je prends le temps d’échanger avec chaque personne, de comprendre ce qu’elle recherche.',
-            ),
-            paragraph(
-              'En tricopigmentation, quelques millimètres, une densité ou une ligne frontale légèrement différente peuvent complètement changer un résultat.',
-            ),
+            paragraph('C’est ce qui m’a amené à me former, puis à ouvrir mon propre studio.'),
             heading('Ma manière de travailler', 'h2'),
-            paragraph('Pour moi, la tricopigmentation est avant tout un travail de précision.'),
             paragraph(
-              'Chaque personne est différente : forme du crâne, implantation, couleur des cheveux, densité, type de peau… Tous ces éléments comptent pour obtenir un résultat naturel et cohérent avec le visage.',
+              'Quand je prépare une tricopigmentation, je regarde d’abord ce qui existe déjà : la forme du crâne, les cheveux encore présents, leur densité et la manière dont ils sont implantés.',
             ),
             paragraph(
-              'Je prends donc le temps d’observer et de préparer mon travail avant de commencer. La ligne frontale, la densité, les contrastes ou encore la répartition des pigments sont réfléchis en fonction de chaque personne.',
+              'La ligne frontale demande notamment beaucoup de réflexion. Une implantation trop basse ou trop régulière peut donner un aspect artificiel, même lorsque les points sont bien réalisés.',
             ),
             paragraph(
-              'J’aime travailler progressivement. Je préfère partir sur quelque chose de subtil et construire le résultat au fil des séances plutôt que d’en faire trop dès le départ. Cela permet d’ajuster le travail en fonction de la façon dont la peau réagit et dont le pigment évolue.',
+              'Je préfère généralement une ligne un peu plus conservatrice, qui reste cohérente avec le visage et l’âge de la personne.',
             ),
             paragraph(
-              'Mon objectif reste toujours le même : obtenir un résultat naturel, équilibré et suffisamment discret pour qu’on ne se demande pas si une tricopigmentation a été réalisée.',
+              'Je travaille aussi progressivement sur la densité. Plutôt que de chercher à obtenir un résultat très marqué dès le départ, je préfère construire la pigmentation sur plusieurs séances.',
             ),
             paragraph(
-              'Enfin, j’accorde beaucoup d’importance à l’échange. Prendre le temps de comprendre ce que vous recherchez, répondre à vos questions et vous mettre à l’aise fait tout autant partie de mon travail que la réalisation elle-même.',
-            ),
-            heading('Formation et exigence technique', 'h2'),
-            paragraph(
-              'Je me suis formé à la tricopigmentation auprès de Samuel Troonen, praticien reconnu en Belgique, au sein de la Médicoderm Académie.',
+              'Je travaille habituellement en trois séances espacées d’environ 10 à 14 jours. Cela permet de voir comment les pigments évoluent après cicatrisation et de faire les ajustements nécessaires.',
             ),
             paragraph(
-              'Depuis, je continue à me former et à suivre le travail de praticiens internationaux, notamment Marc Allen de Creative Scalps, en Angleterre. Cela me permet de découvrir d’autres approches, d’affiner ma technique et de faire évoluer ma façon de travailler.',
+              'Je m’intéresse particulièrement à l’aspect des résultats une fois cicatrisés. C’est à ce moment-là que l’on peut réellement apprécier la densité, la teinte et l’intégration de la pigmentation avec les cheveux existants.',
+            ),
+            heading('Ma formation', 'h2'),
+            paragraph(
+              'Je me suis formé à la tricopigmentation à la **Médicoderm Académie**, auprès de **Samuel Troonen**, en Belgique.',
             ),
             paragraph(
-              'J’ai également suivi la formation obligatoire en hygiène et salubrité, indispensable à la pratique de la tricopigmentation.',
+              'Je continue également à perfectionner ma pratique, notamment auprès de **Marc Allen, de Creative Scalps**, au Royaume-Uni.',
+            ),
+            paragraph('J’ai par ailleurs validé ma formation en hygiène et salubrité.'),
+            paragraph(
+              'Depuis mes débuts, je prends le temps d’analyser mes résultats, de suivre leur évolution et de m’intéresser aux différentes façons de travailler.',
             ),
             paragraph(
-              'Pour moi, la formation ne s’arrête pas à l’obtention d’un certificat. C’est un métier qui évolue et dans lequel il y a toujours quelque chose à améliorer : la technique, le choix du matériel, la compréhension de la peau ou simplement le regard que l’on porte sur son propre travail.',
-            ),
-            paragraph(
-              'Je continue donc à apprendre, à observer et à faire évoluer ma pratique au fil du temps.',
+              'Il y a toujours des choses à apprendre, que ce soit dans le choix des pigments, le matériel, la technique ou simplement la façon d’aborder certaines situations.',
             ),
             heading('Le studio', 'h2'),
             paragraph(
