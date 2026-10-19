@@ -27,6 +27,25 @@ const INSTAGRAM_MESSAGE_URL = 'https://ig.me/m/leodimarcotricopigmentation'
 const GOOGLE_REVIEWS_URL =
   'https://www.google.fr/maps/place/L%C3%A9o+Di+Marco+Tricopigmentation+Nancy/@48.6953784,6.1783947,652m/data=!3m2!1e3!4b1!4m6!3m5!1s0x479499bc88386e6b:0xca515ade1aa9ae26!8m2!3d48.6953784!4d6.1809696!16s%2Fg%2F11z50_qz8t?entry=ttu&g_ep=EgoyMDI2MTAwNi4wIKXMDSoASAFQAw%3D%3D'
 
+// Three of the reviews on Léo's Google Business profile, shown above the link to all of them
+export const googleReviews = [
+  {
+    rating: 5,
+    text: 'Léo est au top. Il est à l’écoute, soigneux, et très doué. Vu pour une retouche c’est parfait. Je recommande et reviendrai sans soucis',
+    author: 'Mathieu',
+  },
+  {
+    rating: 5,
+    text: 'Parfait ! Le résultat est super naturel, vraiment indissociable de la réalité, et encore mieux que dans mes attentes. C’est même au-dessus de tout ce que j’ai pu voir sur les réseaux. Léo est à l’écoute, très sympathique, arrangeant et surtout super impliqué. Les prix sont très abordables. Je recommande les yeux fermés ! En plus, la douleur est très supportable, je me suis même endormi quelques minutes lors de ma dernière session.',
+    author: 'ily an',
+  },
+  {
+    rating: 5,
+    text: 'Super expérience avec Léo pour ma tricopigmentation du crâne. Du premier accueil jusqu’à la fin des 3 séances, tout a été parfaitement géré. Très professionnel, à l’écoute, et le résultat est vraiment top. Le cadre est super agréable aussi, on s’y sent direct en confiance. Je recommande fortement !',
+    author: 'Théo M.',
+  },
+]
+
 const externalLink = (url: string, label: string) => ({
   link: { type: 'custom' as const, url, newTab: true, label },
 })
@@ -144,13 +163,12 @@ export const homePageData = ({
       ),
       links: [pageLink(aPropos, 'Découvrir mon studio', 'outline')],
     },
-    // Léo adds his clients' reviews from the admin. Until then the section shows its introduction
-    // and the link to the Google reviews.
     {
       blockType: 'testimonials',
       heading: 'Mes clients témoignent',
       intro:
         'Au-delà du changement esthétique, mes clients parlent souvent d’une chose : retrouver de la confiance et ne plus avoir à penser constamment à leur perte de cheveux.',
+      reviews: googleReviews,
       enableLink: true,
       ...externalLink(GOOGLE_REVIEWS_URL, 'Voir tous les avis Google →'),
     },
