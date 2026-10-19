@@ -53,6 +53,17 @@ export const Testimonials: Block = {
           type: 'text',
           label: 'Nom du client',
         },
+        {
+          name: 'photo',
+          type: 'upload',
+          relationTo: 'media',
+          // Images only: the media library also holds videos
+          filterOptions: { mimeType: { contains: 'image' } },
+          label: 'Photo du client',
+          admin: {
+            description: 'Avec son accord. Sans photo, l’avis montre l’initiale de son nom.',
+          },
+        },
       ],
     },
     // Link shown after the reviews, for example to all the Google reviews

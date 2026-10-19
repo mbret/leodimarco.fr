@@ -45,6 +45,36 @@ describe('Testimonials block', () => {
     expect(screen.getByText('Très bon accueil.')).toBeTruthy()
     expect(screen.getByText('Marc')).toBeTruthy()
   })
+
+  it('shows the client’s photo, or their initial without one', () => {
+    render(
+      React.createElement(TestimonialsBlock, {
+        ...block,
+        reviews: [
+          { id: '1', rating: 5, text: 'Parfait.', author: 'ily an' },
+          {
+            id: '2',
+            rating: 5,
+            text: 'Très professionnel.',
+            author: 'Théo M.',
+            photo: {
+              id: 1,
+              alt: 'Photo de Théo',
+              url: '/api/media/file/theo.webp',
+              width: 500,
+              height: 500,
+              createdAt: '2026-10-19T00:00:00.000Z',
+              updatedAt: '2026-10-19T00:00:00.000Z',
+            },
+          },
+        ],
+      }),
+    )
+
+    expect(screen.getByText('I')).toBeTruthy()
+    expect(screen.getByRole('img', { name: 'Photo de Théo' })).toBeTruthy()
+    expect(screen.queryByText('T')).toBeNull()
+  })
 })
 
 describe('Seed rich text', () => {
