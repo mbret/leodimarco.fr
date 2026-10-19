@@ -524,6 +524,10 @@ export interface TestimonialsBlock {
         rating: number;
         text: string;
         author?: string | null;
+        /**
+         * Avec son accord. Sans photo, l’avis montre l’initiale de son nom.
+         */
+        photo?: (number | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -1265,6 +1269,7 @@ export interface TestimonialsBlockSelect<T extends boolean = true> {
         rating?: T;
         text?: T;
         author?: T;
+        photo?: T;
         id?: T;
       };
   enableLink?: T;
