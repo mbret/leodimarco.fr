@@ -65,7 +65,7 @@ const columnFields: Field[] = [
     filterOptions: { mimeType: { contains: 'image' } },
     admin: {
       description:
-        'Optionnelle : s’affiche sous le texte. Un bloc dont chaque colonne n’a qu’une image s’affiche en rangée de photos.',
+        'Optionnelle : s’affiche sous le texte. Un bloc d’au moins deux colonnes qui n’ont chacune qu’une image s’affiche en rangée de photos.',
     },
   },
   {
