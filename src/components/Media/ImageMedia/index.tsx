@@ -30,6 +30,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   const {
     alt: altFromProps,
     fill,
+    focalPoint,
     pictureClassName,
     imgClassName,
     priority,
@@ -59,8 +60,8 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     height = fullHeight!
     alt = altFromResource || ''
 
-    // An image cropped to fill its box keeps the focal point set in the admin in view
-    if (fill && typeof focalX === 'number' && typeof focalY === 'number') {
+    // Only on request: an image shown whole (object-contain) would move off centre
+    if (focalPoint && typeof focalX === 'number' && typeof focalY === 'number') {
       objectPosition = `${focalX}% ${focalY}%`
     }
 

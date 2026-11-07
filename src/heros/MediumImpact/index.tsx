@@ -17,7 +17,7 @@ export const MediumImpactHero: React.FC<Page['hero'] & { breadcrumbs?: Page['bre
   richText,
 }) => {
   return (
-    <div className="relative bg-studio md:min-h-[min(33vw,40rem)]">
+    <div className="relative bg-studio">
       <div className="container flex md:min-h-[min(33vw,40rem)] md:items-center">
         <div className="py-10 md:w-1/2 md:py-16 md:pr-12">
           <Breadcrumbs breadcrumbs={breadcrumbs} />
@@ -39,6 +39,7 @@ export const MediumImpactHero: React.FC<Page['hero'] & { breadcrumbs?: Page['bre
         <Media
           className="relative aspect-[3/2] md:absolute md:inset-y-0 md:right-0 md:left-1/2 md:aspect-auto"
           fill
+          focalPoint
           imgClassName="object-cover"
           priority
           resource={media}

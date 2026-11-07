@@ -14,6 +14,7 @@ export const CallToActionBlock: React.FC<CTABlockProps> = ({ links, media, richT
           {media && (
             <Media
               className="shrink-0"
+              focalPoint
               imgClassName="size-16 rounded-full border border-border object-cover md:size-20"
               resource={media}
               size="80px"

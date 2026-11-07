@@ -6,6 +6,7 @@ import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { heading, paragraph, richText } from '@/endpoints/seed/richText'
+import { Media } from '@/components/Media'
 import { MediumImpactHero } from '@/heros/MediumImpact'
 
 const photo = (id: number, alt: string) => ({
@@ -190,5 +191,19 @@ describe('Green band hero', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'À propos de moi' })).toBeTruthy()
     const portrait = screen.getByRole('img', { name: 'Léo Di Marco dans son studio' })
     expect(portrait.style.objectPosition).toBe('38% 35%')
+  })
+})
+
+describe('Media', () => {
+  it('keeps an image shown whole centred, whatever its focal point', () => {
+    render(
+      React.createElement(Media, {
+        fill: true,
+        imgClassName: 'object-contain',
+        resource: { ...photo(1, 'Avant'), focalX: 20, focalY: 50 },
+      }),
+    )
+
+    expect(screen.getByRole('img', { name: 'Avant' }).style.objectPosition).toBe('')
   })
 })

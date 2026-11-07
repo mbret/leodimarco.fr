@@ -7,6 +7,7 @@ export interface Props {
   alt?: string
   className?: string
   fill?: boolean // for NextImage only
+  focalPoint?: boolean // for a cropped image: keeps the focal point set in the admin in view
   htmlElement?: ElementType | null
   pictureClassName?: string
   imgClassName?: string
