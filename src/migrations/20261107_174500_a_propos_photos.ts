@@ -3,16 +3,17 @@ import { fileURLToPath } from 'url'
 
 import { type MigrateDownArgs, type MigrateUpArgs, sql } from '@payloadcms/db-vercel-postgres'
 
-import { aProposPageData } from '../endpoints/seed/aPropos'
+import { type AProposPhotos, aProposPageData } from '../endpoints/seed/aPropos'
 
 const photosDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'media')
 
-// Puts photos on the À propos page: Léo in his studio beside the title, Léo at work beside his
-// training, three photos of the studio and his face on the closing call to action. The text does not
-// change. The photos are uploaded from the media folder next to this file. Their names start with
-// a-propos- so that they never replace an image uploaded from the admin: preview deployments upload
-// to the same bucket as production. Sites that were not seeded yet get the page without photos from
-// the starter pages button instead.
+// Puts Léo's photos on the À propos page. It rewrites the whole page from the seed data, as the earlier
+// À propos migrations did: the text stays that of the a_propos_wording migration, and edits made in
+// the admin since are lost.
+// The file names start with a-propos- so that they never replace an image uploaded from the
+// production admin: preview deployments upload to the same bucket. For the same reason, deleting one
+// of these photos from a preview admin deletes production's file too.
+// Sites that were not seeded yet get the page without photos from the starter pages button instead.
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   // Checking for pages with SQL rather than Payload keeps this migration working on a new site
   // after later schema changes
@@ -45,15 +46,15 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
       })
     ).id
 
-  const photos = {
+  const photos: AProposPhotos = {
     // Léo stands left of the middle, his face in the upper third
-    portrait: await upload(
-      'a-propos-studio.jpg',
+    hero: await upload(
+      'a-propos-leo.jpg',
       'Léo Di Marco dans son studio de tricopigmentation à Pompey',
       { x: 38, y: 35 },
     ),
-    session: await upload(
-      'a-propos-seance.jpg',
+    training: await upload(
+      'a-propos-leo-seance.jpg',
       'Léo Di Marco pendant une séance, ses certificats de formation au mur',
     ),
     studio: [
@@ -63,8 +64,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
         'a-propos-studio-poste.jpg',
         'Le poste de travail du studio, avec le lavabo et les diplômes au mur',
       ),
-    ] as [number, number, number],
-    face: await upload('a-propos-portrait.jpg', 'Léo Di Marco'),
+    ],
+    contactCard: await upload('a-propos-leo-visage.jpg', 'Léo Di Marco'),
   }
 
   await payload.update({

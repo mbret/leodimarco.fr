@@ -7,25 +7,24 @@ import { checkList, heading, paragraph, quote, richText } from './richText'
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
 
-// Photos of Léo and his studio, by their id in the media collection
+// Photos of Léo and his studio, by their id in the media collection, named after where they go
 export type AProposPhotos = {
-  // Léo in his studio, beside the title
-  portrait: number
+  // Léo in his studio, on the green band beside the title
+  hero: number
   // Léo during a session, his certificates on the wall, beside « Ma formation »
-  session: number
+  training: number
   // Three views of the studio, after « Le studio »
   studio: [number, number, number]
   // Léo's face, round on the closing call to action
-  face: number
+  contactCard: number
 }
 
 // À propos page content, from Léo's reworded À propos document: key facts first, the paragraph on his
-// own tricopigmentation set apart as a quote, one block per section, the hygiene commitments as a
-// check list, and the closing invitation to get in touch as the contact call to action. With photos,
-// the title sits on the green band beside Léo's portrait, a photo of him at work goes beside his
-// training, three photos of the studio follow its section and his face goes on the call to action.
-// Without photos, as on a new site, the dot pattern stays beside the title. Used by the seed and by
-// the migrations that bring existing sites up to date.
+// own tricopigmentation set apart as a quote, then « Ma formation », « Le studio » and « Mon
+// engagement » each in a block of their own, the hygiene commitments as a check list, and the closing
+// invitation to get in touch as the contact call to action. Without photos, as on a new site, the dot
+// pattern stays beside the title. Used by the seed and by the migrations that bring existing sites up
+// to date.
 export const aProposPageData = ({
   contact,
   photos,
@@ -127,12 +126,21 @@ export const aProposPageData = ({
     ),
   )
 
+  const studioPhotos: PageData['layout'] = photos
+    ? [
+        {
+          blockType: 'content',
+          columns: photos.studio.map((media) => ({ size: 'oneThird', media })),
+        },
+      ]
+    : []
+
   return {
     slug: 'a-propos',
     title: 'À propos',
     _status: 'published',
     hero: photos
-      ? { type: 'mediumImpact', media: photos.portrait, richText: intro }
+      ? { type: 'mediumImpact', media: photos.hero, richText: intro }
       : { type: 'lowImpact', dotPattern: true, richText: intro },
     layout: [
       {
@@ -150,23 +158,16 @@ export const aProposPageData = ({
         columns: photos
           ? [
               { size: 'half', richText: training },
-              { size: 'half', media: photos.session },
+              { size: 'half', media: photos.training },
             ]
           : [{ size: 'full', richText: training }],
       },
       { blockType: 'content', columns: [{ size: 'full', richText: studio }] },
-      ...(photos
-        ? [
-            {
-              blockType: 'content' as const,
-              columns: photos.studio.map((media) => ({ size: 'oneThird' as const, media })),
-            },
-          ]
-        : []),
+      ...studioPhotos,
       { blockType: 'content', columns: [{ size: 'full', richText: commitment }] },
       {
         blockType: 'cta',
-        media: photos?.face,
+        media: photos?.contactCard,
         richText: richText(
           paragraph(
             'Si vous souhaitez savoir ce qu’il est possible de faire dans votre cas, vous pouvez simplement me contacter et m’envoyer quelques photos. Nous pourrons en discuter ensemble.',
