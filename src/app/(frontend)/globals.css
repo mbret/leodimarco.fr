@@ -95,6 +95,8 @@
   --success: oklch(28% 0.1 200deg);
   --warning: oklch(35% 0.08 70deg);
   --error: oklch(45% 0.1 25deg);
+  /* Green of the studio wall in Léo's photos: the band behind a Medium Impact hero */
+  --studio: #364b3c;
 }
 
 @theme inline {
@@ -136,6 +138,7 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  --color-studio: var(--studio);
 }
 
 @layer base {

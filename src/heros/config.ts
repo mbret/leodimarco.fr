@@ -28,7 +28,7 @@ export const hero: Field = {
           value: 'highImpact',
         },
         {
-          label: 'Medium Impact',
+          label: 'Bandeau vert avec photo',
           value: 'mediumImpact',
         },
         {

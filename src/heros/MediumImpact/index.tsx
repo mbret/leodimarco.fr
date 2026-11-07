@@ -2,45 +2,49 @@ import React from 'react'
 
 import type { Page } from '@/payload-types'
 
+import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 
-export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richText }) => {
+// Title and text on a band in the green of the studio wall, with the photo beside them from the
+// middle of the screen to its right edge. The band keeps the photo's 3:2 shape up to 40rem high. On
+// phones the photo comes under the text.
+export const MediumImpactHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumbs'] }> = ({
+  breadcrumbs,
+  links,
+  media,
+  richText,
+}) => {
   return (
-    <div className="">
-      <div className="container mb-8">
-        {richText && <RichText className="mb-6" data={richText} enableGutter={false} />}
-
-        {Array.isArray(links) && links.length > 0 && (
-          <ul className="flex gap-4">
-            {links.map(({ link }, i) => {
-              return (
-                <li key={i}>
-                  <CMSLink {...link} />
-                </li>
-              )
-            })}
-          </ul>
-        )}
+    <div className="relative bg-studio md:min-h-[min(33vw,40rem)]">
+      <div className="container flex md:min-h-[min(33vw,40rem)] md:items-center">
+        <div className="py-10 md:w-1/2 md:py-16 md:pr-12">
+          <Breadcrumbs breadcrumbs={breadcrumbs} />
+          {richText && <RichText data={richText} enableGutter={false} />}
+          {Array.isArray(links) && links.length > 0 && (
+            <ul className="mt-6 flex flex-wrap gap-4">
+              {links.map(({ link }, i) => {
+                return (
+                  <li key={i}>
+                    <CMSLink {...link} />
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
       </div>
-      <div className="container ">
-        {media && typeof media === 'object' && (
-          <div>
-            <Media
-              className="-mx-4 md:-mx-8 2xl:-mx-16"
-              imgClassName=""
-              priority
-              resource={media}
-            />
-            {media?.caption && (
-              <div className="mt-3">
-                <RichText data={media.caption} enableGutter={false} />
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      {media && typeof media === 'object' && (
+        <Media
+          className="relative aspect-[3/2] md:absolute md:inset-y-0 md:right-0 md:left-1/2 md:aspect-auto"
+          fill
+          imgClassName="object-cover"
+          priority
+          resource={media}
+          size="(min-width: 768px) 50vw, 100vw"
+        />
+      )}
     </div>
   )
 }

@@ -5,7 +5,8 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
-import { paragraph, richText } from '@/endpoints/seed/richText'
+import { heading, paragraph, richText } from '@/endpoints/seed/richText'
+import { MediumImpactHero } from '@/heros/MediumImpact'
 
 const photo = (id: number, alt: string) => ({
   id,
@@ -173,5 +174,21 @@ describe('Call to action block', () => {
     render(React.createElement(CallToActionBlock, block))
 
     expect(screen.queryByRole('img')).toBeNull()
+  })
+})
+
+describe('Green band hero', () => {
+  it('shows the title beside the photo, framed on its focal point', () => {
+    render(
+      React.createElement(MediumImpactHero, {
+        type: 'mediumImpact',
+        richText: richText(heading('À propos de moi'), paragraph('Je m’appelle Léo Di Marco.')),
+        media: { ...photo(1, 'Léo Di Marco dans son studio'), focalX: 38, focalY: 35 },
+      }),
+    )
+
+    expect(screen.getByRole('heading', { level: 1, name: 'À propos de moi' })).toBeTruthy()
+    const portrait = screen.getByRole('img', { name: 'Léo Di Marco dans son studio' })
+    expect(portrait.style.objectPosition).toBe('38% 35%')
   })
 })

@@ -43,13 +43,26 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   let height: number | undefined
   let alt = altFromProps
   let src: StaticImageData | string = srcFromProps || ''
+  let objectPosition: string | undefined
 
   if (!src && resource && typeof resource === 'object') {
-    const { alt: altFromResource, height: fullHeight, url, width: fullWidth } = resource
+    const {
+      alt: altFromResource,
+      focalX,
+      focalY,
+      height: fullHeight,
+      url,
+      width: fullWidth,
+    } = resource
 
     width = fullWidth!
     height = fullHeight!
     alt = altFromResource || ''
+
+    // An image cropped to fill its box keeps the focal point set in the admin in view
+    if (fill && typeof focalX === 'number' && typeof focalY === 'number') {
+      objectPosition = `${focalX}% ${focalY}%`
+    }
 
     const cacheTag = resource.updatedAt
 
@@ -79,6 +92,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         loading={loading}
         sizes={sizes}
         src={src}
+        style={objectPosition ? { objectPosition } : undefined}
         width={!fill ? width : undefined}
       />
     </picture>
