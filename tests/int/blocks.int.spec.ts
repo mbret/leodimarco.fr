@@ -141,8 +141,19 @@ describe('Content block', () => {
         .getAllByRole('img')
         .map((img) => img.getAttribute('alt')),
     ).toEqual(['Photo 1', 'Photo 2', 'Photo 3'])
-    // Keyboard users can scroll the row on phones
     expect(row.getAttribute('tabindex')).toBe('0')
+  })
+
+  it('keeps a single image in its column', () => {
+    render(
+      React.createElement(ContentBlock, {
+        blockType: 'content',
+        columns: [{ size: 'full', media: photo(1, 'Le studio') }],
+      }),
+    )
+
+    expect(screen.getByRole('img', { name: 'Le studio' })).toBeTruthy()
+    expect(screen.queryByRole('list', { name: 'Photos' })).toBeNull()
   })
 
   it('shows no image in a text column', () => {

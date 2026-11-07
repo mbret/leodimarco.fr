@@ -33,6 +33,7 @@
 @source inline("lg:col-span-6");
 @source inline("lg:col-span-8");
 @source inline("lg:col-span-12");
+@source inline("md:col-span-{4,6,8,12}");
 @source inline("border-border");
 @source inline("bg-card");
 @source inline("border-error");
