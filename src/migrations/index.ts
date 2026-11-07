@@ -27,6 +27,7 @@ import * as migration_20261017_120000_contact_form_email from './20261017_120000
 import * as migration_20261017_133000_a_propos_wording from './20261017_133000_a_propos_wording'
 import * as migration_20261019_184720_home_google_reviews from './20261019_184720_home_google_reviews'
 import * as migration_20261019_193802_review_photos from './20261019_193802_review_photos'
+import * as migration_20261107_171752_content_column_image_and_cta_photo from './20261107_171752_content_column_image_and_cta_photo'
 
 export const migrations = [
   {
@@ -173,5 +174,10 @@ export const migrations = [
     up: migration_20261019_193802_review_photos.up,
     down: migration_20261019_193802_review_photos.down,
     name: '20261019_193802_review_photos',
+  },
+  {
+    up: migration_20261107_171752_content_column_image_and_cta_photo.up,
+    down: migration_20261107_171752_content_column_image_and_cta_photo.down,
+    name: '20261107_171752_content_column_image_and_cta_photo',
   },
 ]

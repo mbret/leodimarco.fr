@@ -9,9 +9,9 @@ Everything is edited from the admin panel at `/admin`, which is in French.
 - **Pages**: each page is a hero plus a list of blocks. The site has Accueil (`home`), Prestations, Galerie, À propos, FAQ and Contact, plus a page per service (Effet rasé, Densification capillaire, Camouflage de cicatrices) under Prestations, such as `/prestations/effet-rase`. A page given a « Page parente » sits under it in the URL and shows a breadcrumb above its title. A Low Impact hero can show « Motif de points »: a patch of dots beside the title, the same size on every page and different on every visit, that keeps clear of the text and appears dot by dot as the page loads. Every page has it on, and the end of each page mirrors it with a patch at the bottom left, which appears when visitors reach it.
 - **Réalisations**: the tattoo photos. Drag and drop in the list to change their order. The Gallery block shows them (all of them, or the first few on the homepage).
 - **Blocks** available on pages:
-  - Content: rich text in columns, with lists and tables. Quotes are set in large type, and check lists show a check mark for each ticked item
+  - Content: rich text in columns, with lists and tables. Quotes are set in large type, and check lists show a check mark for each ticked item. A column can also hold an image, under its text. A block whose columns each hold only an image shows a row of photos, which visitors swipe on phones
   - Repères: short facts shown as cards, each a value such as « 29 ans » with a caption
-  - Call to Action
+  - Call to Action: text and buttons, with an optional round photo beside the text, such as Léo's portrait
   - Media
   - Gallery: shows the Réalisations
   - Prestations: service cards with an optional price and button

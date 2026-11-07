@@ -386,6 +386,10 @@ export interface ContentBlock {
           };
           [k: string]: unknown;
         } | null;
+        /**
+         * Optionnelle : s’affiche sous le texte. Un bloc dont chaque colonne n’a qu’une image s’affiche en rangée de photos.
+         */
+        media?: (number | null) | Media;
         enableLink?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
@@ -428,6 +432,10 @@ export interface CallToActionBlock {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Optionnelle : une photo ronde à gauche du texte, par exemple votre portrait.
+   */
+  media?: (number | null) | Media;
   links?:
     | {
         link: {
@@ -1169,6 +1177,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
     | {
         size?: T;
         richText?: T;
+        media?: T;
         enableLink?: T;
         link?:
           | T
@@ -1191,6 +1200,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
   richText?: T;
+  media?: T;
   links?:
     | T
     | {

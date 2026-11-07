@@ -57,6 +57,18 @@ const columnFields: Field[] = [
     label: false,
   },
   {
+    name: 'media',
+    type: 'upload',
+    label: 'Image',
+    relationTo: 'media',
+    // Images only: the media library also holds videos
+    filterOptions: { mimeType: { contains: 'image' } },
+    admin: {
+      description:
+        'Optionnelle : s’affiche sous le texte. Un bloc dont chaque colonne n’a qu’une image s’affiche en rangée de photos.',
+    },
+  },
+  {
     name: 'enableLink',
     type: 'checkbox',
   },

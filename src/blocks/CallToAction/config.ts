@@ -28,6 +28,17 @@ export const CallToAction: Block = {
       }),
       label: false,
     },
+    {
+      name: 'media',
+      type: 'upload',
+      label: 'Photo',
+      relationTo: 'media',
+      // Images only: the media library also holds videos
+      filterOptions: { mimeType: { contains: 'image' } },
+      admin: {
+        description: 'Optionnelle : une photo ronde à gauche du texte, par exemple votre portrait.',
+      },
+    },
     linkGroup({
       appearances: ['default', 'outline'],
       overrides: {
