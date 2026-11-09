@@ -227,7 +227,8 @@ describe('Gallery', () => {
       '50% 30%',
     )
     fireEvent.click(tile)
-    expect(screen.getByRole('dialog', { name: 'Effet rasé, de face' })).toBeTruthy()
+    const fullSize = within(screen.getByRole('dialog', { name: 'Effet rasé, de face' }))
+    expect(fullSize.getByRole('img', { name: 'Vue de face' }).style.objectPosition).toBe('')
   })
 })
 

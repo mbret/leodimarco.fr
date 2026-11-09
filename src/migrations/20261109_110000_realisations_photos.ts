@@ -10,12 +10,12 @@ const realisations = [
   {
     file: 'realisation-effet-rase-1.jpg',
     title: 'Effet rasé, de trois quarts',
-    alt: 'Tricopigmentation effet rasé cicatrisée, vue de trois quarts',
+    alt: 'Tricopigmentation effet rasé cicatrisée, vue de trois quarts sur fond gris',
   },
   {
     file: 'realisation-effet-rase-2.jpg',
     title: 'Effet rasé, de face',
-    alt: 'Tricopigmentation effet rasé cicatrisée, vue de face',
+    alt: 'Tricopigmentation effet rasé cicatrisée, vue de face sur fond gris',
   },
   {
     file: 'realisation-effet-rase-3.jpg',
@@ -25,12 +25,12 @@ const realisations = [
   {
     file: 'realisation-effet-rase-4.jpg',
     title: 'Effet rasé, de trois quarts',
-    alt: 'Tricopigmentation effet rasé cicatrisée, vue de trois quarts',
+    alt: 'Tricopigmentation effet rasé cicatrisée, vue de trois quarts, tête penchée',
   },
   {
     file: 'realisation-effet-rase-5.jpg',
     title: 'Effet rasé, de face',
-    alt: 'Tricopigmentation effet rasé cicatrisée, vue de face',
+    alt: 'Tricopigmentation effet rasé cicatrisée, vue de face sur fond vert foncé',
   },
   {
     file: 'realisation-effet-rase-gros-plan.jpg',
@@ -42,14 +42,19 @@ const realisations = [
 // Fills the Résultats page with Léo's healed results. It adds them only while the gallery is empty,
 // so réalisations entered in the admin are never duplicated or reordered.
 // The file names start with realisation- so that they never replace an image uploaded from the
-// production admin: preview deployments upload to the same bucket.
+// production admin: preview deployments upload to the same bucket. For the same reason, deleting
+// one of these photos from a preview admin deletes production's file.
+// A site that was not seeded yet keeps an empty gallery: the seed creates no réalisations.
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   // Checking with SQL rather than Payload keeps this migration working on a new site after later
   // schema changes
   const { rows: pages } = await db.execute(sql`select 1 from pages limit 1`)
   if (pages.length === 0) return
   const { rows: existing } = await db.execute(sql`select 1 from realisations limit 1`)
-  if (existing.length > 0) return
+  if (existing.length > 0) {
+    payload.logger.info('The gallery already holds réalisations: the healed results are not added')
+    return
+  }
 
   // One at a time, so that each réalisation goes after the previous one in the gallery
   for (const { file, title, alt } of realisations) {
