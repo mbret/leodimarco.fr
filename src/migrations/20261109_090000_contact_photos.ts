@@ -7,9 +7,8 @@ import { type ContactPhotos, contactPageData } from '../endpoints/seed/contact'
 
 const photosDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'media')
 
-// Rebuilds the Contact page with photos: the studio on the green band, Léo's face on the card that
-// asks for photos, the three views to send and the studio beside its address. It rewrites the whole
-// page from the seed data, so edits made in the admin since the page was created are lost.
+// Rebuilds the Contact page with its photos. It rewrites the whole page from the seed data, so edits
+// made in the admin since the page was created are lost.
 // The file names start with contact- so that they never replace an image uploaded from the
 // production admin: preview deployments upload to the same bucket. Léo's face reuses the photo
 // that the À propos migration uploaded.
@@ -29,7 +28,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
     req,
     where: { slug: { equals: 'contact' } },
   })
-  // Keeps the form the page shows today, whatever its title
   const contactForm = contact?.layout?.find((block) => block.blockType === 'formBlock')?.form
   if (!contact || !contactForm) return
 

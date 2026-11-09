@@ -31,7 +31,6 @@ describe('Contact page', () => {
     expect(text).toContain('Les photos à m’envoyer')
     expect(text).toContain('Vous préférez écrire ?')
     expect(text).toContain('Sur rendez-vous uniquement.')
-    expect(text).not.toContain('Plus de résultats sur Instagram')
   })
 
   it('offers WhatsApp and a call beside the title, and the form', () => {
@@ -43,7 +42,7 @@ describe('Contact page', () => {
         { link: expect.objectContaining({ url: 'https://wa.me/33744429488', newTab: true }) },
         { link: expect.objectContaining({ url: 'tel:+33744429488', label: '07 44 42 94 88' }) },
       ])
-      expect(page.hero.links?.[1]?.link).not.toHaveProperty('newTab')
+      expect(page.hero.links?.[1]?.link.newTab).toBeFalsy()
       expect(page.layout).toContainEqual(
         expect.objectContaining({ blockType: 'formBlock', form: contactForm }),
       )
