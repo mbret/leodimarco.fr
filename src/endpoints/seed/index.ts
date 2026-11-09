@@ -3,6 +3,7 @@ import type { Payload, PayloadRequest, RequiredDataFromCollectionSlug } from 'pa
 import type { Form, Page } from '@/payload-types'
 
 import { aProposPageData } from './aPropos'
+import { contactPageData } from './contact'
 import { contactFormData } from './contactForm'
 import { faqPageData } from './faq'
 import { homePageData } from './home'
@@ -94,19 +95,7 @@ export const seed = async ({
     existingForm ||
     (await payload.create({ collection: 'forms', data: contactFormData, depth: 0, req }))
 
-  const contact = await ensurePage({
-    slug: 'contact',
-    title: 'Contact',
-    hero: hero(
-      'Contact',
-      'Studio privé, sur rendez-vous. Décrivez votre situation, je vous réponds pour convenir d’une consultation.',
-    ),
-    layout: [{ blockType: 'formBlock', form: contactForm.id, enableIntro: false }, instagramCta],
-    meta: meta(
-      'Contact et rendez-vous',
-      'Prenez rendez-vous pour une tricopigmentation à Pompey, près de Nancy : studio privé, sur rendez-vous. Décrivez votre situation, réponse rapide.',
-    ),
-  })
+  const contact = await ensurePage(contactPageData({ contactForm }))
 
   const galerie = await ensurePage({
     slug: 'galerie',
