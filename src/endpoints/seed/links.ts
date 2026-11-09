@@ -7,6 +7,7 @@ export const STUDIO_ADDRESS = {
   city: 'Pompey',
 }
 export const WHATSAPP_URL = `https://wa.me/${PHONE.slice(1)}`
+export const INSTAGRAM_URL = 'https://www.instagram.com/leodimarcotricopigmentation/'
 export const INSTAGRAM_MESSAGE_URL = 'https://ig.me/m/leodimarcotricopigmentation'
 
 // Link to another page, as stored by the link field
