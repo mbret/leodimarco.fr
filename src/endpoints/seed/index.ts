@@ -3,10 +3,11 @@ import type { Payload, PayloadRequest, RequiredDataFromCollectionSlug } from 'pa
 import type { Form, Page } from '@/payload-types'
 
 import { aProposPageData } from './aPropos'
+import { contactPageData } from './contact'
 import { contactFormData } from './contactForm'
 import { faqPageData } from './faq'
 import { homePageData } from './home'
-import { pageLink } from './links'
+import { PHONE, pageLink, STUDIO_ADDRESS } from './links'
 import { prestationsPageData, servicePagesData } from './prestations'
 import { heading, paragraph, richText } from './richText'
 
@@ -94,19 +95,7 @@ export const seed = async ({
     existingForm ||
     (await payload.create({ collection: 'forms', data: contactFormData, depth: 0, req }))
 
-  const contact = await ensurePage({
-    slug: 'contact',
-    title: 'Contact',
-    hero: hero(
-      'Contact',
-      'Studio privé, sur rendez-vous. Décrivez votre situation, je vous réponds pour convenir d’une consultation.',
-    ),
-    layout: [{ blockType: 'formBlock', form: contactForm.id, enableIntro: false }, instagramCta],
-    meta: meta(
-      'Contact et rendez-vous',
-      'Prenez rendez-vous pour une tricopigmentation à Pompey, près de Nancy : studio privé, sur rendez-vous. Décrivez votre situation, réponse rapide.',
-    ),
-  })
+  const contact = await ensurePage(contactPageData({ contactForm }))
 
   const galerie = await ensurePage({
     slug: 'galerie',
@@ -181,10 +170,8 @@ export const seed = async ({
   // Fill in each studio detail only where nothing has been entered yet
   const studio = await payload.findGlobal({ slug: 'studio', depth: 0, req })
   const studioDefaults = {
-    phone: '+33744429488',
-    street: '74 rue des Jardins Fleuris',
-    postalCode: '54340',
-    city: 'Pompey',
+    phone: PHONE,
+    ...STUDIO_ADDRESS,
   }
   const missingStudio = {
     ...Object.fromEntries(

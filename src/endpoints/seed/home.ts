@@ -2,7 +2,7 @@ import type { RequiredDataFromCollectionSlug } from 'payload'
 
 import type { Page } from '@/payload-types'
 
-import { pageLink } from './links'
+import { externalLink, INSTAGRAM_MESSAGE_URL, pageLink, WHATSAPP_URL } from './links'
 import type { ServicePages } from './prestations'
 import { heading, paragraph, richText } from './richText'
 
@@ -17,11 +17,6 @@ type LinkedPages = {
   galerie: Page
   services?: ServicePages
 }
-
-// Ways to send photos to Léo besides the contact form: WhatsApp on 07 44 42 94 88 and a direct
-// message on Instagram
-const WHATSAPP_URL = 'https://wa.me/33744429488'
-const INSTAGRAM_MESSAGE_URL = 'https://ig.me/m/leodimarcotricopigmentation'
 
 // Léo's Google Business profile, where clients leave their reviews
 const GOOGLE_REVIEWS_URL =
@@ -45,10 +40,6 @@ export const googleReviews = [
     author: 'Théo M.',
   },
 ]
-
-const externalLink = (url: string, label: string) => ({
-  link: { type: 'custom' as const, url, newTab: true, label },
-})
 
 // Button to a service's page, as on the Prestations cards
 const serviceButton = (page: Page, label: string) => ({
