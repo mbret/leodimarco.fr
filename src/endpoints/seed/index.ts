@@ -7,7 +7,7 @@ import { contactPageData } from './contact'
 import { contactFormData } from './contactForm'
 import { faqPageData } from './faq'
 import { homePageData } from './home'
-import { PHONE, pageLink } from './links'
+import { PHONE, pageLink, STUDIO_ADDRESS } from './links'
 import { prestationsPageData, servicePagesData } from './prestations'
 import { heading, paragraph, richText } from './richText'
 
@@ -171,9 +171,7 @@ export const seed = async ({
   const studio = await payload.findGlobal({ slug: 'studio', depth: 0, req })
   const studioDefaults = {
     phone: PHONE,
-    street: '74 rue des Jardins Fleuris',
-    postalCode: '54340',
-    city: 'Pompey',
+    ...STUDIO_ADDRESS,
   }
   const missingStudio = {
     ...Object.fromEntries(

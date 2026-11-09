@@ -1,10 +1,11 @@
 import type { Page } from '@/payload-types'
 
-// Léo's number, for WhatsApp and calls, and a direct message on Instagram: the ways to reach him
-// besides the contact form
 export const PHONE = '+33744429488'
-export const PHONE_LABEL = '07 44 42 94 88'
-export const PHONE_URL = `tel:${PHONE}`
+export const STUDIO_ADDRESS = {
+  street: '74 rue des Jardins Fleuris',
+  postalCode: '54340',
+  city: 'Pompey',
+}
 export const WHATSAPP_URL = `https://wa.me/${PHONE.slice(1)}`
 export const INSTAGRAM_MESSAGE_URL = 'https://ig.me/m/leodimarcotricopigmentation'
 

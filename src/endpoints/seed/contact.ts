@@ -2,14 +2,14 @@ import type { RequiredDataFromCollectionSlug } from 'payload'
 
 import type { Form } from '@/payload-types'
 
-import { externalLink, INSTAGRAM_MESSAGE_URL, PHONE_LABEL, PHONE_URL, WHATSAPP_URL } from './links'
+import { formatPhone } from '../../utilities/formatPhone'
+import { externalLink, INSTAGRAM_MESSAGE_URL, PHONE, STUDIO_ADDRESS, WHATSAPP_URL } from './links'
 import { heading, paragraph, richText } from './richText'
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
 
-// Directions to the studio in Google Maps, from where the visitor is
-const DIRECTIONS_URL =
-  'https://www.google.com/maps/dir/?api=1&destination=74+rue+des+Jardins+Fleuris%2C+54340+Pompey'
+const { street, postalCode, city } = STUDIO_ADDRESS
+const DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${street}, ${postalCode} ${city}`)}`
 
 // Photos of the Contact page, by their id in the media collection, named after where they go
 export type ContactPhotos = {
@@ -23,10 +23,8 @@ export type ContactPhotos = {
   studio: number
 }
 
-// Contact page content: the quickest ways to reach Léo first (WhatsApp, a call), then the photos he
-// needs for a first opinion, the contact form and the studio's address. Without photos, as on a new
-// site, the dot pattern stays beside the title. Used by the seed and by the migration that brings
-// existing sites up to date.
+// Contact page content. Without photos, as on a new site, the dot pattern stays beside the title.
+// Used by the seed and by the migration that brings existing sites up to date.
 export const contactPageData = ({
   contactForm,
   photos,
@@ -47,8 +45,8 @@ export const contactPageData = ({
     {
       link: {
         type: 'custom' as const,
-        url: PHONE_URL,
-        label: PHONE_LABEL,
+        url: `tel:${PHONE}`,
+        label: formatPhone(PHONE),
         appearance: 'outline' as const,
       },
     },
@@ -56,7 +54,7 @@ export const contactPageData = ({
 
   const studio = richText(
     heading('Le studio', 'h2'),
-    paragraph('74 rue des Jardins Fleuris\n54340 Pompey, près de Nancy'),
+    paragraph(`${street}\n${postalCode} ${city}, près de Nancy`),
     paragraph('Sur rendez-vous uniquement.'),
   )
   const itinerary = {
