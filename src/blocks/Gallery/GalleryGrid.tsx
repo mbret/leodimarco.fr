@@ -29,13 +29,14 @@ export const GalleryGrid: React.FC<{ realisations: Realisation[] }> = ({ realisa
         {realisations.map((realisation, index) => (
           <li key={realisation.id}>
             <button
-              className="relative block aspect-square w-full overflow-hidden rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              className="relative block aspect-[4/5] w-full overflow-hidden rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               onClick={() => setOpenIndex(index)}
               type="button"
             >
               <span className="sr-only">{realisation.title}</span>
               <Media
                 fill
+                focalPoint
                 imgClassName="object-cover transition-transform hover:scale-105"
                 resource={realisation.image}
                 size="(max-width: 768px) 50vw, 33vw"

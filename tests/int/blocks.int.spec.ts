@@ -1,9 +1,10 @@
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import React from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
+import { GalleryGrid } from '@/blocks/Gallery/GalleryGrid'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { heading, paragraph, richText } from '@/endpoints/seed/richText'
 import { Media } from '@/components/Media'
@@ -202,6 +203,32 @@ describe('Green band hero', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'À propos de moi' })).toBeTruthy()
     const portrait = screen.getByRole('img', { name: 'Léo Di Marco dans son studio' })
     expect(portrait.style.objectPosition).toBe('38% 35%')
+  })
+})
+
+describe('Gallery', () => {
+  it('frames each result on its focal point and opens it full size', () => {
+    render(
+      React.createElement(GalleryGrid, {
+        realisations: [
+          {
+            id: 1,
+            title: 'Effet rasé, de face',
+            image: { ...photo(1, 'Vue de face'), focalX: 50, focalY: 30 },
+            createdAt: '2026-11-09T00:00:00.000Z',
+            updatedAt: '2026-11-09T00:00:00.000Z',
+          },
+        ],
+      }),
+    )
+
+    const tile = screen.getByRole('button', { name: /Effet rasé, de face/ })
+    expect(within(tile).getByRole('img', { name: 'Vue de face' }).style.objectPosition).toBe(
+      '50% 30%',
+    )
+    fireEvent.click(tile)
+    const fullSize = within(screen.getByRole('dialog', { name: 'Effet rasé, de face' }))
+    expect(fullSize.getByRole('img', { name: 'Vue de face' }).style.objectPosition).toBe('')
   })
 })
 
