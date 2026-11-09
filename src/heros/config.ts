@@ -28,7 +28,7 @@ export const hero: Field = {
           value: 'highImpact',
         },
         {
-          label: 'Medium Impact',
+          label: 'Bandeau vert avec photo',
           value: 'mediumImpact',
         },
         {
@@ -75,6 +75,8 @@ export const hero: Field = {
         condition: (_, { type } = {}) => ['highImpact', 'mediumImpact'].includes(type),
       },
       relationTo: 'media',
+      // Images only: the media library also holds videos, which would not fill the hero
+      filterOptions: { mimeType: { contains: 'image' } },
       required: true,
     },
   ],

@@ -1,9 +1,23 @@
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import React from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
+import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { ContentBlock } from '@/blocks/Content/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
-import { paragraph } from '@/endpoints/seed/richText'
+import { heading, paragraph, richText } from '@/endpoints/seed/richText'
+import { Media } from '@/components/Media'
+import { MediumImpactHero } from '@/heros/MediumImpact'
+
+const photo = (id: number, alt: string) => ({
+  id,
+  alt,
+  url: `/api/media/file/photo-${id}.jpg`,
+  width: 1200,
+  height: 1500,
+  createdAt: '2026-11-07T00:00:00.000Z',
+  updatedAt: '2026-11-07T00:00:00.000Z',
+})
 
 afterEach(cleanup)
 
@@ -86,5 +100,121 @@ describe('Seed rich text', () => {
       { type: 'linebreak' },
       { type: 'text', text: 'Une technique.', format: 0 },
     ])
+  })
+})
+
+describe('Content block', () => {
+  it('shows a column’s image under its text', () => {
+    render(
+      React.createElement(ContentBlock, {
+        blockType: 'content',
+        columns: [
+          { size: 'half', richText: richText(paragraph('Ma formation')) },
+          {
+            size: 'half',
+            richText: richText(paragraph('Le studio')),
+            media: photo(1, 'Le studio'),
+          },
+        ],
+      }),
+    )
+
+    expect(screen.getByText('Ma formation')).toBeTruthy()
+    expect(screen.getByRole('img', { name: 'Le studio' })).toBeTruthy()
+    expect(screen.queryByRole('list', { name: 'Photos' })).toBeNull()
+  })
+
+  it('shows columns that each hold only an image as a row of photos', () => {
+    render(
+      React.createElement(ContentBlock, {
+        blockType: 'content',
+        columns: [1, 2, 3].map((id) => ({
+          size: 'oneThird' as const,
+          media: photo(id, `Photo ${id}`),
+        })),
+      }),
+    )
+
+    const row = screen.getByRole('list', { name: 'Photos' })
+    expect(
+      within(row)
+        .getAllByRole('img')
+        .map((img) => img.getAttribute('alt')),
+    ).toEqual(['Photo 1', 'Photo 2', 'Photo 3'])
+    expect(row.getAttribute('tabindex')).toBe('0')
+  })
+
+  it('keeps a single image in its column', () => {
+    render(
+      React.createElement(ContentBlock, {
+        blockType: 'content',
+        columns: [{ size: 'full', media: photo(1, 'Le studio') }],
+      }),
+    )
+
+    expect(screen.getByRole('img', { name: 'Le studio' })).toBeTruthy()
+    expect(screen.queryByRole('list', { name: 'Photos' })).toBeNull()
+  })
+
+  it('shows no image in a text column', () => {
+    render(
+      React.createElement(ContentBlock, {
+        blockType: 'content',
+        columns: [{ size: 'full', richText: richText(paragraph('Mon engagement')) }],
+      }),
+    )
+
+    expect(screen.getByText('Mon engagement')).toBeTruthy()
+    expect(screen.queryByRole('img')).toBeNull()
+  })
+})
+
+describe('Call to action block', () => {
+  const block = {
+    blockType: 'cta' as const,
+    richText: richText(paragraph('Envoyez-moi quelques photos.')),
+  }
+
+  it('shows the photo beside the text', () => {
+    render(React.createElement(CallToActionBlock, { ...block, media: photo(6, 'Léo Di Marco') }))
+
+    expect(screen.getByRole('img', { name: 'Léo Di Marco' })).toBeTruthy()
+    expect(screen.getByText('Envoyez-moi quelques photos.')).toBeTruthy()
+  })
+
+  it('shows no photo without one', () => {
+    render(React.createElement(CallToActionBlock, block))
+
+    expect(screen.queryByRole('img')).toBeNull()
+  })
+})
+
+describe('Green band hero', () => {
+  it('shows the title beside the photo, framed on its focal point', () => {
+    render(
+      React.createElement(MediumImpactHero, {
+        type: 'mediumImpact',
+        richText: richText(heading('À propos de moi'), paragraph('Je m’appelle Léo Di Marco.')),
+        media: { ...photo(1, 'Léo Di Marco dans son studio'), focalX: 38, focalY: 35 },
+      }),
+    )
+
+    expect(screen.getByRole('heading', { level: 1, name: 'À propos de moi' })).toBeTruthy()
+    const portrait = screen.getByRole('img', { name: 'Léo Di Marco dans son studio' })
+    expect(portrait.style.objectPosition).toBe('38% 35%')
+  })
+})
+
+describe('Media', () => {
+  it('keeps an image shown whole centred, whatever its focal point', () => {
+    render(
+      React.createElement(Media, {
+        fill: true,
+        imgClassName: 'object-contain',
+        resource: { ...photo(1, 'Avant'), focalX: 20, focalY: 50 },
+      }),
+    )
+
+    expect(screen.getByRole('img', { name: 'Avant' }).style.objectPosition).toBe('')
   })
 })

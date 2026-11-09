@@ -30,6 +30,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   const {
     alt: altFromProps,
     fill,
+    focalPoint,
     pictureClassName,
     imgClassName,
     priority,
@@ -43,13 +44,26 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   let height: number | undefined
   let alt = altFromProps
   let src: StaticImageData | string = srcFromProps || ''
+  let objectPosition: string | undefined
 
   if (!src && resource && typeof resource === 'object') {
-    const { alt: altFromResource, height: fullHeight, url, width: fullWidth } = resource
+    const {
+      alt: altFromResource,
+      focalX,
+      focalY,
+      height: fullHeight,
+      url,
+      width: fullWidth,
+    } = resource
 
     width = fullWidth!
     height = fullHeight!
     alt = altFromResource || ''
+
+    // Only on request: an image shown whole (object-contain) would move off centre
+    if (focalPoint && typeof focalX === 'number' && typeof focalY === 'number') {
+      objectPosition = `${focalX}% ${focalY}%`
+    }
 
     const cacheTag = resource.updatedAt
 
@@ -79,6 +93,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         loading={loading}
         sizes={sizes}
         src={src}
+        style={objectPosition ? { objectPosition } : undefined}
         width={!fill ? width : undefined}
       />
     </picture>

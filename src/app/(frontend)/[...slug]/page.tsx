@@ -79,9 +79,13 @@ export default async function Page({ params: paramsPromise }: Args) {
   // Pages with dots beside their title get them mirrored at the bottom left too, resting on the
   // footer: the page stretches down to it when it is shorter than the screen
   const dots = hero?.type === 'lowImpact' && Boolean(hero.dotPattern)
+  // The green band starts right under the menu
+  const band = hero?.type === 'mediumImpact'
 
   return (
-    <article className={cn('pt-8 md:pt-16 pb-12 md:pb-24', dots && 'relative isolate grow')}>
+    <article
+      className={cn('pb-12 md:pb-24', !band && 'pt-8 md:pt-16', dots && 'relative isolate grow')}
+    >
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
