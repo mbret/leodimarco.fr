@@ -7,7 +7,7 @@ import { contactPageData } from './contact'
 import { contactFormData } from './contactForm'
 import { faqPageData } from './faq'
 import { homePageData } from './home'
-import { PHONE, pageLink, STUDIO_ADDRESS } from './links'
+import { externalLink, INSTAGRAM_URL, PHONE, pageLink, STUDIO_ADDRESS } from './links'
 import { prestationsPageData, servicePagesData } from './prestations'
 import { heading, paragraph, richText } from './richText'
 
@@ -19,7 +19,6 @@ const hero = (title: string, intro?: string): PageData['hero'] => ({
   richText: richText(heading(title), ...(intro ? [paragraph(intro)] : [])),
 })
 
-const INSTAGRAM_URL = 'https://www.instagram.com/leodimarcotricopigmentation/'
 const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61557075478028'
 
 const instagramCta = {
@@ -28,16 +27,7 @@ const instagramCta = {
     heading('Plus de résultats sur Instagram', 'h3'),
     paragraph('Je partage régulièrement mes derniers résultats cicatrisés.'),
   ),
-  links: [
-    {
-      link: {
-        type: 'custom' as const,
-        url: INSTAGRAM_URL,
-        newTab: true,
-        label: 'Suivre sur Instagram',
-      },
-    },
-  ],
+  links: [externalLink(INSTAGRAM_URL, 'Suivre sur Instagram')],
 }
 
 // SEO title and description; generateMeta appends the site name to the title
