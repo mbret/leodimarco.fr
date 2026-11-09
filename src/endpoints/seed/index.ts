@@ -6,7 +6,7 @@ import { aProposPageData } from './aPropos'
 import { contactFormData } from './contactForm'
 import { faqPageData } from './faq'
 import { homePageData } from './home'
-import { pageLink } from './links'
+import { PHONE, pageLink } from './links'
 import { prestationsPageData, servicePagesData } from './prestations'
 import { heading, paragraph, richText } from './richText'
 
@@ -181,7 +181,7 @@ export const seed = async ({
   // Fill in each studio detail only where nothing has been entered yet
   const studio = await payload.findGlobal({ slug: 'studio', depth: 0, req })
   const studioDefaults = {
-    phone: '+33744429488',
+    phone: PHONE,
     street: '74 rue des Jardins Fleuris',
     postalCode: '54340',
     city: 'Pompey',
