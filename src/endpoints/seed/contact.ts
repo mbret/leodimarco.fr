@@ -83,7 +83,7 @@ export const contactPageData = ({
         blockType: 'cta',
         media: photos?.contactCard,
         richText: richText(
-          heading('Les photos à m’envoyer', 'h3'),
+          heading('Les photos à m’envoyer', 'h2'),
           paragraph(
             'De face, de côté et de dos, cheveux courts si possible, en lumière naturelle.',
           ),

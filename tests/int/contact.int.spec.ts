@@ -61,7 +61,15 @@ describe('Contact page', () => {
     expect(layout.at(-1)).toMatchObject({
       blockType: 'content',
       columns: [
-        { size: 'half', enableLink: true, link: { label: 'Itinéraire' } },
+        {
+          size: 'half',
+          enableLink: true,
+          link: {
+            url: 'https://www.google.com/maps/dir/?api=1&destination=74%20rue%20des%20Jardins%20Fleuris%2C%2054340%20Pompey',
+            newTab: true,
+            label: 'Itinéraire',
+          },
+        },
         { size: 'half', media: photos.studio },
       ],
     })
