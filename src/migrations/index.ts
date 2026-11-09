@@ -29,6 +29,7 @@ import * as migration_20261019_184720_home_google_reviews from './20261019_18472
 import * as migration_20261019_193802_review_photos from './20261019_193802_review_photos'
 import * as migration_20261107_171752_content_column_image_and_cta_photo from './20261107_171752_content_column_image_and_cta_photo'
 import * as migration_20261107_174500_a_propos_photos from './20261107_174500_a_propos_photos'
+import * as migration_20261109_090000_contact_photos from './20261109_090000_contact_photos'
 
 export const migrations = [
   {
@@ -185,5 +186,10 @@ export const migrations = [
     up: migration_20261107_174500_a_propos_photos.up,
     down: migration_20261107_174500_a_propos_photos.down,
     name: '20261107_174500_a_propos_photos',
+  },
+  {
+    up: migration_20261109_090000_contact_photos.up,
+    down: migration_20261109_090000_contact_photos.down,
+    name: '20261109_090000_contact_photos',
   },
 ]
