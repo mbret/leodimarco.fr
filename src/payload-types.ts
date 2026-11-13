@@ -834,16 +834,19 @@ export interface KeyFactsBlock {
 export interface Realisation {
   id: number;
   _order?: string | null;
-  /**
-   * Optionnel. Si elle est renseignée, la galerie affiche l’avant et l’après.
-   */
-  before?: (number | null) | Media;
-  image: number | Media;
   title: string;
   /**
    * Optionnel : zone traitée, nombre de séances…
    */
   description?: string | null;
+  /**
+   * Une photo par vue. La première s’affiche dans la galerie, les autres au choix de la vue.
+   */
+  photos: {
+    view: 'face' | 'troisQuarts' | 'profil' | 'dos' | 'grosPlan';
+    image: number | Media;
+    id?: string | null;
+  }[];
   updatedAt: string;
   createdAt: string;
 }
@@ -1362,10 +1365,15 @@ export interface KeyFactsBlockSelect<T extends boolean = true> {
  */
 export interface RealisationsSelect<T extends boolean = true> {
   _order?: T;
-  before?: T;
-  image?: T;
   title?: T;
   description?: T;
+  photos?:
+    | T
+    | {
+        view?: T;
+        image?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

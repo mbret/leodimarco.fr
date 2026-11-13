@@ -2,6 +2,8 @@ import { cleanup, fireEvent, render, screen, within } from '@testing-library/rea
 import React from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
+import type { Realisation } from '@/payload-types'
+
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { GalleryGrid } from '@/blocks/Gallery/GalleryGrid'
@@ -207,28 +209,76 @@ describe('Green band hero', () => {
 })
 
 describe('Gallery', () => {
-  it('frames each result on its focal point and opens it full size', () => {
+  const realisation = (id: number, photos: Realisation['photos']): Realisation => ({
+    id,
+    title: 'Effet rasé',
+    photos,
+    createdAt: '2026-11-13T00:00:00.000Z',
+    updatedAt: '2026-11-13T00:00:00.000Z',
+  })
+
+  it('shows a client’s first view, framed on its focal point, and a chip for each view', () => {
     render(
       React.createElement(GalleryGrid, {
         realisations: [
-          {
-            id: 1,
-            title: 'Effet rasé, de face',
-            image: { ...photo(1, 'Vue de face'), focalX: 50, focalY: 30 },
-            createdAt: '2026-11-09T00:00:00.000Z',
-            updatedAt: '2026-11-09T00:00:00.000Z',
-          },
+          realisation(1, [
+            {
+              id: 'a',
+              view: 'troisQuarts',
+              image: { ...photo(1, 'Trois quarts'), focalX: 50, focalY: 30 },
+            },
+            { id: 'b', view: 'face', image: photo(2, 'Face') },
+            { id: 'c', view: 'dos', image: photo(3, 'Dos') },
+          ]),
         ],
       }),
     )
 
-    const tile = screen.getByRole('button', { name: /Effet rasé, de face/ })
-    expect(within(tile).getByRole('img', { name: 'Vue de face' }).style.objectPosition).toBe(
-      '50% 30%',
+    const card = within(screen.getByRole('group', { name: 'Effet rasé' }))
+    expect(card.getAllByRole('img').map((img) => img.getAttribute('alt'))).toEqual([
+      'Trois quarts',
+      'Face',
+      'Dos',
+    ])
+    expect(card.getByRole('img', { name: 'Trois quarts' }).style.objectPosition).toBe('50% 30%')
+    const views = within(screen.getByRole('group', { name: 'Vues' }))
+    expect(views.getAllByRole('button').map((chip) => chip.textContent)).toEqual([
+      '3/4',
+      'Face',
+      'Dos',
+    ])
+    expect(views.getByRole('button', { name: '3/4' }).getAttribute('aria-pressed')).toBe('true')
+  })
+
+  it('shows the view a chip names', () => {
+    render(
+      React.createElement(GalleryGrid, {
+        realisations: [
+          realisation(1, [
+            { id: 'a', view: 'troisQuarts', image: photo(1, 'Trois quarts') },
+            { id: 'b', view: 'dos', image: photo(2, 'Dos') },
+          ]),
+        ],
+      }),
     )
-    fireEvent.click(tile)
-    const fullSize = within(screen.getByRole('dialog', { name: 'Effet rasé, de face' }))
-    expect(fullSize.getByRole('img', { name: 'Vue de face' }).style.objectPosition).toBe('')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Dos' }))
+
+    expect(screen.getByRole('button', { name: 'Dos' }).getAttribute('aria-pressed')).toBe('true')
+    expect(screen.getByRole('button', { name: '3/4' }).getAttribute('aria-pressed')).toBe('false')
+  })
+
+  it('names the view of a client with a single photo', () => {
+    render(
+      React.createElement(GalleryGrid, {
+        realisations: [
+          realisation(1, [{ id: 'a', view: 'grosPlan', image: photo(1, 'Gros plan') }]),
+        ],
+      }),
+    )
+
+    expect(screen.getByText('Gros plan')).toBeTruthy()
+    expect(screen.queryByRole('button')).toBeNull()
   })
 })
 
