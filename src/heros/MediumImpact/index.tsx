@@ -8,9 +8,7 @@ import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 
 // Title and text on a band in the green of the studio wall, with the photo beside them from the
-// middle of the screen to its right edge. The band is a quarter of the screen width high, up to
-// 28rem, and the photo is cropped around its focal point to fill it. On phones the photo comes
-// under the text.
+// middle of the screen to its right edge. On phones the photo comes under the text.
 export const MediumImpactHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumbs'] }> = ({
   breadcrumbs,
   links,
