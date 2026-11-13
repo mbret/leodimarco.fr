@@ -6,18 +6,18 @@ import type { Media as MediaType } from '@/payload-types'
 export interface Props {
   alt?: string
   className?: string
-  fill?: boolean // for NextImage only
+  fill?: boolean // covers the positioned ancestor that the caller sets
   focalPoint?: boolean // for a cropped image: keeps the focal point set in the admin in view
   htmlElement?: ElementType | null
   pictureClassName?: string
   imgClassName?: string
   onClick?: () => void
   onLoad?: () => void
-  loading?: 'lazy' | 'eager' // for NextImage only
-  priority?: boolean // for NextImage only
+  loading?: 'lazy' | 'eager'
+  priority?: boolean // loads eagerly, at high fetch priority
   ref?: Ref<HTMLImageElement | HTMLVideoElement | null>
   resource?: MediaType | string | number | null // for Payload media
-  size?: string // for NextImage only
+  size?: string // the `sizes` attribute: the width the image renders at
   src?: StaticImageData // for static media
   videoClassName?: string
 }

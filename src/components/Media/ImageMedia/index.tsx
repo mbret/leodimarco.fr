@@ -1,31 +1,59 @@
 'use client'
 
-import type { StaticImageData } from 'next/image'
+import type { CSSProperties } from 'react'
 
 import { cn } from '@/utilities/ui'
-import NextImage from 'next/image'
 import React from 'react'
+
+import type { Media as MediaType } from '@/payload-types'
 
 import type { Props as MediaProps } from '../types'
 
-import { cssVariables } from '@/cssVariables'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
-const { breakpoints } = cssVariables
+/**
+ * The generated sizes that `srcset` offers, narrowest first: the WebP copies Payload makes of
+ * every upload (see `src/collections/Media.ts`). `square` and `og` are crops of another shape, so
+ * they cannot share a `srcset` with these.
+ */
+const LADDER = ['thumbnail', 'small', 'medium', 'large', 'xlarge'] as const
 
-// A base64 encoded image to use as a placeholder while the image is loading
-const placeholderBlur =
-  'data:image/png;base64,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'
+type GeneratedSize = NonNullable<NonNullable<MediaType['sizes']>[(typeof LADDER)[number]]>
+
+/** The type the `<source>` declares, so every size on it must have it. */
+const LADDER_TYPE = 'image/webp'
 
 /**
- * ImageMedia
- *
- * Payload returns relative media URLs (e.g. `/api/media/file/image.webp`), which Next.js Image
- * optimizes as local images through `images.localPatterns` in next.config.ts. `getMediaUrl`
- * only appends a cache tag. If media is ever served from another host, allow that host in
- * `images.remotePatterns`.
+ * Uploads from before the WebP sizes have JPEG sizes. Declared as WebP, they would tell the
+ * browser something false, so they are left out until `scripts/regenerate-media-sizes.ts`
+ * rebuilds them. Until then the `<img>` serves the original.
  */
+const isUsable = (size: GeneratedSize | null | undefined): size is GeneratedSize =>
+  Boolean(size?.url && size?.width && size?.mimeType === LADDER_TYPE)
 
+/** Sharp keeps only the first frame of a GIF, so its sizes would stop the animation. */
+const KEEP_ORIGINAL_TYPES = new Set(['image/gif'])
+
+/** The WebP sizes as a `srcset`, or an empty string when the upload has none. */
+const srcSetFor = (resource: MediaType) =>
+  KEEP_ORIGINAL_TYPES.has(resource.mimeType ?? '')
+    ? ''
+    : LADDER.map((name) => resource.sizes?.[name])
+        .filter(isUsable)
+        // An upload exactly as wide as a size gets that size twice: `xlarge` does not enlarge it
+        .filter((size, i, all) => all.findIndex((other) => other.width === size.width) === i)
+        .map((size) => `${getMediaUrl(size.url, resource.updatedAt)} ${size.width}w`)
+        .join(', ')
+
+/** What `next/image`'s `fill` did: cover the nearest positioned ancestor. */
+const FILL_STYLE: CSSProperties = { height: '100%', inset: 0, position: 'absolute', width: '100%' }
+
+/**
+ * Serves Payload's own WebP sizes, so no image goes through Vercel's image optimizer.
+ *
+ * The sizes are on a `<source>` typed `image/webp`. A browser that cannot read WebP skips it and
+ * loads the original on the `<img>`.
+ */
 export const ImageMedia: React.FC<MediaProps> = (props) => {
   const {
     alt: altFromProps,
@@ -43,21 +71,21 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   let width: number | undefined
   let height: number | undefined
   let alt = altFromProps
-  let src: StaticImageData | string = srcFromProps || ''
+  let src = ''
+  let srcSet = ''
   let objectPosition: string | undefined
 
-  if (!src && resource && typeof resource === 'object') {
-    const {
-      alt: altFromResource,
-      focalX,
-      focalY,
-      height: fullHeight,
-      url,
-      width: fullWidth,
-    } = resource
+  if (srcFromProps) {
+    // A static import already has a hashed name and its own size
+    src = srcFromProps.src
+    width = srcFromProps.width
+    height = srcFromProps.height
+  } else if (resource && typeof resource === 'object') {
+    const { alt: altFromResource, focalX, focalY, height: fullHeight, url, width: fullWidth } =
+      resource
 
-    width = fullWidth!
-    height = fullHeight!
+    width = fullWidth ?? undefined
+    height = fullHeight ?? undefined
     alt = altFromResource || ''
 
     // Only on request: an image shown whole (object-contain) would move off centre
@@ -65,35 +93,34 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
       objectPosition = `${focalX}% ${focalY}%`
     }
 
-    const cacheTag = resource.updatedAt
-
-    src = getMediaUrl(url, cacheTag)
+    src = getMediaUrl(url, resource.updatedAt)
+    srcSet = srcSetFor(resource)
   }
 
-  const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
+  const loading = loadingFromProps ?? (priority ? 'eager' : 'lazy')
 
-  // NOTE: this is used by the browser to determine which image to download at different screen sizes
-  const sizes = sizeFromProps
-    ? sizeFromProps
-    : Object.entries(breakpoints)
-        .map(([, value]) => `(max-width: ${value}px) ${value * 2}w`)
-        .join(', ')
+  // The width the image renders at, so the browser picks a size before layout. Callers that
+  // know it pass `size`; the others are full width.
+  const sizes = sizeFromProps ?? '100vw'
+
+  const style: CSSProperties = {
+    ...(fill ? FILL_STYLE : {}),
+    ...(objectPosition ? { objectPosition } : {}),
+  }
 
   return (
     <picture className={cn(pictureClassName)}>
-      <NextImage
+      {srcSet && <source sizes={sizes} srcSet={srcSet} type={LADDER_TYPE} />}
+      <img
         alt={alt || ''}
         className={cn(imgClassName)}
-        fill={fill}
+        decoding="async"
+        fetchPriority={priority ? 'high' : undefined}
         height={!fill ? height : undefined}
-        placeholder="blur"
-        blurDataURL={placeholderBlur}
-        priority={priority}
-        quality={100}
         loading={loading}
         sizes={sizes}
         src={src}
-        style={objectPosition ? { objectPosition } : undefined}
+        style={Object.keys(style).length ? style : undefined}
         width={!fill ? width : undefined}
       />
     </picture>

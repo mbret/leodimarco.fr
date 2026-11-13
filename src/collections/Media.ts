@@ -66,10 +66,17 @@ export const Media: CollectionConfig = {
       return headers
     },
     focalPoint: true,
+    /**
+     * `thumbnail` to `xlarge` are the widths `ImageMedia` offers in its `srcset`. Sharp makes them
+     * once, at upload, in WebP. This replaces Vercel's image optimizer, which bills each width,
+     * quality and format again on request. Payload skips a size wider than the upload, so a small
+     * upload gets only the lower widths.
+     */
     imageSizes: [
       {
         name: 'thumbnail',
         width: 300,
+        formatOptions: { format: 'webp', options: { quality: 75 } },
       },
       {
         name: 'square',
@@ -79,19 +86,27 @@ export const Media: CollectionConfig = {
       {
         name: 'small',
         width: 600,
+        formatOptions: { format: 'webp', options: { quality: 75 } },
       },
       {
         name: 'medium',
         width: 900,
+        formatOptions: { format: 'webp', options: { quality: 75 } },
       },
       {
         name: 'large',
         width: 1400,
+        formatOptions: { format: 'webp', options: { quality: 75 } },
       },
+      // `withoutEnlargement` makes this size at the upload's own width when the upload is
+      // narrower than 1920, instead of skipping it. So every upload has a WebP copy at full width.
       {
         name: 'xlarge',
         width: 1920,
+        withoutEnlargement: true,
+        formatOptions: { format: 'webp', options: { quality: 75 } },
       },
+      // Kept in the upload's format: social sites read this one, and some may not read WebP
       {
         name: 'og',
         width: 1200,
