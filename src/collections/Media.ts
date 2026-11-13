@@ -51,6 +51,20 @@ export const Media: CollectionConfig = {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
+    /**
+     * For a bare `/api/media/file/<filename>` URL: one day fresh, then a month in which a cache
+     * answers from its copy and refreshes in the background. The media file route gives URLs
+     * with a cache tag a year instead (see `mediaCacheTag.ts`). Without this header, Vercel
+     * answers `max-age=0, must-revalidate` and caches nothing.
+     */
+    modifyResponseHeaders: ({ headers }) => {
+      headers.set(
+        'Cache-Control',
+        'public, max-age=86400, s-maxage=86400, stale-while-revalidate=2592000',
+      )
+
+      return headers
+    },
     focalPoint: true,
     imageSizes: [
       {

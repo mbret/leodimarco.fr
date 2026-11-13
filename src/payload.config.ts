@@ -15,6 +15,7 @@ import { Studio } from './Studio/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { mediaStorage } from './utilities/mediaStorage'
 import { DEFAULT_SENDER } from './utilities/sender'
 import { SITE_NAME } from './utilities/siteName'
 import { s3Storage } from '@payloadcms/storage-s3'
@@ -95,21 +96,11 @@ export default buildConfig({
   cors: [getServerSideURL()].filter(Boolean),
   plugins: [
     ...plugins,
-    // Cloudflare R2 through its S3 API; without R2_BUCKET (local dev) uploads go to public/media
     s3Storage({
+      ...mediaStorage,
       alwaysInsertFields: true,
-      enabled: Boolean(process.env.R2_BUCKET),
       collections: {
         media: true,
-      },
-      bucket: process.env.R2_BUCKET || '',
-      config: {
-        endpoint: process.env.R2_ENDPOINT,
-        region: 'auto',
-        credentials: {
-          accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
-        },
       },
     }),
   ],
