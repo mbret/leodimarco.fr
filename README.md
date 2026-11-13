@@ -40,6 +40,16 @@ Services:
 
   Without `R2_BUCKET`, uploads are written to `public/media`, which fails on Vercel's read-only filesystem.
 
+  Images do not go through Next.js image optimization, which Vercel bills per transformation. At upload, Payload makes WebP copies at several widths, and `ImageMedia` offers them in a `srcset`. The route `src/app/(payload)/api/media/file/[filename]` reads each file straight from R2 and lets Vercel's CDN keep it for a year.
+
+  Uploads made before the WebP sizes show their full-size original until their sizes are made again. To do that, run this once with production's `POSTGRES_URL` and `R2_*` variables in `.env`, then redeploy:
+
+  ```bash
+  NODE_ENV=production DRY_RUN=1 pnpm payload run scripts/regenerate-media-sizes.ts
+  ```
+
+  If the list is correct, run it without `DRY_RUN=1`. Set `NODE_ENV=production`, or Payload pushes the local schema to the database.
+
 - **Amazon SES** (`us-east-1`): sends the contact form's emails from an `@leodimarco.fr` address.
   1. Create a domain identity for `leodimarco.fr` with Easy DKIM, and add the three DKIM CNAME records it lists to the domain's DNS at OVH.
   2. While the account is in the SES sandbox, it can only send to verified addresses: also create an email address identity for the recipient set in the form, and confirm it from the email SES sends.
