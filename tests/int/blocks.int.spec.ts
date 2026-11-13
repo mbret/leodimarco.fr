@@ -234,7 +234,7 @@ describe('Gallery', () => {
       }),
     )
 
-    const card = within(screen.getByRole('group', { name: 'Effet rasé' }))
+    const card = within(screen.getByRole('group', { name: 'Effet rasé, réalisation 1 sur 1' }))
     expect(card.getAllByRole('img').map((img) => img.getAttribute('alt'))).toEqual([
       'Trois quarts',
       'Face',
@@ -250,7 +250,8 @@ describe('Gallery', () => {
     expect(views.getByRole('button', { name: '3/4' }).getAttribute('aria-pressed')).toBe('true')
   })
 
-  it('shows the view a chip names', () => {
+  // jsdom lays nothing out, so each test gives the strip the width of one view
+  const renderTwoViews = () => {
     render(
       React.createElement(GalleryGrid, {
         realisations: [
@@ -261,11 +262,36 @@ describe('Gallery', () => {
         ],
       }),
     )
+    const strip = screen.getByRole('group', { name: 'Effet rasé, réalisation 1 sur 1' })
+    Object.defineProperty(strip, 'clientWidth', { configurable: true, value: 400 })
+    const pressed = () =>
+      screen
+        .getAllByRole('button')
+        .filter((chip) => chip.getAttribute('aria-pressed') === 'true')
+        .map((chip) => chip.textContent)
+    return { pressed, strip }
+  }
+
+  it('scrolls to the view a chip names, and keeps that chip pressed on the way', () => {
+    const { pressed, strip } = renderTwoViews()
 
     fireEvent.click(screen.getByRole('button', { name: 'Dos' }))
 
-    expect(screen.getByRole('button', { name: 'Dos' }).getAttribute('aria-pressed')).toBe('true')
-    expect(screen.getByRole('button', { name: '3/4' }).getAttribute('aria-pressed')).toBe('false')
+    expect(strip.scrollLeft).toBe(400)
+    expect(pressed()).toEqual(['Dos'])
+    // The smooth scroll first reports the view it leaves
+    strip.scrollLeft = 120
+    fireEvent.scroll(strip)
+    expect(pressed()).toEqual(['Dos'])
+  })
+
+  it('presses the chip of the view a swipe shows', () => {
+    const { pressed, strip } = renderTwoViews()
+
+    strip.scrollLeft = 400
+    fireEvent.scroll(strip)
+
+    expect(pressed()).toEqual(['Dos'])
   })
 
   it('names the view of a client with a single photo', () => {
@@ -279,6 +305,7 @@ describe('Gallery', () => {
 
     expect(screen.getByText('Gros plan')).toBeTruthy()
     expect(screen.queryByRole('button')).toBeNull()
+    expect(screen.getByRole('group').getAttribute('tabindex')).toBeNull()
   })
 })
 

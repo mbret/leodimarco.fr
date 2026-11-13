@@ -105,9 +105,11 @@ const clients: { photos: Photo[] }[] = [
 
 // Replaces each réalisation's single photo with a list of photos, one per view, and gives Léo's six
 // healed results all their views. On a site that has no réalisation yet, it creates the six.
-// The schema change and the photos run in one transaction, so a failed upload undoes both.
+// The schema change and the photos run in one transaction: a failure undoes both in the database.
+// Photos already sent to the bucket stay, and the next run uploads them again under the same names.
 // The file names start with realisation- so that they never replace an image uploaded from the
-// production admin: preview deployments upload to the same bucket.
+// production admin: preview deployments upload to the same bucket. For the same reason, deleting
+// one of these photos from a preview admin deletes production's file.
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   // The existing photo becomes the first of the list. The data below sets its real view.
   await db.execute(sql`

@@ -17,28 +17,48 @@ const viewLabels: Record<Realisation['photos'][number]['view'], string> = {
 
 // One client: their photos in a 4:5 frame, one at a time, and a chip per view to show another.
 // On phones the frame also swipes from one view to the next.
-const RealisationCard: React.FC<{ realisation: Realisation }> = ({ realisation }) => {
+const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = ({
+  label,
+  realisation,
+}) => {
   const { description, photos, title } = realisation
   const strip = useRef<HTMLDivElement>(null)
   const [shown, setShown] = useState(0)
+  // The view a chip asked for, while the smooth scroll passes the views before it
+  const target = useRef<number | null>(null)
 
   const show = (index: number) => {
+    if (index === shown || !strip.current) return
+    target.current = index
     setShown(index)
-    if (strip.current) strip.current.scrollLeft = index * strip.current.clientWidth
+    strip.current.scrollLeft = index * strip.current.clientWidth
+  }
+
+  const sync = (element: HTMLDivElement) => {
+    if (!element.clientWidth) return
+    const index = Math.round(element.scrollLeft / element.clientWidth)
+    if (target.current !== null) {
+      if (index !== target.current) return
+      target.current = null
+    }
+    setShown(index)
   }
 
   return (
     <figure className="grid gap-3">
       <div
-        aria-label={title}
+        aria-label={label}
         className="flex aspect-[4/5] snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-md border border-border [scrollbar-width:none] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none motion-safe:scroll-smooth [&::-webkit-scrollbar]:hidden"
-        onScroll={({ currentTarget: { clientWidth, scrollLeft } }) => {
-          if (clientWidth) setShown(Math.round(scrollLeft / clientWidth))
+        onScroll={({ currentTarget }) => sync(currentTarget)}
+        // A swipe can stop the scroll before it reaches the view a chip asked for
+        onScrollEnd={({ currentTarget }) => {
+          target.current = null
+          sync(currentTarget)
         }}
         ref={strip}
         role="group"
         // Lets keyboard users scroll from one view to the next
-        tabIndex={0}
+        tabIndex={photos.length > 1 ? 0 : undefined}
       >
         {photos.map(({ id, image }) => (
           <div className="relative w-full shrink-0 snap-center" key={id}>
@@ -90,9 +110,12 @@ const RealisationCard: React.FC<{ realisation: Realisation }> = ({ realisation }
 
 export const GalleryGrid: React.FC<{ realisations: Realisation[] }> = ({ realisations }) => (
   <ul className="grid gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-    {realisations.map((realisation) => (
+    {realisations.map((realisation, index) => (
       <li key={realisation.id}>
-        <RealisationCard realisation={realisation} />
+        <RealisationCard
+          label={`${realisation.title}, réalisation ${index + 1} sur ${realisations.length}`}
+          realisation={realisation}
+        />
       </li>
     ))}
   </ul>

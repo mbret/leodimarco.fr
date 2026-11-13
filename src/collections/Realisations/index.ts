@@ -51,7 +51,7 @@ export const Realisations: CollectionConfig<'realisations'> = {
       required: true,
       admin: {
         description:
-          'Une photo par vue. La première s’affiche dans la galerie, les autres au choix de la vue.',
+          'La première photo s’affiche dans la galerie. Chaque photo y ajoute une puce au nom de sa vue.',
       },
       fields: [
         {
