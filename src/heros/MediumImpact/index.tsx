@@ -8,8 +8,9 @@ import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 
 // Title and text on a band in the green of the studio wall, with the photo beside them from the
-// middle of the screen to its right edge. The band keeps the photo's 3:2 shape up to 40rem high. On
-// phones the photo comes under the text.
+// middle of the screen to its right edge. The band is a quarter of the screen width high, up to
+// 28rem, and the photo is cropped around its focal point to fill it. On phones the photo comes
+// under the text.
 export const MediumImpactHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumbs'] }> = ({
   breadcrumbs,
   links,
@@ -18,8 +19,8 @@ export const MediumImpactHero: React.FC<Page['hero'] & { breadcrumbs?: Page['bre
 }) => {
   return (
     <div className="relative bg-studio">
-      <div className="container flex md:min-h-[min(33vw,40rem)] md:items-center">
-        <div className="py-10 md:w-1/2 md:py-16 md:pr-12">
+      <div className="container flex md:min-h-[min(25vw,28rem)] md:items-center">
+        <div className="py-10 md:w-1/2 md:py-12 md:pr-12">
           <Breadcrumbs breadcrumbs={breadcrumbs} />
           {richText && <RichText data={richText} enableGutter={false} />}
           {Array.isArray(links) && links.length > 0 && (
