@@ -31,6 +31,7 @@ import * as migration_20261107_171752_content_column_image_and_cta_photo from '.
 import * as migration_20261107_174500_a_propos_photos from './20261107_174500_a_propos_photos'
 import * as migration_20261109_090000_contact_photos from './20261109_090000_contact_photos'
 import * as migration_20261109_110000_realisations_photos from './20261109_110000_realisations_photos'
+import * as migration_20261113_145332_realisation_views from './20261113_145332_realisation_views'
 
 export const migrations = [
   {
@@ -197,5 +198,10 @@ export const migrations = [
     up: migration_20261109_110000_realisations_photos.up,
     down: migration_20261109_110000_realisations_photos.down,
     name: '20261109_110000_realisations_photos',
+  },
+  {
+    up: migration_20261113_145332_realisation_views.up,
+    down: migration_20261113_145332_realisation_views.down,
+    name: '20261113_145332_realisation_views',
   },
 ]

@@ -1,107 +1,122 @@
 'use client'
 
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import type { Realisation } from '@/payload-types'
 
 import { Media } from '@/components/Media'
-import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { cn } from '@/utilities/ui'
 
-export const GalleryGrid: React.FC<{ realisations: Realisation[] }> = ({ realisations }) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
-  const current = openIndex === null ? null : realisations[openIndex]
-  const count = realisations.length
+const viewLabels: Record<Realisation['photos'][number]['view'], string> = {
+  face: 'Face',
+  troisQuarts: '3/4',
+  profil: 'Profil',
+  dos: 'Dos',
+  grosPlan: 'Gros plan',
+}
 
-  const step = (delta: number) =>
-    setOpenIndex((index) => (index === null ? null : (index + delta + count) % count))
+// One client: their photos in a 4:5 frame, one at a time, and a chip per view to show another.
+// On phones the frame also swipes from one view to the next.
+const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = ({
+  label,
+  realisation,
+}) => {
+  const { description, photos, title } = realisation
+  const strip = useRef<HTMLDivElement>(null)
+  const [shown, setShown] = useState(0)
+  // The view a chip asked for, while the smooth scroll passes the views before it
+  const target = useRef<number | null>(null)
+
+  const show = (index: number) => {
+    if (index === shown || !strip.current) return
+    target.current = index
+    setShown(index)
+    strip.current.scrollLeft = index * strip.current.clientWidth
+  }
+
+  const sync = (element: HTMLDivElement) => {
+    if (!element.clientWidth) return
+    const index = Math.round(element.scrollLeft / element.clientWidth)
+    if (target.current !== null) {
+      if (index !== target.current) return
+      target.current = null
+    }
+    setShown(index)
+  }
 
   return (
-    <>
-      <ul className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
-        {realisations.map((realisation, index) => (
-          <li key={realisation.id}>
-            <button
-              className="relative block aspect-[4/5] w-full overflow-hidden rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-              onClick={() => setOpenIndex(index)}
-              type="button"
-            >
-              <span className="sr-only">{realisation.title}</span>
-              <Media
-                fill
-                focalPoint
-                imgClassName="object-cover transition-transform hover:scale-105"
-                resource={realisation.image}
-                size="(max-width: 768px) 50vw, 33vw"
-              />
-              {realisation.before && (
-                <span className="absolute top-2 left-2 rounded-md bg-background/80 px-2 py-1 text-xs font-medium">
-                  Avant / après
-                </span>
-              )}
-            </button>
-          </li>
+    <figure className="grid gap-3">
+      <div
+        aria-label={label}
+        className="flex aspect-[4/5] snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-md border border-border [scrollbar-width:none] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none motion-safe:scroll-smooth [&::-webkit-scrollbar]:hidden"
+        onScroll={({ currentTarget }) => sync(currentTarget)}
+        // A swipe can stop the scroll before it reaches the view a chip asked for
+        onScrollEnd={({ currentTarget }) => {
+          target.current = null
+          sync(currentTarget)
+        }}
+        ref={strip}
+        role="group"
+        // Lets keyboard users scroll from one view to the next
+        tabIndex={photos.length > 1 ? 0 : undefined}
+      >
+        {photos.map(({ id, image }) => (
+          <div className="relative w-full shrink-0 snap-center" key={id}>
+            <Media
+              fill
+              focalPoint
+              imgClassName="object-cover"
+              resource={image}
+              size="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+            />
+          </div>
         ))}
-      </ul>
-
-      <Dialog open={current !== null} onOpenChange={(open) => !open && setOpenIndex(null)}>
-        {current && (
-          <DialogContent
-            className={current.before ? 'sm:max-w-5xl' : 'sm:max-w-3xl'}
-            onKeyDown={(event) => {
-              if (event.key === 'ArrowLeft') step(-1)
-              if (event.key === 'ArrowRight') step(1)
-            }}
-          >
-            <DialogHeader>
-              <DialogTitle>{current.title}</DialogTitle>
-              <DialogDescription className={current.description ? undefined : 'sr-only'}>
-                {current.description || current.title}
-              </DialogDescription>
-            </DialogHeader>
-            {current.before ? (
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { label: 'Avant', resource: current.before },
-                  { label: 'Après', resource: current.image },
-                ].map(({ label, resource }) => (
-                  <figure className="grid gap-2" key={label}>
-                    <div className="relative h-[50vh] md:h-[65vh]">
-                      <Media fill imgClassName="object-contain" resource={resource} size="50vw" />
-                    </div>
-                    <figcaption className="text-center text-sm text-muted-foreground">
-                      {label}
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
-            ) : (
-              <div className="relative h-[70vh]">
-                <Media fill imgClassName="object-contain" resource={current.image} size="100vw" />
-              </div>
-            )}
-            {count > 1 && (
-              <div className="flex justify-between">
-                <Button onClick={() => step(-1)} size="icon" variant="outline">
-                  <ChevronLeftIcon />
-                  <span className="sr-only">Photo précédente</span>
-                </Button>
-                <Button onClick={() => step(1)} size="icon" variant="outline">
-                  <ChevronRightIcon />
-                  <span className="sr-only">Photo suivante</span>
-                </Button>
-              </div>
-            )}
-          </DialogContent>
+      </div>
+      <figcaption className="flex flex-wrap items-center justify-between gap-2">
+        <span>
+          <span className="font-medium">{title}</span>
+          {description && (
+            <span className="block text-sm text-muted-foreground">{description}</span>
+          )}
+        </span>
+        {photos.length > 1 ? (
+          <span aria-label="Vues" className="flex gap-1" role="group">
+            {photos.map(({ id, view }, index) => (
+              <button
+                aria-pressed={index === shown}
+                className={cn(
+                  'rounded-full border px-3 py-1 text-xs transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+                  index === shown
+                    ? 'border-foreground bg-foreground text-background'
+                    : 'border-border text-muted-foreground hover:text-foreground',
+                )}
+                key={id}
+                onClick={() => show(index)}
+                type="button"
+              >
+                {viewLabels[view]}
+              </button>
+            ))}
+          </span>
+        ) : (
+          <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
+            {viewLabels[photos[0].view]}
+          </span>
         )}
-      </Dialog>
-    </>
+      </figcaption>
+    </figure>
   )
 }
+
+export const GalleryGrid: React.FC<{ realisations: Realisation[] }> = ({ realisations }) => (
+  <ul className="grid gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+    {realisations.map((realisation, index) => (
+      <li key={realisation.id}>
+        <RealisationCard
+          label={`${realisation.title}, réalisation ${index + 1} sur ${realisations.length}`}
+          realisation={realisation}
+        />
+      </li>
+    ))}
+  </ul>
+)
