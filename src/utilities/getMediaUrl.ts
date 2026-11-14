@@ -4,9 +4,6 @@ import { MEDIA_CACHE_TAG_PARAM } from './mediaCacheTag'
  * Adds the cache tag to a media URL.
  * @param url The URL from the media document, e.g. `/api/media/file/image.webp`
  * @param cacheTag The document's `updatedAt`, so a replaced file gets a new URL
- *
- * The tag is a named parameter, so the media file route can find it and let caches keep the
- * file for a year. See `mediaCacheTag.ts`.
  */
 export const getMediaUrl = (url: string | null | undefined, cacheTag?: string | null): string => {
   if (!url) return ''

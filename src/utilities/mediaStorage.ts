@@ -1,10 +1,8 @@
 import type { S3StorageOptions } from '@payloadcms/storage-s3'
 
 /**
- * Cloudflare R2 through its S3 API, read by the `s3Storage` adapter and by the media file route.
- * Without R2_BUCKET (local dev), Payload stores uploads in `public/media` instead.
- *
- * No `clientUploads` and no `prefix`: the media file route finds each file under its filename.
+ * Cloudflare R2 through its S3 API. Without R2_BUCKET (local dev), Payload stores uploads in
+ * `public/media` instead.
  */
 export const mediaStorage = {
   bucket: process.env.R2_BUCKET || '',

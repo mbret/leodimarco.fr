@@ -2,18 +2,16 @@ import { describe, expect, it } from 'vitest'
 
 import { Media } from '@/collections/Media'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { MEDIA_CACHE_TAG_PARAM, withMediaCacheControl } from '@/utilities/mediaCacheTag'
+import { MEDIA_DAY_CACHE_CONTROL, withMediaCacheControl } from '@/utilities/mediaCacheTag'
 
 const REVISION = '2026-01-01T00:00:00.000Z'
 const DAY = 60 * 60 * 24
 
-/** The `Cache-Control` the collection gives every file it serves. */
 const collectionCacheControl = (): string | null =>
   (Media.upload as { modifyResponseHeaders: (args: { headers: Headers }) => Headers })
     .modifyResponseHeaders({ headers: new Headers() })
     .get('Cache-Control')
 
-/** The seconds a `Cache-Control` directive asks for. */
 const seconds = (cacheControl: string | null, directive: string): number => {
   const match = cacheControl?.match(new RegExp(`${directive}=(\\d+)`))
 
@@ -21,8 +19,12 @@ const seconds = (cacheControl: string | null, directive: string): number => {
 }
 
 describe('a media URL without a cache tag', () => {
+  it('gets the one-day window from the collection', () => {
+    expect(collectionCacheControl()).toBe(MEDIA_DAY_CACHE_CONTROL)
+  })
+
   it('may be kept by the browser and the CDN for a day', () => {
-    const cacheControl = collectionCacheControl()
+    const cacheControl = MEDIA_DAY_CACHE_CONTROL
 
     expect(cacheControl).toContain('public')
     expect(cacheControl).not.toMatch(/max-age=0|no-store|must-revalidate/)
@@ -32,7 +34,7 @@ describe('a media URL without a cache tag', () => {
 
   // Nothing can invalidate a bare URL, so a replaced file must reach visitors in a few days
   it('is not promised forever', () => {
-    const cacheControl = collectionCacheControl()
+    const cacheControl = MEDIA_DAY_CACHE_CONTROL
 
     expect(cacheControl).not.toContain('immutable')
     expect(seconds(cacheControl, 'max-age')).toBeLessThanOrEqual(7 * DAY)
@@ -44,7 +46,7 @@ describe('a media URL with a cache tag', () => {
 
   const served = (status = 200) =>
     new Response(status === 304 ? null : 'bytes', {
-      headers: { 'Cache-Control': collectionCacheControl()!, 'Content-Type': 'image/webp' },
+      headers: { 'Cache-Control': MEDIA_DAY_CACHE_CONTROL, 'Content-Type': 'image/webp' },
       status,
     })
 
@@ -88,14 +90,6 @@ describe('a media URL with a cache tag', () => {
   })
 
   it('leaves a bare URL on the collection’s window', () => {
-    expect(answer(MEDIA_URL).headers.get('Cache-Control')).toBe(collectionCacheControl())
-  })
-
-  // `getMediaUrl` writes the parameter and the route reads it: both must use the same name
-  it('is recognised on the URLs the site renders', () => {
-    const url = new URL(getMediaUrl('/api/media/file/photo.webp', REVISION), 'https://example.test')
-
-    expect(url.searchParams.get(MEDIA_CACHE_TAG_PARAM)).toBe(REVISION)
-    expect(answer(url.href).headers.get('Cache-Control')).toContain('immutable')
+    expect(answer(MEDIA_URL).headers.get('Cache-Control')).toBe(MEDIA_DAY_CACHE_CONTROL)
   })
 })

@@ -10,9 +10,12 @@ import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { MEDIA_DAY_CACHE_CONTROL } from '../utilities/mediaCacheTag'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+const WEBP = { format: 'webp', options: { quality: 75 } } as const
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -51,32 +54,20 @@ export const Media: CollectionConfig = {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
-    /**
-     * For a bare `/api/media/file/<filename>` URL: one day fresh, then a month in which a cache
-     * answers from its copy and refreshes in the background. The media file route gives URLs
-     * with a cache tag a year instead (see `mediaCacheTag.ts`). Without this header, Vercel
-     * answers `max-age=0, must-revalidate` and caches nothing.
-     */
+    // The media file route gives a URL with a cache tag a year instead (see `mediaCacheTag.ts`).
+    // Without this header, Vercel answers `max-age=0, must-revalidate` and caches nothing.
     modifyResponseHeaders: ({ headers }) => {
-      headers.set(
-        'Cache-Control',
-        'public, max-age=86400, s-maxage=86400, stale-while-revalidate=2592000',
-      )
+      headers.set('Cache-Control', MEDIA_DAY_CACHE_CONTROL)
 
       return headers
     },
     focalPoint: true,
-    /**
-     * `thumbnail` to `xlarge` are the widths `ImageMedia` offers in its `srcset`. Sharp makes them
-     * once, at upload, in WebP. This replaces Vercel's image optimizer, which bills each width,
-     * quality and format again on request. Payload skips a size wider than the upload, so a small
-     * upload gets only the lower widths.
-     */
+    // `thumbnail` to `xlarge` are the widths `ImageMedia` offers in its `srcset`
     imageSizes: [
       {
         name: 'thumbnail',
         width: 300,
-        formatOptions: { format: 'webp', options: { quality: 75 } },
+        formatOptions: WEBP,
       },
       {
         name: 'square',
@@ -86,25 +77,26 @@ export const Media: CollectionConfig = {
       {
         name: 'small',
         width: 600,
-        formatOptions: { format: 'webp', options: { quality: 75 } },
+        formatOptions: WEBP,
       },
       {
         name: 'medium',
         width: 900,
-        formatOptions: { format: 'webp', options: { quality: 75 } },
+        formatOptions: WEBP,
       },
       {
         name: 'large',
         width: 1400,
-        formatOptions: { format: 'webp', options: { quality: 75 } },
+        formatOptions: WEBP,
       },
       // `withoutEnlargement` makes this size at the upload's own width when the upload is
-      // narrower than 1920, instead of skipping it. So every upload has a WebP copy at full width.
+      // narrower than 1920, where Payload would otherwise skip it. So `srcset` always has a copy
+      // as wide as the upload, up to 1920.
       {
         name: 'xlarge',
         width: 1920,
         withoutEnlargement: true,
-        formatOptions: { format: 'webp', options: { quality: 75 } },
+        formatOptions: WEBP,
       },
       // Kept in the upload's format: social sites read this one, and some may not read WebP
       {

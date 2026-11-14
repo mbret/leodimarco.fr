@@ -12,17 +12,17 @@ import { Media } from '@/collections/Media'
 import { withMediaCacheControl } from '@/utilities/mediaCacheTag'
 import { mediaStorage } from '@/utilities/mediaStorage'
 
-/**
- * Serves `/api/media/file/<filename>` before Payload's `api/[...slug]` catch-all, which Next
- * matches after this longer static path.
+/*
+ * Serves `/api/media/file/<filename>` in place of Payload's `api/[...slug]` catch-all.
  *
  * With R2 configured, the file comes straight from the bucket. Payload's own handler starts
  * Payload and queries the database for the file's key, and that key is always the filename here
- * (see `mediaStorage`). Without R2 (local dev), Payload serves the file from disk.
+ * (see the `s3Storage` options in `payload.config.ts`).
  *
  * Reading the bucket directly skips Payload's access check. That is correct only while anyone
  * may read the media collection, which `mediaFileRoute.int.spec.ts` checks.
  */
+
 const payloadGET = REST_GET(config)
 const payloadOPTIONS = REST_OPTIONS(config)
 
@@ -161,13 +161,7 @@ export const GET = async (request: Request, { params }: Args): Promise<Response>
   return withMediaCacheControl(request, response)
 }
 
-/**
- * Answered from the file's metadata. Without its own HEAD, Next runs GET and drops the body
- * unread, and each such body holds an S3 client socket open until R2 closes it.
- */
-export const HEAD = GET
-
-/** This route takes the path from the catch-all for every method, so it passes CORS preflights back. */
+/** This route shadows Payload's catch-all for every method, so it hands CORS preflights to Payload. */
 export const OPTIONS = async (request: Request, { params }: Args): Promise<Response> => {
   const { filename } = await params
 

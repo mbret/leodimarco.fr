@@ -96,6 +96,7 @@ export default buildConfig({
   cors: [getServerSideURL()].filter(Boolean),
   plugins: [
     ...plugins,
+    // No `clientUploads` and no `prefix`: the media file route finds each file under its filename
     s3Storage({
       ...mediaStorage,
       alwaysInsertFields: true,

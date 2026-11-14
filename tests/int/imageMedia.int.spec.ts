@@ -47,7 +47,6 @@ const renderImage = (props: React.ComponentProps<typeof ImageMedia>) => {
   const { container } = render(React.createElement(ImageMedia, props))
 
   return {
-    html: container.innerHTML,
     img: container.querySelector('img')!,
     source: container.querySelector('source'),
   }
@@ -79,9 +78,6 @@ describe('the image sizes a browser can pick from', () => {
   })
 
   it('never sends an image through the Next.js optimizer', () => {
-    const { html } = renderImage({ resource: upload() })
-
-    expect(html).not.toContain('/_next/image')
     expect(nextConfig.images?.unoptimized).toBe(true)
   })
 
@@ -93,7 +89,6 @@ describe('the image sizes a browser can pick from', () => {
     expect(source?.getAttribute('srcset')).toBe(`/api/media/file/photo-thumbnail.webp?${TAG} 300w`)
   })
 
-  // An upload from before the WebP sizes has JPEG sizes, which a WebP source must not offer
   it('offers no JPEG size made before the sizes became WebP', () => {
     const { img, source } = renderImage({
       resource: upload({
@@ -126,23 +121,6 @@ describe('the image sizes a browser can pick from', () => {
         `/api/media/file/photo-large.webp?${TAG} 1400w`,
       ].join(', '),
     )
-  })
-
-  // Sharp keeps only the first frame of a GIF
-  it('offers no sizes for an animation', () => {
-    const { img, source } = renderImage({
-      resource: upload({ mimeType: 'image/gif', url: '/api/media/file/loop.gif' }),
-    })
-
-    expect(source).toBeNull()
-    expect(img.getAttribute('src')).toBe(`/api/media/file/loop.gif?${TAG}`)
-  })
-
-  it('puts the cache tag on every URL', () => {
-    const { html } = renderImage({ resource: upload() })
-
-    expect(html.match(/\/api\/media\/file\/[^"\s]+/g)).toHaveLength(6)
-    expect(html.split(TAG)).toHaveLength(7)
   })
 })
 

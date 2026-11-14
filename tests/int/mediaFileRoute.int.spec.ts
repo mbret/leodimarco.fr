@@ -7,6 +7,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { anyone } from '@/access/anyone'
 import { Media } from '@/collections/Media'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { MEDIA_DAY_CACHE_CONTROL } from '@/utilities/mediaCacheTag'
 
 type S3 = typeof import('@aws-sdk/client-s3')
 
@@ -103,18 +104,14 @@ const request = (
   filename: string,
   { headers = {}, method = 'GET', revision = '' } = {},
 ) =>
-  route[method === 'HEAD' ? 'HEAD' : 'GET'](
+  // Next answers HEAD with the GET handler
+  route.GET(
     new Request(`https://example.test${getMediaUrl(`/api/media/file/${filename}`, revision)}`, {
       headers,
       method,
     }),
     { params: Promise.resolve({ filename }) },
   )
-
-const collectionCacheControl = () =>
-  (Media.upload as { modifyResponseHeaders: (args: { headers: Headers }) => Headers })
-    .modifyResponseHeaders({ headers: new Headers() })
-    .get('Cache-Control')
 
 afterEach(() => {
   stored.clear()
@@ -169,7 +166,7 @@ describe('the media file route, with R2 configured', () => {
 
     const response = await request(route, 'photo.webp')
 
-    expect(response.headers.get('Cache-Control')).toBe(collectionCacheControl())
+    expect(response.headers.get('Cache-Control')).toBe(MEDIA_DAY_CACHE_CONTROL)
   })
 
   it('keeps scripts out of an SVG, as Payload does', async () => {
@@ -220,7 +217,7 @@ describe('the media file route, with R2 configured', () => {
     expect(response.status).toBe(304)
     expect(response.body).toBeNull()
     expect(response.headers.get('ETag')).toBe('"revision-1"')
-    expect(response.headers.get('Cache-Control')).toBe(collectionCacheControl())
+    expect(response.headers.get('Cache-Control')).toBe(MEDIA_DAY_CACHE_CONTROL)
     expect(cancelled).toEqual(['photo.webp'])
   })
 
