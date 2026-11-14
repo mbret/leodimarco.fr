@@ -1,19 +1,14 @@
+import { MEDIA_CACHE_TAG_PARAM } from './mediaCacheTag'
+
 /**
- * Processes media resource URL to ensure proper formatting
- * @param url The original URL from the resource
- * @param cacheTag Optional cache tag to append to the URL
- * @returns Properly formatted URL with cache tag if provided
- *
- * Local paths (e.g. `/api/media/file/image.webp`) are kept relative so
- * Next.js image optimization treats them as local rather than fetching
- * through `remotePatterns`, which blocks private IPs since Next.js 16.
+ * Adds the cache tag to a media URL.
+ * @param url The URL from the media document, e.g. `/api/media/file/image.webp`
+ * @param cacheTag The document's `updatedAt`, so a replaced file gets a new URL
  */
 export const getMediaUrl = (url: string | null | undefined, cacheTag?: string | null): string => {
   if (!url) return ''
 
-  if (cacheTag && cacheTag !== '') {
-    cacheTag = encodeURIComponent(cacheTag)
-  }
+  if (!cacheTag) return url
 
-  return cacheTag ? `${url}?${cacheTag}` : url
+  return `${url}?${MEDIA_CACHE_TAG_PARAM}=${encodeURIComponent(cacheTag)}`
 }
