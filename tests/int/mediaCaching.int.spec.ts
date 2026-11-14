@@ -88,8 +88,4 @@ describe('a media URL with a cache tag', () => {
 
     expect(response.headers.get('Cache-Control')).toBeNull()
   })
-
-  it('leaves a bare URL on the collection’s window', () => {
-    expect(answer(MEDIA_URL).headers.get('Cache-Control')).toBe(MEDIA_DAY_CACHE_CONTROL)
-  })
 })

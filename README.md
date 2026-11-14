@@ -40,15 +40,15 @@ Services:
 
   Without `R2_BUCKET`, uploads are written to `public/media`, which fails on Vercel's read-only filesystem.
 
-  Images do not go through Next.js image optimization, which Vercel bills per transformation. At upload, Payload makes WebP copies at several widths, and `ImageMedia` offers them in a `srcset`. The route `src/app/(payload)/api/media/file/[filename]` reads each file straight from R2 and lets Vercel's CDN keep it for a year.
+  Images do not go through Next.js image optimization, which Vercel bills per transformation. At upload, Payload makes WebP copies at several widths, and `ImageMedia` offers them in a `srcset`. The route `src/app/(payload)/api/media/file/[filename]` reads each file straight from R2. Vercel's CDN keeps it until the next deploy, and browsers keep it for a year.
 
-  Uploads made before the WebP sizes show their full-size original until their sizes are made again. To do that, run this once with production's `POSTGRES_URL` and `R2_*` variables in `.env`, then redeploy:
+  Uploads made before the WebP sizes show their full-size original until their sizes are made again. To do that, run this once from this branch before you merge it, with production's `POSTGRES_URL` and `R2_*` variables in `.env`. The site that is live keeps working during the run, and the merge deploy then offers the WebP sizes:
 
   ```bash
   NODE_ENV=production DRY_RUN=1 pnpm payload run scripts/regenerate-media-sizes.ts
   ```
 
-  If the list is correct, run it without `DRY_RUN=1`. Set `NODE_ENV=production`, or Payload pushes the local schema to the database.
+  If the list is correct, run it without `DRY_RUN=1`. Set `NODE_ENV=production`, or Payload pushes the local schema to the database. If you run it after the deploy, redeploy afterwards: pages rendered before the run offer only the originals.
 
 - **Amazon SES** (`us-east-1`): sends the contact form's emails from an `@leodimarco.fr` address.
   1. Create a domain identity for `leodimarco.fr` with Easy DKIM, and add the three DKIM CNAME records it lists to the domain's DNS at OVH.

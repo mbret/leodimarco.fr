@@ -19,7 +19,9 @@
  *
  * After a LIMIT run, open the documents in the admin and make sure their filenames did not change.
  *
- * Redeploy afterwards: pages rendered before the run still offer only the originals.
+ * Run it before the deploy that brings the WebP sizes: the live site does not read the sizes, so
+ * it keeps working, and that deploy then renders the new ones. After a deploy, redeploy once the
+ * run is done: pages rendered before it offer only the originals.
  */
 import config from '@payload-config'
 
@@ -31,6 +33,10 @@ const SOURCE_ORIGIN = process.env.SOURCE_ORIGIN ?? 'https://www.leodimarco.fr'
 
 const DRY_RUN = process.env.DRY_RUN === '1'
 const LIMIT = process.env.LIMIT ? Number(process.env.LIMIT) : undefined
+
+if (LIMIT !== undefined && !(Number.isInteger(LIMIT) && LIMIT > 0)) {
+  throw new Error(`LIMIT must be a whole number above 0, not "${process.env.LIMIT}".`)
+}
 
 /** The `srcset` sizes in `src/collections/Media.ts`. */
 const LADDER = ['thumbnail', 'small', 'medium', 'large', 'xlarge'] as const
@@ -121,7 +127,9 @@ const main = async () => {
       await payload.update({
         collection: 'media',
         id: doc.id,
-        data: {},
+        // On update, Payload takes the focal point from the incoming data only. Without it, the
+        // `og` and `square` crops are cut around the centre.
+        data: { focalX: doc.focalX, focalY: doc.focalY },
         file: await fetchOriginal(doc),
         // Without this, Payload sees the document's own file as a name conflict and renames it,
         // which breaks every URL to the old name
@@ -139,7 +147,9 @@ const main = async () => {
   console.log(`\nDone: ${done} regenerated, ${failed} failed.`)
 
   if (done > 0) {
-    console.log('\nRedeploy now: pages rendered before this run still offer only the originals.')
+    console.log(
+      '\nIf the WebP sizes are already deployed, redeploy: pages rendered before this run offer only the originals.',
+    )
   }
 }
 

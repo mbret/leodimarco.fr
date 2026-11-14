@@ -4,12 +4,9 @@ import {
   S3Client,
   S3ServiceException,
 } from '@aws-sdk/client-s3'
-import config from '@payload-config'
-import { REST_GET, REST_OPTIONS } from '@payloadcms/next/routes'
 import { sanitizeFilename } from 'payload/shared'
 
-import { Media } from '@/collections/Media'
-import { withMediaCacheControl } from '@/utilities/mediaCacheTag'
+import { MEDIA_DAY_CACHE_CONTROL, withMediaCacheControl } from '@/utilities/mediaCacheTag'
 import { mediaStorage } from '@/utilities/mediaStorage'
 
 /*
@@ -23,9 +20,6 @@ import { mediaStorage } from '@/utilities/mediaStorage'
  * may read the media collection, which `mediaFileRoute.int.spec.ts` checks.
  */
 
-const payloadGET = REST_GET(config)
-const payloadOPTIONS = REST_OPTIONS(config)
-
 const r2 = mediaStorage.enabled ? new S3Client(mediaStorage.config) : null
 
 /** Payload's policy for XML uploads, so an SVG opened on its own runs no script. */
@@ -37,21 +31,22 @@ const isXml = (contentType: string) => {
   return essence === 'application/xml' || essence === 'text/xml' || essence.endsWith('+xml')
 }
 
-const withCollectionHeaders = (headers: Headers) =>
-  (typeof Media.upload === 'object' && Media.upload.modifyResponseHeaders?.({ headers })) || headers
-
 type Stored = { ContentLength?: number; ContentRange?: string; ContentType?: string; ETag?: string }
 
 const fileHeaders = ({ ContentLength, ContentRange, ContentType, ETag }: Stored) => {
   const contentType = ContentType ?? 'application/octet-stream'
-  const headers = new Headers({ 'Accept-Ranges': 'bytes', 'Content-Type': contentType })
+  const headers = new Headers({
+    'Accept-Ranges': 'bytes',
+    'Cache-Control': MEDIA_DAY_CACHE_CONTROL,
+    'Content-Type': contentType,
+  })
 
   if (ContentLength !== undefined) headers.set('Content-Length', String(ContentLength))
   if (ContentRange) headers.set('Content-Range', ContentRange)
   if (ETag) headers.set('ETag', ETag)
   if (isXml(contentType)) headers.set('Content-Security-Policy', XML_CONTENT_SECURITY_POLICY)
 
-  return withCollectionHeaders(headers)
+  return headers
 }
 
 /** Whether `If-None-Match` names the stored file, compared weakly as RFC 9110 asks. */
@@ -66,7 +61,10 @@ const alreadyHeld = (request: Request, etag: string | undefined): etag is string
 }
 
 const notModified = (etag: string) =>
-  new Response(null, { headers: withCollectionHeaders(new Headers({ ETag: etag })), status: 304 })
+  new Response(null, {
+    headers: { 'Cache-Control': MEDIA_DAY_CACHE_CONTROL, ETag: etag },
+    status: 304,
+  })
 
 /**
  * One well-formed range, passed on to R2. RFC 9110 lets a server ignore any other range, and a
@@ -152,11 +150,21 @@ type Args = { params: Promise<{ filename: string }> }
 /** The params Payload's catch-all receives for this path. */
 const restParams = (filename: string) => Promise.resolve({ slug: ['media', 'file', filename] })
 
+/** Loaded only when Payload answers, so a file read from R2 does not load Payload's config. */
+const payloadRoutes = async () => {
+  const [{ default: config }, { REST_GET, REST_OPTIONS }] = await Promise.all([
+    import('@payload-config'),
+    import('@payloadcms/next/routes'),
+  ])
+
+  return { GET: REST_GET(config), OPTIONS: REST_OPTIONS(config) }
+}
+
 export const GET = async (request: Request, { params }: Args): Promise<Response> => {
   const { filename } = await params
   const response = r2
     ? await fromBucket(r2, request, filename)
-    : await payloadGET(request, { params: restParams(filename) })
+    : await (await payloadRoutes()).GET(request, { params: restParams(filename) })
 
   return withMediaCacheControl(request, response)
 }
@@ -165,5 +173,5 @@ export const GET = async (request: Request, { params }: Args): Promise<Response>
 export const OPTIONS = async (request: Request, { params }: Args): Promise<Response> => {
   const { filename } = await params
 
-  return payloadOPTIONS(request, { params: restParams(filename) })
+  return (await payloadRoutes()).OPTIONS(request, { params: restParams(filename) })
 }
