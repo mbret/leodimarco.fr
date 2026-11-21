@@ -78,7 +78,11 @@ describe('the image sizes a browser can pick from', () => {
   })
 
   it('never sends an image through the Next.js optimizer', () => {
-    expect(nextConfig.images?.unoptimized).toBe(true)
+    expect(nextConfig.images).toMatchObject({
+      unoptimized: true,
+      localPatterns: [],
+      remotePatterns: [],
+    })
   })
 
   it('offers only the sizes that exist', () => {
