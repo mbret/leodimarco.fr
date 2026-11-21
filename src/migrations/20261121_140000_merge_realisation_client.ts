@@ -5,6 +5,14 @@ import type { Realisation } from '@/payload-types'
 // Two of Léo's réalisations show the same client, photographed on two days. This keeps the one with
 // the 3/4 view realisation-effet-rase-4.jpg, gives it one photo per view from both days, and deletes
 // the other one. realisation-effet-rase-4-dos.jpg, the farther of his two back views, stays in Media.
+// It does so only while both still hold the photos 20261113_145332_realisation_views gave them, so
+// that nothing edited in the admin is lost.
+const keptFiles = [
+  'realisation-effet-rase-4.jpg',
+  'realisation-effet-rase-4-face.jpg',
+  'realisation-effet-rase-4-dos.jpg',
+]
+const mergedFiles = ['realisation-effet-rase-3-trois-quarts.jpg', 'realisation-effet-rase-3.jpg']
 const photos: { view: Realisation['photos'][number]['view']; file: string }[] = [
   { view: 'troisQuarts', file: 'realisation-effet-rase-4.jpg' },
   { view: 'face', file: 'realisation-effet-rase-4-face.jpg' },
@@ -50,15 +58,29 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
     return
   }
 
-  const list = []
-  for (const { view, file } of photos) {
-    const image = await mediaId(file)
-    if (!image) {
-      payload.logger.warn(`${file} is missing from Media: the réalisations are not merged`)
-      return
-    }
-    list.push({ view, image })
+  const imagesOf = (realisation: Realisation) =>
+    realisation.photos
+      .map(({ image }) => (typeof image === 'object' ? image.id : image))
+      .sort()
+      .join()
+  const idsOf = async (files: string[]) => (await Promise.all(files.map(mediaId))).sort().join()
+  if (
+    imagesOf(kept) !== (await idsOf(keptFiles)) ||
+    imagesOf(merged) !== (await idsOf(mergedFiles)) ||
+    merged.description
+  ) {
+    payload.logger.warn(
+      'The two réalisations of the same client changed since: they are not merged',
+    )
+    return
   }
+
+  const ids = new Map<string, number>()
+  for (const file of [...keptFiles, ...mergedFiles]) {
+    const id = await mediaId(file)
+    if (id) ids.set(file, id)
+  }
+  const list = photos.map(({ view, file }) => ({ view, image: ids.get(file) as number }))
 
   // Migrations run before the build, which renders the gallery anyway
   const context = { disableRevalidate: true }
@@ -70,12 +92,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
     req,
     context,
   })
+  payload.logger.info(`Deleting réalisation ${JSON.stringify(merged)}`)
   await payload.delete({ collection: 'realisations', id: merged.id, depth: 0, req, context })
 
   // The photo first described as a 3/4 view shows his right side
   await payload.update({
     collection: 'media',
-    where: { filename: { equals: 'realisation-effet-rase-3-trois-quarts.jpg' } },
+    id: ids.get('realisation-effet-rase-3-trois-quarts.jpg') as number,
     data: { alt: 'Tricopigmentation effet rasé cicatrisée, vue de profil, barbe rousse' },
     depth: 0,
     req,
