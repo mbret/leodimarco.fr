@@ -1,11 +1,12 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import React from 'react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { Realisation } from '@/payload-types'
 
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
+import { FAQBlock } from '@/blocks/FAQ/Component'
 import { GalleryGrid } from '@/blocks/Gallery/GalleryGrid'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { heading, paragraph, richText } from '@/endpoints/seed/richText'
@@ -189,6 +190,170 @@ describe('Call to action block', () => {
     render(React.createElement(CallToActionBlock, block))
 
     expect(screen.queryByRole('img')).toBeNull()
+  })
+})
+
+describe('FAQ block', () => {
+  const question = (text: string, extra: object = {}) => ({
+    id: text,
+    question: text,
+    answer: richText(paragraph('Réponse.')),
+    ...extra,
+  })
+  const category = (title: string, text: string) => ({ title, items: [question(text)] })
+  const twoCategories = {
+    blockType: 'faq' as const,
+    categories: [
+      {
+        title: 'Est-ce adapté à mon cas ?',
+        items: [question('À qui s’adresse la tricopigmentation ?', { id: 'q1' })],
+      },
+      category('Sécurité', 'Qu’en est-il de l’hygiène ?'),
+    ],
+  }
+
+  // jsdom lays nothing out: elements start below the screen, then report the top the test gives
+  const tops = new Map<string, number>()
+  beforeEach(() => {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+      this: HTMLElement,
+    ) {
+      const top = tops.get(this.id) ?? window.innerHeight
+      return { top, bottom: top + 100 } as DOMRect
+    })
+  })
+  afterEach(() => {
+    tops.clear()
+    vi.restoreAllMocks()
+    window.history.replaceState(null, '', window.location.pathname)
+  })
+  const place = (id: string, top: number) => tops.set(id, top)
+  // The page scrolled to its end
+  const scrollToEnd = () => {
+    vi.spyOn(window, 'scrollY', 'get').mockReturnValue(500)
+    vi.spyOn(Element.prototype, 'scrollHeight', 'get').mockReturnValue(window.innerHeight + 500)
+    fireEvent.scroll(window)
+  }
+  const navLinks = () =>
+    within(screen.getByRole('navigation', { name: 'Catégories de questions' })).getAllByRole('link')
+  const current = () =>
+    navLinks()
+      .filter((link) => link.getAttribute('aria-current') === 'location')
+      .map((link) => link.getAttribute('href'))
+
+  it('links to each category and marks the one being read', () => {
+    render(React.createElement(FAQBlock, twoCategories))
+
+    expect(navLinks().map((link) => link.getAttribute('href'))).toEqual([
+      '#est-ce-adapte-a-mon-cas',
+      '#securite',
+    ])
+    expect(current()).toEqual(['#est-ce-adapte-a-mon-cas'])
+    expect(document.querySelector('#est-ce-adapte-a-mon-cas h2')!.textContent).toBe(
+      'Est-ce adapté à mon cas\u00a0?',
+    )
+
+    // The second category's top passes 30% of the screen height
+    place('est-ce-adapte-a-mon-cas', -400)
+    place('securite', window.innerHeight * 0.2)
+    fireEvent.scroll(window)
+    expect(current()).toEqual(['#securite'])
+
+    // Back up: the second category goes below 30% again
+    place('est-ce-adapte-a-mon-cas', -100)
+    place('securite', window.innerHeight * 0.5)
+    fireEvent.scroll(window)
+    expect(current()).toEqual(['#est-ce-adapte-a-mon-cas'])
+  })
+
+  it('marks the category already scrolled to when the page opens', () => {
+    place('est-ce-adapte-a-mon-cas', -400)
+    place('securite', 0)
+    render(React.createElement(FAQBlock, twoCategories))
+
+    expect(current()).toEqual(['#securite'])
+  })
+
+  it('marks the last category at the end of the page, however low it stays', () => {
+    render(React.createElement(FAQBlock, twoCategories))
+    place('est-ce-adapte-a-mon-cas', -400)
+    place('securite', window.innerHeight * 0.6)
+    scrollToEnd()
+
+    expect(current()).toEqual(['#securite'])
+  })
+
+  it('marks the category of the question a link leads to at the end of the page', () => {
+    render(React.createElement(FAQBlock, twoCategories))
+    window.history.replaceState(null, '', '#question-q1')
+    // The page cannot scroll the question to the top: it stays in the middle of the screen
+    place('est-ce-adapte-a-mon-cas', window.innerHeight * 0.1)
+    place('question-q1', window.innerHeight * 0.4)
+    place('securite', window.innerHeight * 0.6)
+    scrollToEnd()
+
+    expect(current()).toEqual(['#est-ce-adapte-a-mon-cas'])
+  })
+
+  it('gives categories with the same title their own anchor', () => {
+    render(
+      React.createElement(FAQBlock, {
+        blockType: 'faq',
+        categories: [category('Tarifs', 'Combien ?'), category('Tarifs ?', 'Pourquoi ?')],
+      }),
+    )
+
+    expect(navLinks().map((link) => link.getAttribute('href'))).toEqual(['#tarifs', '#tarifs-2'])
+  })
+
+  it('shows a single category without links to it, the question mark on its word', () => {
+    render(
+      React.createElement(FAQBlock, {
+        blockType: 'faq',
+        categories: [category('Questions fréquentes', 'Est-ce douloureux ?')],
+      }),
+    )
+
+    expect(screen.queryByRole('navigation')).toBeNull()
+    expect(screen.getByRole('heading', { level: 2, name: 'Questions fréquentes' })).toBeTruthy()
+    expect(screen.getByRole('button').textContent).toBe('Est-ce douloureux\u00a0?')
+  })
+
+  it('links each highlighted question to its answer', () => {
+    render(
+      React.createElement(FAQBlock, {
+        blockType: 'faq',
+        highlightsTitle: 'Les questions les plus posées',
+        categories: [
+          {
+            title: 'Déroulement',
+            items: [
+              question('Est-ce douloureux ?', {
+                highlight: true,
+                shortAnswer: '« Non » : très peu.',
+              }),
+            ],
+          },
+        ],
+      }),
+    )
+
+    const link = screen.getByRole('link', { name: 'Lire la réponse' })
+    const answer = document.getElementById(link.getAttribute('href')!.slice(1))
+    expect(within(answer!).getByRole('button').textContent).toBe('Est-ce douloureux\u00a0?')
+    expect(screen.getByText(/Non/).textContent).toBe('«\u00a0Non\u00a0»\u00a0: très peu.')
+  })
+
+  it('gives search engines the questions as written', () => {
+    const { container } = render(
+      React.createElement(FAQBlock, {
+        blockType: 'faq',
+        categories: [category('Questions fréquentes', 'Est-ce douloureux ?')],
+      }),
+    )
+
+    const script = container.querySelector('script[type="application/ld+json"]')
+    expect(JSON.parse(script!.textContent!).mainEntity[0].name).toBe('Est-ce douloureux ?')
   })
 })
 
