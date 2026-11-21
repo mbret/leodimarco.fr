@@ -22,6 +22,7 @@ import type {
   Page,
 } from '@/payload-types'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { keepPunctuation } from '@/utilities/keepPunctuation'
 import { pagePath } from '@/utilities/pagePath'
 import { cn } from '@/utilities/ui'
 
@@ -53,6 +54,12 @@ const isHeaderRow = (row: SerializedTableRowNode) =>
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
+  // Text keeps French punctuation on the line of its word, in the formats of the default converter
+  text: (args) => {
+    const { text } = defaultConverters
+    const node = { ...args.node, text: keepPunctuation(args.node.text) }
+    return typeof text === 'function' ? text({ ...args, node }) : text
+  },
   // Check lists show a check mark, or an empty circle when unticked, instead of the editor's
   // checkboxes. Screen readers are told which items are unticked.
   list: (args) => {
