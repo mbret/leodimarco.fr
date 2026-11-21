@@ -107,10 +107,9 @@ const Category: React.FC<{ group: Group }> = ({ group }) => (
               {item.question}
             </AccordionTrigger>
             <AccordionContent className="pb-6">
-              {/* Answers sit below their question: smaller and muted, with emphasised words in full
-                  colour rather than bold */}
+              {/* Answers sit below their question: smaller and muted */}
               <RichText
-                className="prose-sm [--tw-prose-body:var(--color-muted-foreground)]! [&_strong]:font-normal"
+                className="prose-sm [--tw-prose-body:var(--color-muted-foreground)]!"
                 data={item.answer}
                 enableGutter={false}
               />

@@ -16,18 +16,17 @@ const text = (value: string, format = 0) => ({
 
 const linebreak = { type: 'linebreak' as const, version: 1 }
 
-// Splits "plain **bold** *emphasised* plain _foreign_" into text nodes: bold parts in bold,
-// emphasised parts in bold italic, foreign words and product names in italic. A lone asterisk,
-// such as a footnote mark, stays plain text. A newline becomes a line break.
+// Splits "plain **bold** plain _foreign_" into text nodes: bold parts in bold, foreign words and
+// product names in italic. A lone asterisk, such as a footnote mark, stays plain text. A newline
+// becomes a line break.
 const inline = (value: string) =>
   value.split('\n').flatMap((line, i) => [
     ...(i > 0 ? [linebreak] : []),
     ...line
-      .split(/(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_)/)
+      .split(/(\*\*[^*]+\*\*|_[^_]+_)/)
       .filter(Boolean)
       .map((part) => {
         if (/^\*\*[^*]+\*\*$/.test(part)) return text(part.slice(2, -2), BOLD)
-        if (/^\*[^*]+\*$/.test(part)) return text(part.slice(1, -1), BOLD | ITALIC)
         if (/^_[^_]+_$/.test(part)) return text(part.slice(1, -1), ITALIC)
         return text(part)
       }),
