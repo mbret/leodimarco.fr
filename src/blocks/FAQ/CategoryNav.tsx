@@ -13,23 +13,36 @@ export const CategoryNav: React.FC<{ categories: Category[] }> = ({ categories }
 
   useEffect(() => {
     // The category being read is the last one whose top has passed 30% of the screen height. At
-    // the end of the page it is the last category, which a short page can keep lower than that.
+    // the end of the page, which a short last category can keep lower than that, it is the
+    // category of the question or category the page links to when that is on screen, else the
+    // last category.
     const markCurrent = () => {
-      const { innerHeight, scrollY } = window
-      const atEnd =
-        scrollY > 0 && innerHeight + scrollY >= document.documentElement.scrollHeight - 1
+      const { innerHeight, location, scrollY } = window
+      const byId = (id: string) => document.getElementById(id)
       const passed = categories.filter(
         ({ anchor }) =>
-          (document.getElementById(anchor)?.getBoundingClientRect().top ?? Infinity) <=
-          innerHeight * 0.3,
+          (byId(anchor)?.getBoundingClientRect().top ?? Infinity) <= innerHeight * 0.3,
       )
-      const category = atEnd ? categories.at(-1) : (passed.at(-1) ?? categories[0])
+      let category: Category | undefined = passed.at(-1) ?? categories[0]
+
+      if (scrollY > 0 && innerHeight + scrollY >= document.documentElement.scrollHeight - 1) {
+        const target = location.hash && byId(decodeURIComponent(location.hash.slice(1)))
+        const box = target && target.getBoundingClientRect()
+        const linked =
+          box && box.bottom > 0 && box.top < innerHeight
+            ? categories.find(({ anchor }) => byId(anchor)?.contains(target))
+            : undefined
+        category = linked ?? categories.at(-1)
+      }
       if (category) setCurrent(category.anchor)
     }
     markCurrent()
+    // A link to a category already on screen changes the address without scrolling
+    window.addEventListener('hashchange', markCurrent)
     window.addEventListener('scroll', markCurrent, { passive: true })
     window.addEventListener('resize', markCurrent)
     return () => {
+      window.removeEventListener('hashchange', markCurrent)
       window.removeEventListener('scroll', markCurrent)
       window.removeEventListener('resize', markCurrent)
     }
