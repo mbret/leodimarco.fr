@@ -6,26 +6,33 @@ import { cn } from '@/utilities/ui'
 
 type Category = { anchor: string; count: number; title: string }
 
-// Links to the categories: chips above the questions on phones and tablets, and a list that stays
-// beside them on large screens, marking the category being read
+// Links to the categories, marking the one being read: chips above the questions on phones and
+// tablets, and a list beside them that stays in view on large screens
 export const CategoryNav: React.FC<{ categories: Category[] }> = ({ categories }) => {
   const [current, setCurrent] = useState(categories[0]?.anchor)
 
   useEffect(() => {
-    // A category is being read while it crosses the band from 10% to 30% of the screen height. In
-    // the gap between two categories, the previous one stays marked.
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries.find(({ isIntersecting }) => isIntersecting)
-        if (entry) setCurrent(entry.target.id)
-      },
-      { rootMargin: '-10% 0px -70% 0px' },
-    )
-    categories.forEach(({ anchor }) => {
-      const section = document.getElementById(anchor)
-      if (section) observer.observe(section)
-    })
-    return () => observer.disconnect()
+    // The category being read is the last one whose top has passed 30% of the screen height. At
+    // the end of the page it is the last category, which a short page can keep lower than that.
+    const markCurrent = () => {
+      const { innerHeight, scrollY } = window
+      const atEnd =
+        scrollY > 0 && innerHeight + scrollY >= document.documentElement.scrollHeight - 1
+      const passed = categories.filter(
+        ({ anchor }) =>
+          (document.getElementById(anchor)?.getBoundingClientRect().top ?? Infinity) <=
+          innerHeight * 0.3,
+      )
+      const category = atEnd ? categories.at(-1) : (passed.at(-1) ?? categories[0])
+      if (category) setCurrent(category.anchor)
+    }
+    markCurrent()
+    window.addEventListener('scroll', markCurrent, { passive: true })
+    window.addEventListener('resize', markCurrent)
+    return () => {
+      window.removeEventListener('scroll', markCurrent)
+      window.removeEventListener('resize', markCurrent)
+    }
   }, [categories])
 
   return (
@@ -45,7 +52,10 @@ export const CategoryNav: React.FC<{ categories: Category[] }> = ({ categories }
               href={`#${anchor}`}
             >
               {title}
-              <span className="hidden text-xs text-muted-foreground tabular-nums lg:inline">
+              <span
+                aria-hidden
+                className="hidden text-xs text-muted-foreground tabular-nums lg:inline"
+              >
                 {count}
               </span>
             </a>

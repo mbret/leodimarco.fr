@@ -1,6 +1,6 @@
-import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import React from 'react'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { Realisation } from '@/payload-types'
 
@@ -194,59 +194,102 @@ describe('Call to action block', () => {
 })
 
 describe('FAQ block', () => {
-  const category = (title: string, question: string) => ({
-    title,
-    items: [{ id: question, question, answer: richText(paragraph('Réponse.')) }],
+  const question = (text: string, extra: object = {}) => ({
+    id: text,
+    question: text,
+    answer: richText(paragraph('Réponse.')),
+    ...extra,
   })
+  const category = (title: string, text: string) => ({ title, items: [question(text)] })
+  const twoCategories = {
+    blockType: 'faq' as const,
+    categories: [
+      category('Est-ce adapté à mon cas ?', 'À qui s’adresse la tricopigmentation ?'),
+      category('Sécurité', 'Qu’en est-il de l’hygiène ?'),
+    ],
+  }
 
-  // jsdom has no IntersectionObserver: this one reports when the test says so
-  let onScreen: IntersectionObserverCallback = () => {}
-  const original = window.IntersectionObserver
+  // jsdom lays nothing out: sections start below the screen, then report the top the test gives
   beforeEach(() => {
-    window.IntersectionObserver = class {
-      constructor(callback: IntersectionObserverCallback) {
-        onScreen = callback
-      }
-      observe() {}
-      disconnect() {}
-    } as unknown as typeof IntersectionObserver
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
+      top: window.innerHeight,
+    } as DOMRect)
   })
   afterEach(() => {
-    window.IntersectionObserver = original
+    vi.restoreAllMocks()
   })
+  const placeSection = (id: string, top: number) => {
+    document.getElementById(id)!.getBoundingClientRect = () => ({ top }) as DOMRect
+  }
+  const navLinks = () =>
+    within(screen.getByRole('navigation', { name: 'Catégories de questions' })).getAllByRole('link')
+  const current = () =>
+    navLinks()
+      .filter((link) => link.getAttribute('aria-current') === 'location')
+      .map((link) => link.getAttribute('href'))
 
   it('links to each category and marks the one being read', () => {
-    render(
-      React.createElement(FAQBlock, {
-        blockType: 'faq',
-        categories: [
-          category('Est-ce adapté à mon cas ?', 'À qui s’adresse la tricopigmentation ?'),
-          category('Sécurité', 'Qu’en est-il de l’hygiène ?'),
-        ],
-      }),
-    )
+    render(React.createElement(FAQBlock, twoCategories))
 
-    const nav = screen.getByRole('navigation', { name: 'Catégories de questions' })
-    const links = within(nav).getAllByRole('link')
-    expect(links.map((link) => link.getAttribute('href'))).toEqual([
+    expect(navLinks().map((link) => link.getAttribute('href'))).toEqual([
       '#est-ce-adapte-a-mon-cas',
       '#securite',
     ])
-    expect(links[0].getAttribute('aria-current')).toBe('location')
+    expect(current()).toEqual(['#est-ce-adapte-a-mon-cas'])
+    expect(
+      within(document.getElementById('securite')!).getByRole('heading', {
+        level: 2,
+        name: 'Sécurité',
+      }),
+    ).toBeTruthy()
 
-    const securite = document.getElementById('securite')!
-    expect(within(securite).getByRole('heading', { level: 2, name: 'Sécurité' })).toBeTruthy()
-    act(() =>
-      onScreen(
-        [{ isIntersecting: true, target: securite } as unknown as IntersectionObserverEntry],
-        {} as IntersectionObserver,
-      ),
-    )
-    expect(links[0].getAttribute('aria-current')).toBeNull()
-    expect(links[1].getAttribute('aria-current')).toBe('location')
+    // The second category's top passes 30% of the screen height
+    placeSection('est-ce-adapte-a-mon-cas', -400)
+    placeSection('securite', window.innerHeight * 0.2)
+    fireEvent.scroll(window)
+    expect(current()).toEqual(['#securite'])
+
+    // Back up: the second category goes below 30% again
+    placeSection('est-ce-adapte-a-mon-cas', -100)
+    placeSection('securite', window.innerHeight * 0.5)
+    fireEvent.scroll(window)
+    expect(current()).toEqual(['#est-ce-adapte-a-mon-cas'])
   })
 
-  it('shows a single category without links to it', () => {
+  it('marks the last category at the end of the page, however low it stays', () => {
+    render(React.createElement(FAQBlock, twoCategories))
+    placeSection('est-ce-adapte-a-mon-cas', -400)
+    placeSection('securite', window.innerHeight * 0.6)
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 500 })
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      configurable: true,
+      value: window.innerHeight + 500,
+    })
+
+    try {
+      fireEvent.scroll(window)
+      expect(current()).toEqual(['#securite'])
+    } finally {
+      Object.defineProperty(window, 'scrollY', { configurable: true, value: 0 })
+      Object.defineProperty(document.documentElement, 'scrollHeight', {
+        configurable: true,
+        value: 0,
+      })
+    }
+  })
+
+  it('gives categories with the same title their own anchor', () => {
+    render(
+      React.createElement(FAQBlock, {
+        blockType: 'faq',
+        categories: [category('Tarifs', 'Combien ?'), category('Tarifs ?', 'Pourquoi ?')],
+      }),
+    )
+
+    expect(navLinks().map((link) => link.getAttribute('href'))).toEqual(['#tarifs', '#tarifs-2'])
+  })
+
+  it('shows a single category without links to it, the question mark on its word', () => {
     render(
       React.createElement(FAQBlock, {
         blockType: 'faq',
@@ -256,17 +299,41 @@ describe('FAQ block', () => {
 
     expect(screen.queryByRole('navigation')).toBeNull()
     expect(screen.getByRole('heading', { level: 2, name: 'Questions fréquentes' })).toBeTruthy()
+    expect(screen.getByRole('button').textContent).toBe('Est-ce douloureux\u00a0?')
   })
 
-  it('keeps the question mark on the line of the question', () => {
+  it('links each highlighted question to its answer', () => {
     render(
+      React.createElement(FAQBlock, {
+        blockType: 'faq',
+        highlightsTitle: 'Les questions les plus posées',
+        categories: [
+          {
+            title: 'Déroulement',
+            items: [
+              question('Est-ce douloureux ?', { highlight: true, shortAnswer: 'Non : très peu.' }),
+            ],
+          },
+        ],
+      }),
+    )
+
+    const link = screen.getByRole('link', { name: 'Lire la réponse' })
+    const answer = document.getElementById(link.getAttribute('href')!.slice(1))
+    expect(within(answer!).getByRole('button').textContent).toBe('Est-ce douloureux\u00a0?')
+    expect(screen.getByText(/^Non/).textContent).toBe('Non\u00a0: très peu.')
+  })
+
+  it('gives search engines the questions as written', () => {
+    const { container } = render(
       React.createElement(FAQBlock, {
         blockType: 'faq',
         categories: [category('Questions fréquentes', 'Est-ce douloureux ?')],
       }),
     )
 
-    expect(screen.getByRole('button').textContent).toBe('Est-ce douloureux ?')
+    const script = container.querySelector('script[type="application/ld+json"]')
+    expect(JSON.parse(script!.textContent!).mainEntity[0].name).toBe('Est-ce douloureux ?')
   })
 })
 
