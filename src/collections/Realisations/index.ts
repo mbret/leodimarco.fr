@@ -4,7 +4,8 @@ import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { revalidateRealisation, revalidateRealisationDelete } from './hooks/revalidateRealisation'
 
-// Before/after results shown by the Gallery block, in the order set by drag and drop in the admin
+// Healed results shown by the Gallery block, one per client with a photo per view, in the order set
+// by drag and drop in the admin
 export const Realisations: CollectionConfig<'realisations'> = {
   slug: 'realisations',
   labels: {
@@ -18,39 +19,16 @@ export const Realisations: CollectionConfig<'realisations'> = {
     update: authenticated,
   },
   admin: {
-    defaultColumns: ['image', 'title', 'updatedAt'],
+    defaultColumns: ['title', 'description', 'updatedAt'],
     useAsTitle: 'title',
   },
   defaultPopulate: {
     title: true,
     description: true,
-    image: true,
-    before: true,
+    photos: true,
   },
   orderable: true,
   fields: [
-    {
-      type: 'row',
-      fields: [
-        {
-          name: 'before',
-          type: 'upload',
-          label: 'Photo avant',
-          relationTo: 'media',
-          admin: {
-            description:
-              'Optionnel. Si elle est renseignée, la galerie affiche l’avant et l’après.',
-          },
-        },
-        {
-          name: 'image',
-          type: 'upload',
-          label: 'Photo après',
-          relationTo: 'media',
-          required: true,
-        },
-      ],
-    },
     {
       name: 'title',
       type: 'text',
@@ -64,6 +42,45 @@ export const Realisations: CollectionConfig<'realisations'> = {
       admin: {
         description: 'Optionnel : zone traitée, nombre de séances…',
       },
+    },
+    {
+      name: 'photos',
+      type: 'array',
+      label: 'Photos',
+      labels: { singular: 'Photo', plural: 'Photos' },
+      required: true,
+      admin: {
+        description:
+          'La première photo s’affiche dans la galerie. Chaque photo y ajoute une puce au nom de sa vue.',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'view',
+              type: 'select',
+              label: 'Vue',
+              required: true,
+              options: [
+                { label: 'Face', value: 'face' },
+                { label: '3/4', value: 'troisQuarts' },
+                { label: 'Profil', value: 'profil' },
+                { label: 'Dos', value: 'dos' },
+                { label: 'Gros plan', value: 'grosPlan' },
+              ],
+            },
+            {
+              name: 'image',
+              type: 'upload',
+              label: 'Photo',
+              relationTo: 'media',
+              required: true,
+              filterOptions: { mimeType: { contains: 'image' } },
+            },
+          ],
+        },
+      ],
     },
   ],
   hooks: {
