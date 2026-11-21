@@ -54,7 +54,6 @@ const isHeaderRow = (row: SerializedTableRowNode) =>
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
-  // Text keeps French punctuation on the line of its word, in the formats of the default converter
   text: (args) => {
     const { text } = defaultConverters
     const node = { ...args.node, text: keepPunctuation(args.node.text) }
