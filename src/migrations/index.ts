@@ -34,7 +34,7 @@ import * as migration_20261109_110000_realisations_photos from './20261109_11000
 import * as migration_20261113_145332_realisation_views from './20261113_145332_realisation_views'
 import * as migration_20261121_120000_media_webp_sizes from './20261121_120000_media_webp_sizes'
 import * as migration_20261121_140000_merge_realisation_client from './20261121_140000_merge_realisation_client'
-import * as migration_20261121_163241_faq_no_emphasis from './20261121_163241_faq_no_emphasis'
+import * as migration_20261121_164445_faq_key_facts from './20261121_164445_faq_key_facts'
 
 export const migrations = [
   {
@@ -218,8 +218,8 @@ export const migrations = [
     name: '20261121_140000_merge_realisation_client',
   },
   {
-    up: migration_20261121_163241_faq_no_emphasis.up,
-    down: migration_20261121_163241_faq_no_emphasis.down,
-    name: '20261121_163241_faq_no_emphasis',
+    up: migration_20261121_164445_faq_key_facts.up,
+    down: migration_20261121_164445_faq_key_facts.down,
+    name: '20261121_164445_faq_key_facts',
   },
 ]

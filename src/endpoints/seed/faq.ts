@@ -47,7 +47,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
               question: 'Qu’est-ce que la tricopigmentation ?',
               answer: richText(
                 paragraph(
-                  'C’est une micropigmentation capillaire semi-permanente qui va imiter l’apparence de petits cheveux rasés de près.',
+                  'C’est une *micropigmentation capillaire semi-permanente* qui va imiter l’apparence de petits cheveux rasés de près.',
                 ),
                 paragraph(
                   'Elle consiste à implanter des milliers de micro-points de pigment très fins dans le cuir chevelu.',
@@ -79,7 +79,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
                   'La tricopigmentation repose, comme le tatouage, sur l’implantation d’un pigment dans la peau. Mais le travail et le rendu recherché ne sont pas les mêmes.',
                 ),
                 paragraph(
-                  'La différence majeure concerne la profondeur d’implantation. Dans ma pratique, je vise une couche superficielle du derme, ce qui permet :',
+                  'La différence majeure concerne la *profondeur d’implantation*. Dans ma pratique, je vise une couche superficielle du derme, ce qui permet :',
                 ),
                 bulletList(
                   'un rendu plus léger',
@@ -92,7 +92,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
               question: 'Quel matériel est utilisé ?',
               answer: richText(
                 paragraph(
-                  'Du dermographe jusqu’aux aiguilles, je travaille exclusivement avec du matériel professionnel de tricopigmentation.',
+                  'Du dermographe jusqu’aux aiguilles, je travaille exclusivement avec du *matériel professionnel de tricopigmentation*.',
                 ),
                 paragraph(
                   'Le dermographe apporte le contrôle et la régularité du geste, tandis que les aiguilles permettent la finesse du travail.',
@@ -131,7 +131,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
                   'L’approche est simplement différente, car on ne recherche généralement pas le même rendu que chez un homme.',
                 ),
                 paragraph(
-                  'Chez la femme, le travail vise le plus souvent à réduire la transparence du cuir chevelu, souvent au niveau de la raie, ou à camoufler une cicatrice, tout en restant très discret sous les cheveux existants.',
+                  'Chez la femme, le travail vise le plus souvent à *réduire la transparence du cuir chevelu*, souvent au niveau de la raie, ou à camoufler une cicatrice, tout en restant très discret sous les cheveux existants.',
                 ),
               ),
             },
@@ -153,7 +153,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
                   'Oui, elle peut intervenir en complément pour densifier visuellement certaines zones encore clairsemées, harmoniser l’ensemble ou camoufler une cicatrice de greffe FUE ou FUT.',
                 ),
                 paragraph(
-                  'Il faut simplement que la zone soit bien cicatrisée, généralement 12 mois après l’opération. Il est aussi tout à fait possible de faire une greffe suite à une tricopigmentation, une fois la cicatrisation terminée.',
+                  'Il faut simplement que la zone soit bien cicatrisée, généralement *12 mois après l’opération*. Il est aussi tout à fait possible de faire une greffe suite à une tricopigmentation, une fois la cicatrisation terminée.',
                 ),
               ),
             },
@@ -181,7 +181,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
                   'La durée d’une séance dépend toujours du cas, de la zone à traiter et du niveau de précision nécessaire.',
                 ),
                 paragraph(
-                  'En moyenne, une séance dure entre 2 et 5 heures. Une petite zone ou une retouche peuvent être plus rapides, tandis qu’un travail plus complet demande naturellement plus de temps.',
+                  'En moyenne, une séance dure entre *2 et 5 heures*. Une petite zone ou une retouche peuvent être plus rapides, tandis qu’un travail plus complet demande naturellement plus de temps.',
                 ),
               ),
             },
@@ -192,7 +192,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
                 'Le plus souvent trois, de 2 à 5 heures chacune, pour construire le résultat étape par étape.',
               answer: richText(
                 paragraph(
-                  'Le traitement se réalise généralement en plusieurs séances, le plus souvent trois.',
+                  'Le traitement se réalise généralement en plusieurs séances, le plus souvent *trois*.',
                 ),
                 paragraph(
                   'Cette progression permet de construire le résultat étape par étape, d’observer la réaction de la peau et d’ajuster la densité, la teinte ou certaines zones si nécessaire.',
@@ -223,7 +223,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
                   'L’effet le plus courant est l’apparition de rougeurs temporaires, qui disparaissent généralement au bout de quelques heures.',
                 ),
                 paragraph(
-                  'La sensation varie selon les personnes et les zones traitées, mais la plupart des clients décrivent surtout un inconfort léger, généralement très supportable.',
+                  'La sensation varie selon les personnes et les zones traitées, mais la plupart des clients décrivent surtout un *inconfort léger*, généralement très supportable.',
                 ),
               ),
             },
@@ -265,7 +265,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
                 paragraph(
                   'Les cellules du cuir chevelu se renouvellent rapidement, ce qui explique que le rendu puisse s’adoucir, perdre légèrement en intensité et nécessiter une retouche pour conserver un résultat idéal.',
                 ),
-                paragraph('Ces retouches interviennent généralement entre 18 et 24 mois.'),
+                paragraph('Ces retouches interviennent généralement entre *18 et 24 mois*.'),
               ),
             },
             {
@@ -282,8 +282,8 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
               answer: richText(
                 paragraph('Cela dépend du rendu recherché.'),
                 bulletList(
-                  'Pour un effet rasé, j’ai besoin de travailler sur une zone parfaitement rasée, car j’ai besoin d’une bonne visibilité du cuir chevelu. L’idéal est de se raser la veille au soir, afin d’éviter toute irritation le jour J. Je recommande l’utilisation d’une tondeuse électrique de type _Skull Shaver_, qui permet d’obtenir un rasage très court tout en facilitant la routine par la suite.',
-                  'Pour un effet densité, il n’est pas nécessaire de se raser. Je travaille entre les cheveux, sans toucher les bulbes. L’essentiel est d’arriver à la séance avec les cheveux propres et sans produit coiffant.',
+                  '*Pour un effet rasé*, j’ai besoin de travailler sur une zone parfaitement rasée, car j’ai besoin d’une bonne visibilité du cuir chevelu. L’idéal est de se raser la veille au soir, afin d’éviter toute irritation le jour J. Je recommande l’utilisation d’une tondeuse électrique de type _Skull Shaver_, qui permet d’obtenir un rasage très court tout en facilitant la routine par la suite.',
+                  '*Pour un effet densité*, il n’est pas nécessaire de se raser. Je travaille entre les cheveux, sans toucher les bulbes. L’essentiel est d’arriver à la séance avec les cheveux propres et sans produit coiffant.',
                 ),
               ),
             },
@@ -303,7 +303,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
                   'J’ai été formé à l’hygiène et salubrité et j’accorde ainsi une attention particulière à la préparation du poste de travail, à l’organisation de la séance et au respect du cadre réglementaire applicable à l’activité.',
                 ),
                 paragraph(
-                  'Chaque séance est réalisée avec du matériel professionnel, des consommables stériles à usage unique et des pigments conformes aux normes européennes actuelles REACH.',
+                  'Chaque séance est réalisée avec du matériel professionnel, des *consommables stériles à usage unique* et des pigments conformes aux normes européennes actuelles REACH.',
                 ),
                 paragraph('Mon local est déclaré auprès de l’ARS.'),
               ),
@@ -330,7 +330,7 @@ export const faqPageData = ({ aPropos, contact, galerie, prestations }: LinkedPa
                   'Les consignes post-traitement varient légèrement selon le type de prestation, mais le principe reste le même : laisser la zone tranquille pendant les premiers jours.',
                 ),
                 paragraph(
-                  'Pour un effet rasé ou le camouflage d’une cicatrice, il est conseillé de garder la zone sèche pendant les 3 premiers jours.',
+                  'Pour un effet rasé ou le camouflage d’une cicatrice, il est conseillé de garder la zone *sèche pendant les 3 premiers jours*.',
                 ),
                 paragraph(
                   'À partir du 4e jour, un lavage doux avec un shampoing à pH neutre peut être repris.',
