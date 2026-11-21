@@ -1,7 +1,7 @@
 'use client'
 
-import { XIcon, ZoomInIcon } from 'lucide-react'
-import React, { useCallback, useRef, useState } from 'react'
+import { ZoomInIcon } from 'lucide-react'
+import React, { useRef, useState } from 'react'
 
 import type { Realisation } from '@/payload-types'
 
@@ -9,10 +9,7 @@ import { Media } from '@/components/Media'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { cn } from '@/utilities/ui'
 
-import { PhotoZoom, pointIn, type ZoomPoint } from './PhotoZoom'
-
-// Where the zoom opened, the frame's size, and the photo already shown, to fill the zoom at once
-type OpenZoom = { at: ZoomPoint; frame: { width: number; height: number }; preview: string }
+import { PhotoViewer, type ViewerPhoto } from './PhotoViewer'
 
 const viewLabels: Record<Realisation['photos'][number]['view'], string> = {
   face: 'Face',
@@ -24,7 +21,7 @@ const viewLabels: Record<Realisation['photos'][number]['view'], string> = {
 
 // One client: their photos in a 4:5 frame, one at a time, and a chip per view to show another.
 // On phones the frame also swipes from one view to the next. A tap or a click on the photo, or the
-// zoom button, enlarges it in place, where a pinch or the mouse wheel zooms further.
+// zoom button, opens the photos in the viewer, where a pinch or the mouse wheel zooms.
 const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = ({
   label,
   realisation,
@@ -34,25 +31,28 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
   const [shown, setShown] = useState(0)
   // The view a chip asked for, while the smooth scroll passes the views before it
   const target = useRef<number | null>(null)
-  const [zoom, setZoom] = useState<OpenZoom | null>(null)
-  const closeZoom = useCallback(() => setZoom(null), [])
-  const shownImage = photos[shown]?.image
-  const zoomable = typeof shownImage === 'object' && shownImage?.url ? shownImage : null
-  // The 1920px size caps a large upload; a smaller upload has none and zooms on its original
-  const zoomSrc =
-    zoomable && getMediaUrl(zoomable.sizes?.xlarge?.url || zoomable.url, zoomable.updatedAt)
+  // The photos as the viewer shows them, from the size the card loaded, while it is open
+  const [viewer, setViewer] = useState<ViewerPhoto[] | null>(null)
 
-  const openZoom = (slide: Element | null | undefined, at: ZoomPoint) => {
-    if (!(slide instanceof HTMLElement)) return
-    setZoom({
-      at,
-      frame: { height: slide.clientHeight, width: slide.clientWidth },
-      preview: slide.querySelector('img')?.currentSrc ?? '',
-    })
+  const openViewer = () => {
+    const slides = [...(strip.current?.children ?? [])]
+    setViewer(
+      // In the card's order, so that a view's index is the same in both
+      photos.map(({ id, image, view }, index) => {
+        const media = typeof image === 'object' ? image : null
+        return {
+          id: id ?? String(index),
+          alt: media?.alt ?? '',
+          label: viewLabels[view],
+          preview: slides[index]?.querySelector('img')?.currentSrc ?? '',
+          // The 1920px size caps a large upload; a smaller upload has none and shows its original
+          src: getMediaUrl(media?.sizes?.xlarge?.url || media?.url, media?.updatedAt),
+        }
+      }),
+    )
   }
 
   const show = (index: number) => {
-    setZoom(null)
     if (index === shown || !strip.current) return
     target.current = index
     setShown(index)
@@ -66,8 +66,19 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
       if (index !== target.current) return
       target.current = null
     }
-    if (index !== shown) setZoom(null)
     setShown(index)
+  }
+
+  // The viewer covered the card, so its view changes at once rather than with a smooth scroll
+  const closeViewer = (index: number) => {
+    setViewer(null)
+    target.current = null
+    setShown(index)
+    const element = strip.current
+    if (!element) return
+    element.style.scrollBehavior = 'auto'
+    element.scrollLeft = index * element.clientWidth
+    element.style.scrollBehavior = ''
   }
 
   return (
@@ -89,16 +100,9 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
         >
           {photos.map(({ id, image }) => (
             <div
-              className={cn('relative w-full shrink-0 snap-center', zoomable && 'cursor-zoom-in')}
+              className="relative w-full shrink-0 cursor-zoom-in snap-center"
               key={id}
-              onClick={(event) => {
-                if (zoomable) {
-                  openZoom(
-                    event.currentTarget,
-                    pointIn(event.currentTarget, event.clientX, event.clientY),
-                  )
-                }
-              }}
+              onClick={openViewer}
             >
               <Media
                 fill
@@ -110,33 +114,16 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
             </div>
           ))}
         </div>
-        {zoom && zoomSrc && (
-          <PhotoZoom
-            at={zoom.at}
-            frame={zoom.frame}
-            objectPosition={
-              typeof zoomable.focalX === 'number' && typeof zoomable.focalY === 'number'
-                ? `${zoomable.focalX}% ${zoomable.focalY}%`
-                : undefined
-            }
-            onClose={closeZoom}
-            preview={zoom.preview}
-            src={zoomSrc}
-          />
-        )}
-        {zoomable && (
-          <button
-            aria-label="Zoom"
-            aria-pressed={zoom !== null}
-            className="absolute right-2 bottom-2 rounded-full border border-border bg-background/80 p-2 text-foreground backdrop-blur-sm transition-colors hover:bg-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            onClick={() => {
-              if (zoom) setZoom(null)
-              else openZoom(strip.current?.children[shown], { x: 50, y: 50 })
-            }}
-            type="button"
-          >
-            {zoom ? <XIcon className="size-4" /> : <ZoomInIcon className="size-4" />}
-          </button>
+        <button
+          aria-label="Agrandir les photos"
+          className="absolute right-2 bottom-2 rounded-full border border-border bg-background/80 p-2 text-foreground backdrop-blur-sm transition-colors hover:bg-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          onClick={openViewer}
+          type="button"
+        >
+          <ZoomInIcon className="size-4" />
+        </button>
+        {viewer && (
+          <PhotoViewer onClose={closeViewer} photos={viewer} start={shown} title={title} />
         )}
       </div>
       <figcaption className="flex flex-wrap items-center justify-between gap-2">

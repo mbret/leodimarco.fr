@@ -308,79 +308,70 @@ describe('Gallery', () => {
     expect(screen.getByRole('group').getAttribute('tabindex')).toBeNull()
   })
 
-  describe('zoom', () => {
-    const renderOnePhoto = () => {
+  describe('viewer', () => {
+    const renderClient = () =>
       render(
         React.createElement(GalleryGrid, {
-          realisations: [realisation(1, [{ id: 'a', view: 'face', image: photo(1, 'Face') }])],
+          realisations: [
+            realisation(1, [
+              { id: 'a', view: 'troisQuarts', image: photo(1, 'Trois quarts') },
+              { id: 'b', view: 'dos', image: photo(2, 'Dos') },
+            ]),
+          ],
         }),
       )
-      return {
-        enlarged: () =>
-          document.querySelector<HTMLImageElement>(
-            '[data-testid="photo-zoom"] img[data-full-size]',
-          ),
-        transform: () =>
-          document.querySelector<HTMLElement>(
-            '[data-testid="photo-zoom"] .react-transform-component',
-          )?.style.transform,
-        zoomButton: () => screen.getByRole('button', { name: 'Zoom' }),
-      }
-    }
+    const viewer = () => within(screen.getByRole('dialog', { name: 'Effet rasé' }))
 
-    it('opens the full-size photo enlarged on the point clicked', () => {
-      const { enlarged, transform, zoomButton } = renderOnePhoto()
-      // jsdom lays nothing out, so the photo gets the size of a 400 × 500 frame
-      const slide = screen.getByRole('img', { name: 'Face' }).closest('div[class*="snap-center"]')
-      if (!(slide instanceof HTMLElement)) throw new Error('No slide around the photo')
-      Object.defineProperty(slide, 'clientWidth', { configurable: true, value: 400 })
-      Object.defineProperty(slide, 'clientHeight', { configurable: true, value: 500 })
-      slide.getBoundingClientRect = () => DOMRect.fromRect({ x: 0, y: 0, width: 400, height: 500 })
+    it('opens the full-size photo the card shows, from the photo or its button', () => {
+      renderClient()
 
-      fireEvent.click(slide, { clientX: 100, clientY: 125 })
+      fireEvent.click(screen.getByRole('img', { name: 'Trois quarts' }))
 
-      expect(enlarged()?.getAttribute('src')).toMatch(/^\/api\/media\/file\/photo-1\.jpg\?/)
-      // 2.5 times, with the point clicked, a quarter across and down, kept where it was
-      expect(transform()).toMatch(/translate\(-150px, -187\.5px\) scale\(2\.5\)/)
-      expect(zoomButton().getAttribute('aria-pressed')).toBe('true')
+      expect(
+        viewer().getAllByRole('img', { name: 'Trois quarts' }).at(-1)?.getAttribute('src'),
+      ).toMatch(/^\/api\/media\/file\/photo-1\.jpg\?/)
+      fireEvent.click(viewer().getByRole('button', { name: 'Fermer' }))
+      expect(screen.queryByRole('dialog')).toBeNull()
+
+      fireEvent.click(screen.getByRole('button', { name: 'Agrandir les photos' }))
+      expect(screen.getByRole('dialog', { name: 'Effet rasé' })).toBeTruthy()
     })
 
-    it('stays open on a tap, which may start a drag or a pinch', () => {
-      const { enlarged } = renderOnePhoto()
-      fireEvent.click(screen.getByRole('img', { name: 'Face' }))
+    it('changes view with its chips, and leaves the card on the last view shown', () => {
+      renderClient()
+      fireEvent.click(screen.getByRole('button', { name: 'Agrandir les photos' }))
 
-      fireEvent.click(screen.getByTestId('photo-zoom'))
-
-      expect(enlarged()).not.toBeNull()
-    })
-
-    it('opens and closes from its button, and closes on Escape', () => {
-      const { enlarged, zoomButton } = renderOnePhoto()
-
-      fireEvent.click(zoomButton())
-      expect(enlarged()).not.toBeNull()
-      fireEvent.click(zoomButton())
-      expect(enlarged()).toBeNull()
-
-      fireEvent.click(zoomButton())
+      fireEvent.click(viewer().getByRole('button', { name: 'Dos' }))
+      expect(viewer().getByRole('img', { name: 'Dos' }).getAttribute('src')).toMatch(/photo-2\.jpg/)
       fireEvent.keyDown(window, { key: 'Escape' })
-      expect(enlarged()).toBeNull()
+
+      expect(screen.queryByRole('dialog')).toBeNull()
+      const cardChips = within(screen.getByRole('group', { name: 'Vues' }))
+      expect(cardChips.getByRole('button', { name: 'Dos' }).getAttribute('aria-pressed')).toBe(
+        'true',
+      )
     })
 
-    it('closes when another view shows, from a chip or a scroll', () => {
-      const { strip } = renderTwoViews()
-      const zoomLayer = () => screen.queryByTestId('photo-zoom')
+    it('keeps Tab among its buttons', () => {
+      renderClient()
+      fireEvent.click(screen.getByRole('button', { name: 'Agrandir les photos' }))
+      const buttons = viewer().getAllByRole('button')
 
-      fireEvent.click(screen.getByRole('button', { name: 'Zoom' }))
-      fireEvent.click(screen.getByRole('button', { name: 'Dos' }))
-      expect(zoomLayer()).toBeNull()
-      // The chip's scroll reaches its view
-      fireEvent.scroll(strip)
+      expect(document.activeElement).toBe(buttons[0])
+      buttons.at(-1)?.focus()
+      fireEvent.keyDown(window, { key: 'Tab' })
+      expect(document.activeElement).toBe(buttons[0])
+      fireEvent.keyDown(window, { key: 'Tab', shiftKey: true })
+      expect(document.activeElement).toBe(buttons.at(-1))
+    })
 
-      fireEvent.click(screen.getByRole('button', { name: 'Zoom' }))
-      strip.scrollLeft = 0
-      fireEvent.scroll(strip)
-      expect(zoomLayer()).toBeNull()
+    it('stops the page from scrolling while it is open', () => {
+      renderClient()
+
+      fireEvent.click(screen.getByRole('button', { name: 'Agrandir les photos' }))
+      expect(document.documentElement.style.overflow).toBe('hidden')
+      fireEvent.click(viewer().getByRole('button', { name: 'Fermer' }))
+      expect(document.documentElement.style.overflow).toBe('')
     })
   })
 })
