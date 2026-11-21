@@ -344,16 +344,30 @@ describe('FAQ block', () => {
     expect(screen.getByText(/Non/).textContent).toBe('«\u00a0Non\u00a0»\u00a0: très peu.')
   })
 
-  it('gives search engines the questions as written', () => {
+  it('gives search engines the questions and answers as written', () => {
     const { container } = render(
       React.createElement(FAQBlock, {
         blockType: 'faq',
-        categories: [category('Questions fréquentes', 'Est-ce douloureux ?')],
+        categories: [
+          {
+            title: 'Questions fréquentes',
+            items: [
+              question('Est-ce douloureux ?', {
+                answer: richText(paragraph('Très peu : une gêne légère.')),
+              }),
+            ],
+          },
+        ],
       }),
     )
 
     const script = container.querySelector('script[type="application/ld+json"]')
-    expect(JSON.parse(script!.textContent!).mainEntity[0].name).toBe('Est-ce douloureux ?')
+    const [entity] = JSON.parse(script!.textContent!).mainEntity
+    expect(entity.name).toBe('Est-ce douloureux ?')
+    expect(entity.acceptedAnswer.text).toBe('Très peu : une gêne légère.')
+    // The page itself keeps the colon on the line of its word
+    fireEvent.click(screen.getByRole('button', { name: /douloureux/ }))
+    expect(screen.getByText(/gêne/).textContent).toBe('Très peu\u00a0: une gêne légère.')
   })
 })
 

@@ -6,17 +6,13 @@ import type { FAQBlock as FAQBlockProps } from '@/payload-types'
 import { CMSLink } from '@/components/Link'
 import RichText from '@/components/RichText'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { keepPunctuation } from '@/utilities/keepPunctuation'
 import { toPlainText } from '@/utilities/toPlainText'
 import { cn } from '@/utilities/ui'
 
 import { CategoryAccordion } from './CategoryAccordion'
 import { CategoryNav } from './CategoryNav'
 import { questionAnchor } from './questionAnchor'
-
-// French puts a space before ? ! : ; and inside « »: a no-break space keeps the mark on the line of
-// its word
-const keepPunctuation = (text: string) =>
-  text.replace(/ ([?!:;»])/g, '\u00a0$1').replace(/« /g, '«\u00a0')
 
 // A title without accents, such as est-ce-adapte-a-mon-cas
 const slug = (title: string) =>

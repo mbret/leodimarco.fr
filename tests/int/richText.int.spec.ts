@@ -62,4 +62,20 @@ describe('Rich text', () => {
     expect(screen.getByText('À partir de 200 €').tagName).toBe('STRONG')
     expect(screen.getByRole('paragraph').textContent).toBe('À partir de 200 €*')
   })
+
+  it('keeps French punctuation on the line of its word', () => {
+    renderRichText(richText(paragraph('Est-ce douloureux ? « Très peu » : c’est tout l’enjeu.')))
+
+    expect(screen.getByRole('paragraph').textContent).toBe(
+      'Est-ce douloureux\u00a0? «\u00a0Très peu\u00a0»\u00a0: c’est tout l’enjeu.',
+    )
+  })
+
+  it('keeps the format of text with French punctuation', () => {
+    renderRichText(richText(paragraph('C’est **tout l’enjeu :** ligne frontale.')))
+
+    const bold = screen.getByText(/enjeu/)
+    expect(bold.tagName).toBe('STRONG')
+    expect(bold.textContent).toBe('tout l’enjeu\u00a0:')
+  })
 })
