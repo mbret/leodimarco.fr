@@ -82,8 +82,14 @@ vi.mock('@aws-sdk/client-s3', async (importOriginal) => {
     },
   }
 })
-vi.mock('@payload-config', () => ({ default: {} }))
-vi.mock('@payloadcms/next/routes', () => ({ REST_GET: () => payloadGET, REST_OPTIONS: vi.fn() }))
+const payloadConfig = vi.hoisted(() => ({ loads: 0 }))
+
+vi.mock('@payload-config', () => {
+  payloadConfig.loads++
+
+  return { default: {} }
+})
+vi.mock('@payloadcms/next/routes', () => ({ REST_GET: () => payloadGET }))
 
 type Route = typeof import('@/app/(payload)/api/media/file/[filename]/route')
 
@@ -151,6 +157,7 @@ describe('the media file route, with R2 configured', () => {
       },
     ])
     expect(payloadGET).not.toHaveBeenCalled()
+    expect(payloadConfig.loads).toBe(0)
   })
 
   it('finds a file whose name has spaces under that same name', async () => {
@@ -266,6 +273,7 @@ describe('the media file route, without R2', () => {
     const response = await request(route, 'photo.webp')
 
     expect(await response.text()).toBe('from Payload')
+    expect(payloadConfig.loads).toBe(1)
     expect(sent).toEqual([])
   })
 })

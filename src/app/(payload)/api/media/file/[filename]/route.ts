@@ -147,31 +147,24 @@ const fromBucket = async (bucket: S3Client, request: Request, filename: string) 
 
 type Args = { params: Promise<{ filename: string }> }
 
-/** The params Payload's catch-all receives for this path. */
-const restParams = (filename: string) => Promise.resolve({ slug: ['media', 'file', filename] })
-
-/** Loaded only when Payload answers, so a file read from R2 does not load Payload's config. */
-const payloadRoutes = async () => {
-  const [{ default: config }, { REST_GET, REST_OPTIONS }] = await Promise.all([
+/** Without R2 (local dev), Payload serves the file. Loaded here, so R2 requests never load it. */
+const fromPayload = async (request: Request, filename: string) => {
+  const [{ default: config }, { REST_GET }] = await Promise.all([
     import('@payload-config'),
     import('@payloadcms/next/routes'),
   ])
 
-  return { GET: REST_GET(config), OPTIONS: REST_OPTIONS(config) }
+  // The params Payload's catch-all receives for this path
+  return REST_GET(config)(request, {
+    params: Promise.resolve({ slug: ['media', 'file', filename] }),
+  })
 }
 
 export const GET = async (request: Request, { params }: Args): Promise<Response> => {
   const { filename } = await params
   const response = r2
     ? await fromBucket(r2, request, filename)
-    : await (await payloadRoutes()).GET(request, { params: restParams(filename) })
+    : await fromPayload(request, filename)
 
   return withMediaCacheControl(request, response)
-}
-
-/** This route shadows Payload's catch-all for every method, so it hands CORS preflights to Payload. */
-export const OPTIONS = async (request: Request, { params }: Args): Promise<Response> => {
-  const { filename } = await params
-
-  return (await payloadRoutes()).OPTIONS(request, { params: restParams(filename) })
 }

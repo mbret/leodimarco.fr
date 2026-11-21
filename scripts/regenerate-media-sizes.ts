@@ -4,8 +4,8 @@
  *   NODE_ENV=production DRY_RUN=1 pnpm payload run scripts/regenerate-media-sizes.ts
  *   NODE_ENV=production LIMIT=1 pnpm payload run scripts/regenerate-media-sizes.ts
  *
- * Run it with production's POSTGRES_URL and R2_* variables. Without R2_BUCKET, Payload writes the
- * new sizes to this machine's disk while the production rows expect them in the bucket.
+ * Run it with production's POSTGRES_URL and R2_* variables. It refuses to run without R2_BUCKET:
+ * Payload would write the new sizes to this machine's disk while the production rows point to them.
  *
  * NODE_ENV=production is required. Without it, Payload pushes the local schema to the database
  * and adds a `dev` row to `payload_migrations`. The next deploy's `payload migrate` then stops
@@ -44,22 +44,18 @@ const LADDER = ['thumbnail', 'small', 'medium', 'large', 'xlarge'] as const
 /** The width of `xlarge`. `withoutEnlargement` caps it at the upload's own width. */
 const TOP_WIDTH = 1920
 
-/** The raster types Payload makes sizes for (its `canResizeImage`). */
-const RESIZABLE_TYPES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/gif',
-  'image/webp',
-  'image/tiff',
-  'image/avif',
-])
+/**
+ * The types Payload makes sizes for and stores as uploaded. It makes sizes for GIF, WebP and TIFF
+ * too, but it also re-encodes those originals, so the backfill leaves them alone.
+ */
+const REBUILT_TYPES = new Set(['image/jpeg', 'image/png', 'image/avif'])
 
 type Pending = Media & { filename: string; mimeType: string; url: string; width: number }
 
-/** Whether Payload makes sizes for the document, and it does not have the widest WebP size yet. */
+/** Whether the backfill handles the document's type, and it does not have the widest WebP size yet. */
 const needsSizes = (doc: Media): doc is Pending => {
   if (!doc.filename || !doc.url || typeof doc.width !== 'number') return false
-  if (!RESIZABLE_TYPES.has(doc.mimeType ?? '')) return false
+  if (!REBUILT_TYPES.has(doc.mimeType ?? '')) return false
 
   const widest = LADDER.map((name) => doc.sizes?.[name]).reduce(
     (top, size) =>
@@ -91,6 +87,10 @@ const main = async () => {
     throw new Error('Set NODE_ENV=production, so Payload does not push the schema in dev mode.')
   }
 
+  if (!mediaStorage.enabled) {
+    throw new Error('Set the R2_* variables, so the new sizes go to the bucket the site reads.')
+  }
+
   const { getPayload } = await import('payload')
 
   const payload = await getPayload({ config })
@@ -109,7 +109,7 @@ const main = async () => {
   console.log(`nothing to do         : ${docs.length - pending.length}`)
   console.log(`to regenerate         : ${todo.length}${LIMIT ? ` (LIMIT=${LIMIT})` : ''}`)
   console.log(`originals read from   : ${SOURCE_ORIGIN}`)
-  console.log(`sizes written to      : ${mediaStorage.enabled ? 'R2' : 'local disk'}`)
+  console.log(`R2 bucket             : ${mediaStorage.bucket}`)
 
   if (DRY_RUN) {
     todo.forEach((doc) => console.log(`  would regenerate ${doc.filename}`))
