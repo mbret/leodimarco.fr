@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 
 // A point of the photo, in percent of its width and height
 export type ZoomPoint = { x: number; y: number }
 
-const ZOOM = 2.5
+const OPENING_SCALE = 2.5
 
 export const pointIn = (element: Element, clientX: number, clientY: number): ZoomPoint => {
   const box = element.getBoundingClientRect()
@@ -17,20 +18,21 @@ export const pointIn = (element: Element, clientX: number, clientY: number): Zoo
   }
 }
 
-// The photo enlarged over its frame, at full size so the pigment dots stay sharp. The enlarged
-// area follows the mouse, or the finger while it drags. A tap or a click that ends no drag closes
-// it, and so does Escape.
+// The photo enlarged over its frame, from the full-size file so the pigment dots stay sharp. It
+// opens enlarged on the point that was tapped, on the photo already shown until the full-size file
+// loads. A pinch or the mouse wheel zooms, a drag moves the photo, and a double tap zooms in or
+// back out. Escape closes it.
 export const PhotoZoom: React.FC<{
   at: ZoomPoint
+  // The frame's size in pixels, to open on `at`
+  frame: { width: number; height: number }
   objectPosition?: string
   onClose: () => void
-  onMove: (point: ZoomPoint) => void
+  // The photo the frame already shows, at a smaller size
+  preview: string
   src: string
-}> = ({ at, objectPosition, onClose, onMove, src }) => {
+}> = ({ at, frame, objectPosition, onClose, preview, src }) => {
   const [loaded, setLoaded] = useState(false)
-  // Where the pointer went down, to tell a tap from a drag
-  const pressedAt = useRef<{ x: number; y: number } | null>(null)
-  const dragged = useRef(false)
 
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -43,49 +45,44 @@ export const PhotoZoom: React.FC<{
   return (
     <div
       aria-hidden
-      className="absolute inset-0 cursor-zoom-out touch-none overflow-hidden rounded-md"
+      // Keeps the browser from scrolling or zooming the page while a finger moves the photo
+      className="absolute inset-0 cursor-grab touch-none overflow-hidden rounded-md active:cursor-grabbing"
       data-testid="photo-zoom"
-      // Closing on the click rather than on pointerup: a phone sends its click after the finger
-      // lifts, and it would reopen the zoom from the photo under it
-      onClick={() => {
-        if (!dragged.current) onClose()
-        dragged.current = false
-      }}
-      onPointerDown={(event) => {
-        pressedAt.current = { x: event.clientX, y: event.clientY }
-        dragged.current = false
-        event.currentTarget.setPointerCapture?.(event.pointerId)
-      }}
-      onPointerMove={(event) => {
-        const start = pressedAt.current
-        // A mouse moves the enlarged area as it hovers, a finger only while it drags
-        if (event.pointerType !== 'mouse' && !start) return
-        if (start && Math.hypot(event.clientX - start.x, event.clientY - start.y) >= 8) {
-          dragged.current = true
-        }
-        onMove(pointIn(event.currentTarget, event.clientX, event.clientY))
-      }}
-      onPointerUp={() => {
-        pressedAt.current = null
-      }}
-      onPointerCancel={() => {
-        pressedAt.current = null
-      }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element -- the full-size file, not a resized one */}
-      <img
-        alt=""
-        className="h-full w-full object-cover transition-opacity duration-200 motion-reduce:transition-none"
-        draggable={false}
-        onLoad={() => setLoaded(true)}
-        src={src}
-        style={{
-          objectPosition,
-          opacity: loaded ? 1 : 0,
-          transform: `scale(${ZOOM})`,
-          transformOrigin: `${at.x}% ${at.y}%`,
-        }}
-      />
+      <TransformWrapper
+        doubleClick={{ mode: 'toggle' }}
+        initialPositionX={(at.x / 100) * frame.width * (1 - OPENING_SCALE)}
+        initialPositionY={(at.y / 100) * frame.height * (1 - OPENING_SCALE)}
+        initialScale={OPENING_SCALE}
+        maxScale={8}
+        minScale={1}
+        wheel={{ step: 0.2 }}
+      >
+        <TransformComponent contentClass="!h-full !w-full" wrapperClass="!h-full !w-full">
+          <div className="relative h-full w-full">
+            {preview && (
+              /* eslint-disable-next-line @next/next/no-img-element -- a file the page already loaded */
+              <img
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover"
+                draggable={false}
+                src={preview}
+                style={{ objectPosition }}
+              />
+            )}
+            {/* eslint-disable-next-line @next/next/no-img-element -- the full-size file, not a resized one */}
+            <img
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-200 motion-reduce:transition-none"
+              data-full-size
+              draggable={false}
+              onLoad={() => setLoaded(true)}
+              src={src}
+              style={{ objectPosition, opacity: loaded ? 1 : 0 }}
+            />
+          </div>
+        </TransformComponent>
+      </TransformWrapper>
     </div>
   )
 }

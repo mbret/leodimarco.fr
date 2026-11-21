@@ -316,54 +316,71 @@ describe('Gallery', () => {
         }),
       )
       return {
-        enlarged: () => document.querySelector<HTMLImageElement>('[data-testid="photo-zoom"] img'),
+        enlarged: () =>
+          document.querySelector<HTMLImageElement>(
+            '[data-testid="photo-zoom"] img[data-full-size]',
+          ),
+        transform: () =>
+          document.querySelector<HTMLElement>(
+            '[data-testid="photo-zoom"] .react-transform-component',
+          )?.style.transform,
         zoomButton: () => screen.getByRole('button', { name: 'Zoom' }),
       }
     }
 
-    it('enlarges the full-size photo where it is clicked', () => {
-      const { enlarged, zoomButton } = renderOnePhoto()
+    it('opens the full-size photo enlarged on the point clicked', () => {
+      const { enlarged, transform, zoomButton } = renderOnePhoto()
+      // jsdom lays nothing out, so the photo gets the size of a 400 × 500 frame
+      const slide = screen.getByRole('img', { name: 'Face' }).closest('div[class*="snap-center"]')
+      if (!(slide instanceof HTMLElement)) throw new Error('No slide around the photo')
+      Object.defineProperty(slide, 'clientWidth', { configurable: true, value: 400 })
+      Object.defineProperty(slide, 'clientHeight', { configurable: true, value: 500 })
+      slide.getBoundingClientRect = () => DOMRect.fromRect({ x: 0, y: 0, width: 400, height: 500 })
 
-      fireEvent.click(screen.getByRole('img', { name: 'Face' }))
+      fireEvent.click(slide, { clientX: 100, clientY: 125 })
 
       expect(enlarged()?.getAttribute('src')).toMatch(/^\/api\/media\/file\/photo-1\.jpg\?/)
-      expect(enlarged()?.style.transform).toBe('scale(2.5)')
-      // jsdom lays nothing out, so the click lands in the middle
-      expect(enlarged()?.style.transformOrigin).toBe('50% 50%')
+      // 2.5 times, with the point clicked, a quarter across and down, kept where it was
+      expect(transform()).toMatch(/translate\(-150px, -187\.5px\) scale\(2\.5\)/)
       expect(zoomButton().getAttribute('aria-pressed')).toBe('true')
     })
 
-    it('follows a finger that drags, and closes on a tap', () => {
+    it('stays open on a tap, which may start a drag or a pinch', () => {
       const { enlarged } = renderOnePhoto()
       fireEvent.click(screen.getByRole('img', { name: 'Face' }))
-      const zoom = document.querySelector('[data-testid="photo-zoom"]')!
-      zoom.getBoundingClientRect = () => DOMRect.fromRect({ x: 0, y: 0, width: 400, height: 500 })
 
-      fireEvent.pointerDown(zoom, { clientX: 200, clientY: 250, pointerType: 'touch' })
-      fireEvent.pointerMove(zoom, { clientX: 100, clientY: 125, pointerType: 'touch' })
-      expect(enlarged()?.style.transformOrigin).toBe('25% 25%')
-      fireEvent.pointerUp(zoom, { clientX: 100, clientY: 125, pointerType: 'touch' })
-      // A mouse drag ends with a click too
-      fireEvent.click(zoom)
+      fireEvent.click(screen.getByTestId('photo-zoom'))
+
       expect(enlarged()).not.toBeNull()
-
-      fireEvent.pointerDown(zoom, { clientX: 100, clientY: 125, pointerType: 'touch' })
-      fireEvent.pointerUp(zoom, { clientX: 102, clientY: 126, pointerType: 'touch' })
-      fireEvent.click(zoom)
-      expect(enlarged()).toBeNull()
     })
 
     it('opens and closes from its button, and closes on Escape', () => {
       const { enlarged, zoomButton } = renderOnePhoto()
 
       fireEvent.click(zoomButton())
-      expect(enlarged()?.style.transformOrigin).toBe('50% 50%')
+      expect(enlarged()).not.toBeNull()
       fireEvent.click(zoomButton())
       expect(enlarged()).toBeNull()
 
       fireEvent.click(zoomButton())
       fireEvent.keyDown(window, { key: 'Escape' })
       expect(enlarged()).toBeNull()
+    })
+
+    it('closes when another view shows, from a chip or a scroll', () => {
+      const { strip } = renderTwoViews()
+      const zoomLayer = () => screen.queryByTestId('photo-zoom')
+
+      fireEvent.click(screen.getByRole('button', { name: 'Zoom' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Dos' }))
+      expect(zoomLayer()).toBeNull()
+      // The chip's scroll reaches its view
+      fireEvent.scroll(strip)
+
+      fireEvent.click(screen.getByRole('button', { name: 'Zoom' }))
+      strip.scrollLeft = 0
+      fireEvent.scroll(strip)
+      expect(zoomLayer()).toBeNull()
     })
   })
 })

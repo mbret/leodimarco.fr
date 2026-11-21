@@ -1,6 +1,6 @@
 'use client'
 
-import { ZoomInIcon, ZoomOutIcon } from 'lucide-react'
+import { XIcon, ZoomInIcon } from 'lucide-react'
 import React, { useCallback, useRef, useState } from 'react'
 
 import type { Realisation } from '@/payload-types'
@@ -10,6 +10,9 @@ import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { cn } from '@/utilities/ui'
 
 import { PhotoZoom, pointIn, type ZoomPoint } from './PhotoZoom'
+
+// Where the zoom opened, the frame's size, and the photo already shown, to fill the zoom at once
+type OpenZoom = { at: ZoomPoint; frame: { width: number; height: number }; preview: string }
 
 const viewLabels: Record<Realisation['photos'][number]['view'], string> = {
   face: 'Face',
@@ -21,7 +24,7 @@ const viewLabels: Record<Realisation['photos'][number]['view'], string> = {
 
 // One client: their photos in a 4:5 frame, one at a time, and a chip per view to show another.
 // On phones the frame also swipes from one view to the next. A tap or a click on the photo, or the
-// zoom button, enlarges it in place.
+// zoom button, enlarges it in place, where a pinch or the mouse wheel zooms further.
 const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = ({
   label,
   realisation,
@@ -31,10 +34,22 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
   const [shown, setShown] = useState(0)
   // The view a chip asked for, while the smooth scroll passes the views before it
   const target = useRef<number | null>(null)
-  const [zoom, setZoom] = useState<ZoomPoint | null>(null)
+  const [zoom, setZoom] = useState<OpenZoom | null>(null)
   const closeZoom = useCallback(() => setZoom(null), [])
   const shownImage = photos[shown]?.image
   const zoomable = typeof shownImage === 'object' && shownImage?.url ? shownImage : null
+  // The 1920px size caps a large upload; a smaller upload has none and zooms on its original
+  const zoomSrc =
+    zoomable && getMediaUrl(zoomable.sizes?.xlarge?.url || zoomable.url, zoomable.updatedAt)
+
+  const openZoom = (slide: Element | null | undefined, at: ZoomPoint) => {
+    if (!(slide instanceof HTMLElement)) return
+    setZoom({
+      at,
+      frame: { height: slide.clientHeight, width: slide.clientWidth },
+      preview: slide.querySelector('img')?.currentSrc ?? '',
+    })
+  }
 
   const show = (index: number) => {
     setZoom(null)
@@ -51,6 +66,7 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
       if (index !== target.current) return
       target.current = null
     }
+    if (index !== shown) setZoom(null)
     setShown(index)
   }
 
@@ -76,7 +92,12 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
               className={cn('relative w-full shrink-0 snap-center', zoomable && 'cursor-zoom-in')}
               key={id}
               onClick={(event) => {
-                if (zoomable) setZoom(pointIn(event.currentTarget, event.clientX, event.clientY))
+                if (zoomable) {
+                  openZoom(
+                    event.currentTarget,
+                    pointIn(event.currentTarget, event.clientX, event.clientY),
+                  )
+                }
               }}
             >
               <Media
@@ -89,17 +110,18 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
             </div>
           ))}
         </div>
-        {zoom && zoomable && (
+        {zoom && zoomSrc && (
           <PhotoZoom
-            at={zoom}
+            at={zoom.at}
+            frame={zoom.frame}
             objectPosition={
               typeof zoomable.focalX === 'number' && typeof zoomable.focalY === 'number'
                 ? `${zoomable.focalX}% ${zoomable.focalY}%`
                 : undefined
             }
             onClose={closeZoom}
-            onMove={setZoom}
-            src={getMediaUrl(zoomable.url, zoomable.updatedAt)}
+            preview={zoom.preview}
+            src={zoomSrc}
           />
         )}
         {zoomable && (
@@ -107,10 +129,13 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
             aria-label="Zoom"
             aria-pressed={zoom !== null}
             className="absolute right-2 bottom-2 rounded-full border border-border bg-background/80 p-2 text-foreground backdrop-blur-sm transition-colors hover:bg-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            onClick={() => setZoom(zoom ? null : { x: 50, y: 50 })}
+            onClick={() => {
+              if (zoom) setZoom(null)
+              else openZoom(strip.current?.children[shown], { x: 50, y: 50 })
+            }}
             type="button"
           >
-            {zoom ? <ZoomOutIcon className="size-4" /> : <ZoomInIcon className="size-4" />}
+            {zoom ? <XIcon className="size-4" /> : <ZoomInIcon className="size-4" />}
           </button>
         )}
       </div>
