@@ -1,11 +1,12 @@
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import React from 'react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import type { Realisation } from '@/payload-types'
 
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
+import { FAQBlock } from '@/blocks/FAQ/Component'
 import { GalleryGrid } from '@/blocks/Gallery/GalleryGrid'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { heading, paragraph, richText } from '@/endpoints/seed/richText'
@@ -189,6 +190,83 @@ describe('Call to action block', () => {
     render(React.createElement(CallToActionBlock, block))
 
     expect(screen.queryByRole('img')).toBeNull()
+  })
+})
+
+describe('FAQ block', () => {
+  const category = (title: string, question: string) => ({
+    title,
+    items: [{ id: question, question, answer: richText(paragraph('Réponse.')) }],
+  })
+
+  // jsdom has no IntersectionObserver: this one reports when the test says so
+  let onScreen: IntersectionObserverCallback = () => {}
+  const original = window.IntersectionObserver
+  beforeEach(() => {
+    window.IntersectionObserver = class {
+      constructor(callback: IntersectionObserverCallback) {
+        onScreen = callback
+      }
+      observe() {}
+      disconnect() {}
+    } as unknown as typeof IntersectionObserver
+  })
+  afterEach(() => {
+    window.IntersectionObserver = original
+  })
+
+  it('links to each category and marks the one being read', () => {
+    render(
+      React.createElement(FAQBlock, {
+        blockType: 'faq',
+        categories: [
+          category('Est-ce adapté à mon cas ?', 'À qui s’adresse la tricopigmentation ?'),
+          category('Sécurité', 'Qu’en est-il de l’hygiène ?'),
+        ],
+      }),
+    )
+
+    const nav = screen.getByRole('navigation', { name: 'Catégories de questions' })
+    const links = within(nav).getAllByRole('link')
+    expect(links.map((link) => link.getAttribute('href'))).toEqual([
+      '#est-ce-adapte-a-mon-cas',
+      '#securite',
+    ])
+    expect(links[0].getAttribute('aria-current')).toBe('location')
+
+    const securite = document.getElementById('securite')!
+    expect(within(securite).getByRole('heading', { level: 2, name: 'Sécurité' })).toBeTruthy()
+    act(() =>
+      onScreen(
+        [{ isIntersecting: true, target: securite } as unknown as IntersectionObserverEntry],
+        {} as IntersectionObserver,
+      ),
+    )
+    expect(links[0].getAttribute('aria-current')).toBeNull()
+    expect(links[1].getAttribute('aria-current')).toBe('location')
+  })
+
+  it('shows a single category without links to it', () => {
+    render(
+      React.createElement(FAQBlock, {
+        blockType: 'faq',
+        categories: [category('Questions fréquentes', 'Est-ce douloureux ?')],
+      }),
+    )
+
+    expect(screen.queryByRole('navigation')).toBeNull()
+    expect(screen.getByRole('heading', { level: 2, name: 'Questions fréquentes' })).toBeTruthy()
+  })
+
+  it('keeps the question mark on the line of the question', () => {
+    render(
+      React.createElement(FAQBlock, {
+        blockType: 'faq',
+        categories: [category('Questions fréquentes', 'Est-ce douloureux ?')],
+      }),
+    )
+
+    expect(screen.getByRole('button').textContent).toBe('Est-ce douloureux ?')
   })
 })
 
