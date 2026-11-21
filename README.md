@@ -40,6 +40,10 @@ Services:
 
   Without `R2_BUCKET`, uploads are written to `public/media`, which fails on Vercel's read-only filesystem.
 
+  Images do not go through Next.js image optimization, which Vercel bills per transformation. At upload, Payload makes WebP copies at several widths, and `ImageMedia` offers them in a `srcset`. The route `src/app/(payload)/api/media/file/[filename]` reads each file straight from R2. Vercel's CDN keeps it until the next deploy, and browsers keep it for a year.
+
+  Uploads made before the WebP sizes get them from the migration `20261121_120000_media_webp_sizes`, on the first deploy that runs it. It reads each original from R2, and keeps its filename and focal point.
+
 - **Amazon SES** (`us-east-1`): sends the contact form's emails from an `@leodimarco.fr` address.
   1. Create a domain identity for `leodimarco.fr` with Easy DKIM, and add the three DKIM CNAME records it lists to the domain's DNS at OVH.
   2. While the account is in the SES sandbox, it can only send to verified addresses: also create an email address identity for the recipient set in the form, and confirm it from the email SES sends.
