@@ -12,10 +12,14 @@ const nextConfig: NextConfig = {
   sassOptions: {
     loadPaths: ['./node_modules/@payloadcms/ui/dist/scss/'],
   },
-  // Turns off `/_next/image`, which Vercel bills per transformation. `ImageMedia` serves the
-  // sizes Payload makes at upload instead, so nothing on the site uses the optimizer.
+  // `ImageMedia` serves the sizes Payload makes at upload, so nothing on the site uses
+  // `/_next/image`, which Vercel bills per transformation. `unoptimized` stops Next.js from
+  // writing its URLs. Vercel still answers `/_next/image` and reads only the patterns, so the
+  // empty lists make it refuse every image. Next.js adds back its own static imports.
   images: {
     unoptimized: true,
+    localPatterns: [],
+    remotePatterns: [],
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
