@@ -304,8 +304,67 @@ describe('Gallery', () => {
     )
 
     expect(screen.getByText('Gros plan')).toBeTruthy()
-    expect(screen.queryByRole('button')).toBeNull()
+    expect(screen.queryByRole('group', { name: 'Vues' })).toBeNull()
     expect(screen.getByRole('group').getAttribute('tabindex')).toBeNull()
+  })
+
+  describe('zoom', () => {
+    const renderOnePhoto = () => {
+      render(
+        React.createElement(GalleryGrid, {
+          realisations: [realisation(1, [{ id: 'a', view: 'face', image: photo(1, 'Face') }])],
+        }),
+      )
+      return {
+        enlarged: () => document.querySelector<HTMLImageElement>('[data-testid="photo-zoom"] img'),
+        zoomButton: () => screen.getByRole('button', { name: 'Zoom' }),
+      }
+    }
+
+    it('enlarges the full-size photo where it is clicked', () => {
+      const { enlarged, zoomButton } = renderOnePhoto()
+
+      fireEvent.click(screen.getByRole('img', { name: 'Face' }))
+
+      expect(enlarged()?.getAttribute('src')).toMatch(/^\/api\/media\/file\/photo-1\.jpg\?/)
+      expect(enlarged()?.style.transform).toBe('scale(2.5)')
+      // jsdom lays nothing out, so the click lands in the middle
+      expect(enlarged()?.style.transformOrigin).toBe('50% 50%')
+      expect(zoomButton().getAttribute('aria-pressed')).toBe('true')
+    })
+
+    it('follows a finger that drags, and closes on a tap', () => {
+      const { enlarged } = renderOnePhoto()
+      fireEvent.click(screen.getByRole('img', { name: 'Face' }))
+      const zoom = document.querySelector('[data-testid="photo-zoom"]')!
+      zoom.getBoundingClientRect = () => DOMRect.fromRect({ x: 0, y: 0, width: 400, height: 500 })
+
+      fireEvent.pointerDown(zoom, { clientX: 200, clientY: 250, pointerType: 'touch' })
+      fireEvent.pointerMove(zoom, { clientX: 100, clientY: 125, pointerType: 'touch' })
+      expect(enlarged()?.style.transformOrigin).toBe('25% 25%')
+      fireEvent.pointerUp(zoom, { clientX: 100, clientY: 125, pointerType: 'touch' })
+      // A mouse drag ends with a click too
+      fireEvent.click(zoom)
+      expect(enlarged()).not.toBeNull()
+
+      fireEvent.pointerDown(zoom, { clientX: 100, clientY: 125, pointerType: 'touch' })
+      fireEvent.pointerUp(zoom, { clientX: 102, clientY: 126, pointerType: 'touch' })
+      fireEvent.click(zoom)
+      expect(enlarged()).toBeNull()
+    })
+
+    it('opens and closes from its button, and closes on Escape', () => {
+      const { enlarged, zoomButton } = renderOnePhoto()
+
+      fireEvent.click(zoomButton())
+      expect(enlarged()?.style.transformOrigin).toBe('50% 50%')
+      fireEvent.click(zoomButton())
+      expect(enlarged()).toBeNull()
+
+      fireEvent.click(zoomButton())
+      fireEvent.keyDown(window, { key: 'Escape' })
+      expect(enlarged()).toBeNull()
+    })
   })
 })
 
