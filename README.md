@@ -42,13 +42,7 @@ Services:
 
   Images do not go through Next.js image optimization, which Vercel bills per transformation. At upload, Payload makes WebP copies at several widths, and `ImageMedia` offers them in a `srcset`. The route `src/app/(payload)/api/media/file/[filename]` reads each file straight from R2. Vercel's CDN keeps it until the next deploy, and browsers keep it for a year.
 
-  Uploads made before the WebP sizes show their full-size original until `scripts/regenerate-media-sizes.ts` makes their sizes again. Run it with production's `POSTGRES_URL` and `R2_*` variables in `.env`, first as a dry run:
-
-  ```bash
-  NODE_ENV=production DRY_RUN=1 pnpm payload run scripts/regenerate-media-sizes.ts
-  ```
-
-  If the list is correct, run it without `DRY_RUN=1`. Set `NODE_ENV=production`, or Payload pushes the local schema to the database. If the site already runs this code, redeploy afterwards: pages rendered before the run offer only the originals.
+  Uploads made before the WebP sizes get them from the migration `20261121_120000_media_webp_sizes`, on the first deploy that runs it. It reads each original from R2, and keeps its filename and focal point.
 
 - **Amazon SES** (`us-east-1`): sends the contact form's emails from an `@leodimarco.fr` address.
   1. Create a domain identity for `leodimarco.fr` with Easy DKIM, and add the three DKIM CNAME records it lists to the domain's DNS at OVH.

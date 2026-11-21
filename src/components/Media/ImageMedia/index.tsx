@@ -23,7 +23,7 @@ const LADDER_TYPE = 'image/webp'
 
 /**
  * The `<source>` declares WebP, so it leaves out sizes made before the sizes became WebP, until
- * `scripts/regenerate-media-sizes.ts` rebuilds them.
+ * the migration `20261121_120000_media_webp_sizes` rebuilds them.
  */
 const isUsable = (size: GeneratedSize | null | undefined): size is GeneratedSize =>
   Boolean(size?.url && size?.width && size?.mimeType === LADDER_TYPE)
