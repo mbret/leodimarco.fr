@@ -1622,12 +1622,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "excerpt": {
-          "name": "excerpt",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "author": {
           "name": "author",
           "type": "varchar",
@@ -4758,12 +4752,6 @@
         },
         "text": {
           "name": "text",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "excerpt": {
-          "name": "excerpt",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false

@@ -87,7 +87,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "pages_blocks_gallery" ADD COLUMN "link_url" varchar;
   ALTER TABLE "pages_blocks_gallery" ADD COLUMN "link_label" varchar;
   ALTER TABLE "pages_blocks_gallery" ADD COLUMN "layout" "enum_pages_blocks_gallery_layout" DEFAULT 'cards';
-  ALTER TABLE "pages_blocks_testimonials_reviews" ADD COLUMN "excerpt" varchar;
   ALTER TABLE "pages_blocks_testimonials" ADD COLUMN "layout" "enum_pages_blocks_testimonials_layout" DEFAULT 'cards';
   ALTER TABLE "_pages_v_blocks_gallery" ADD COLUMN "enable_link" boolean;
   ALTER TABLE "_pages_v_blocks_gallery" ADD COLUMN "link_type" "enum__pages_v_blocks_gallery_link_type" DEFAULT 'reference';
@@ -95,7 +94,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "_pages_v_blocks_gallery" ADD COLUMN "link_url" varchar;
   ALTER TABLE "_pages_v_blocks_gallery" ADD COLUMN "link_label" varchar;
   ALTER TABLE "_pages_v_blocks_gallery" ADD COLUMN "layout" "enum__pages_v_blocks_gallery_layout" DEFAULT 'cards';
-  ALTER TABLE "_pages_v_blocks_testimonials_reviews" ADD COLUMN "excerpt" varchar;
   ALTER TABLE "_pages_v_blocks_testimonials" ADD COLUMN "layout" "enum__pages_v_blocks_testimonials_layout" DEFAULT 'cards';
   ALTER TABLE "header" ADD COLUMN "enable_button" boolean;
   ALTER TABLE "header" ADD COLUMN "button_type" "enum_header_button_type" DEFAULT 'reference';
@@ -161,7 +159,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "pages_blocks_gallery" DROP COLUMN "link_url";
   ALTER TABLE "pages_blocks_gallery" DROP COLUMN "link_label";
   ALTER TABLE "pages_blocks_gallery" DROP COLUMN "layout";
-  ALTER TABLE "pages_blocks_testimonials_reviews" DROP COLUMN "excerpt";
   ALTER TABLE "pages_blocks_testimonials" DROP COLUMN "layout";
   ALTER TABLE "_pages_v_blocks_gallery" DROP COLUMN "enable_link";
   ALTER TABLE "_pages_v_blocks_gallery" DROP COLUMN "link_type";
@@ -169,7 +166,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "_pages_v_blocks_gallery" DROP COLUMN "link_url";
   ALTER TABLE "_pages_v_blocks_gallery" DROP COLUMN "link_label";
   ALTER TABLE "_pages_v_blocks_gallery" DROP COLUMN "layout";
-  ALTER TABLE "_pages_v_blocks_testimonials_reviews" DROP COLUMN "excerpt";
   ALTER TABLE "_pages_v_blocks_testimonials" DROP COLUMN "layout";
   ALTER TABLE "header" DROP COLUMN "enable_button";
   ALTER TABLE "header" DROP COLUMN "button_type";
