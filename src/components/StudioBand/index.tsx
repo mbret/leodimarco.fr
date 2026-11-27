@@ -19,7 +19,14 @@ export const StudioBand: React.FC<{
   return (
     <div className="relative isolate studio-band">
       <div className="container flex md:min-h-[min(25vw,28rem)] md:items-center">
-        <div className={cn('py-10 md:py-12', photo ? 'md:w-1/2 md:pr-12' : 'max-w-[48rem]')}>
+        {/* A container for what it holds, such as the facts of a band. Its width is set, not taken
+            from the text, which a container cannot measure. */}
+        <div
+          className={cn(
+            '@container w-full py-10 md:py-12',
+            photo ? 'md:w-1/2 md:pr-12' : 'max-w-[48rem]',
+          )}
+        >
           {children}
         </div>
       </div>

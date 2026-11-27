@@ -7,8 +7,8 @@ import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 
-// The photo beside the text on large screens, where the large subtitle still fits, and under it on
-// smaller ones. The page title shows as a small label above the subtitle (globals.css).
+// The photo beside the text from tablets, and under it across the whole width on phones. The page
+// title shows as a small label above the subtitle (globals.css).
 export const PhotoHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumbs'] }> = ({
   breadcrumbs,
   highlights,
@@ -18,7 +18,7 @@ export const PhotoHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumb
 }) => (
   <div className="container">
     <Breadcrumbs breadcrumbs={breadcrumbs} />
-    <div className="lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
+    <div className="md:grid md:grid-cols-[1.1fr_0.9fr] md:items-center md:gap-10 lg:gap-16">
       <div className="max-w-[48rem]">
         {richText && <RichText className="photo-hero" data={richText} enableGutter={false} />}
         {Array.isArray(links) && links.length > 0 && (
@@ -43,13 +43,13 @@ export const PhotoHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumb
       </div>
       {media && typeof media === 'object' && (
         <Media
-          className="relative mt-10 aspect-[4/5] max-w-md overflow-hidden rounded-xl lg:mt-0 lg:max-w-none"
+          className="relative mt-10 aspect-[4/5] overflow-hidden rounded-xl md:mt-0"
           fill
           focalPoint
           imgClassName="object-cover"
           priority
           resource={media}
-          size="(min-width: 1024px) 420px, (min-width: 448px) 448px, 100vw"
+          size="(min-width: 768px) 420px, 100vw"
         />
       )}
     </div>

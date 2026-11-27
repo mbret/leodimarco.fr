@@ -19,7 +19,9 @@ export const CallToActionBlock: React.FC<CTABlockProps> = ({
       <StudioBand media={media}>
         {richText && <RichText className="mb-0" data={richText} enableGutter={false} />}
         {facts && facts.length > 0 && (
-          <ul className="mt-8 grid gap-4 border-t border-border pt-5 sm:grid-cols-3">
+          // In a row once their column fits three long words such as « tricopigmentation » side by
+          // side, and one under the other in a narrower column
+          <ul className="mt-8 grid gap-4 border-t border-border pt-5 @min-[26rem]:grid-cols-3">
             {facts.map(({ id, label, value }) => (
               <li key={id}>
                 <p className="font-heading text-lg font-semibold">{value}</p>

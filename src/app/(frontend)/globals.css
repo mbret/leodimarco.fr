@@ -259,8 +259,9 @@
     font-size: 3.5rem;
   }
 
+  /* Beside the photo, in half the width of a tablet */
   .prose.photo-hero h1 + h2 {
-    font-size: 4.25rem;
+    font-size: 3rem;
   }
 
   .prose h2 {
@@ -269,6 +270,12 @@
 
   .prose blockquote {
     font-size: 1.875rem;
+  }
+}
+
+@variant lg {
+  .prose.photo-hero h1 + h2 {
+    font-size: 4.25rem;
   }
 }
 
