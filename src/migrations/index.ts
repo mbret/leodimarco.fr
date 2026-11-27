@@ -36,6 +36,7 @@ import * as migration_20261121_120000_media_webp_sizes from './20261121_120000_m
 import * as migration_20261121_140000_merge_realisation_client from './20261121_140000_merge_realisation_client'
 import * as migration_20261121_164445_faq_key_facts from './20261121_164445_faq_key_facts'
 import * as migration_20261127_122718_cta_style from './20261127_122718_cta_style'
+import * as migration_20261127_123000_home_photos from './20261127_123000_home_photos'
 
 export const migrations = [
   {
@@ -227,5 +228,10 @@ export const migrations = [
     up: migration_20261127_122718_cta_style.up,
     down: migration_20261127_122718_cta_style.down,
     name: '20261127_122718_cta_style',
+  },
+  {
+    up: migration_20261127_123000_home_photos.up,
+    down: migration_20261127_123000_home_photos.down,
+    name: '20261127_123000_home_photos',
   },
 ]

@@ -18,6 +18,29 @@ type LinkedPages = {
   services?: ServicePages
 }
 
+// Photos of the home page, by their id in the media collection, named after where they go
+export type HomePhotos = {
+  // A healed result, beside the title
+  hero: number
+  // The healed points up close, beside « Une bonne tricopigmentation ne se remarque pas »
+  closeUp: number
+  // Léo in his studio, on the green band that tells his story
+  leo: number
+}
+
+const TECHNIQUE_TITLE = 'Une bonne tricopigmentation ne se remarque pas.'
+const techniqueText = [
+  paragraph(
+    'La tricopigmentation est une technique de micropigmentation du cuir chevelu qui recrée visuellement l’apparence de cheveux rasés ou atténue l’effet de transparence lorsque la densité s’affaiblit.',
+  ),
+  paragraph(
+    'Inspirée du tatouage, elle consiste à déposer des milliers de micro-points de pigments sur le cuir chevelu et permet sans chirurgie et sans délai d’apporter une réelle transformation visuelle.',
+  ),
+  paragraph(
+    'Une densité plus homogène, une teinte adaptée, une ligne frontale qui épouse votre morphologie et un rendu global suffisamment naturel pour que le changement soit visible, sans attirer l’attention.',
+  ),
+]
+
 // Léo's Google Business profile, where clients leave their reviews
 const GOOGLE_REVIEWS_URL =
   'https://www.google.fr/maps/place/L%C3%A9o+Di+Marco+Tricopigmentation+Nancy/@48.6953784,6.1783947,652m/data=!3m2!1e3!4b1!4m6!3m5!1s0x479499bc88386e6b:0xca515ade1aa9ae26!8m2!3d48.6953784!4d6.1809696!16s%2Fg%2F11z50_qz8t?entry=ttu&g_ep=EgoyMDI2MTAwNi4wIKXMDSoASAFQAw%3D%3D'
@@ -66,93 +89,74 @@ export const effectCards = (services?: ServicePages) => [
   },
 ]
 
-// Home page content, from Léo's home page document. Used by the seed and by the migration that
-// brings existing sites up to date.
+// Home page content, from Léo's home page document, built around photos: a healed result beside the
+// title, the healed points up close beside the technique, and Léo's own story on a green band.
+// Without photos, as on a new site, the dot pattern stays beside the title. Used by the seed and by
+// the migrations that bring existing sites up to date.
 export const homePageData = ({
   aPropos,
   contact,
   faq,
   galerie,
+  photos,
   services,
-}: LinkedPages): PageData => ({
+}: LinkedPages & { photos?: HomePhotos }): PageData => ({
   slug: 'home',
   title: 'Accueil',
   _status: 'published',
   hero: {
     type: 'lowImpact',
+    // The photo takes the place of the dots, which come back if it is removed
     dotPattern: true,
+    media: photos?.hero,
     richText: richText(
       // The non-breaking space keeps "à Nancy" together when the title wraps on phones
       heading('Tricopigmentation à\u00a0Nancy.'),
       paragraph('**Un résultat qui se voit.**\n**Une technique qui ne se remarque pas.**'),
+      paragraph('Je suis Léo et je vous reçois dans mon studio à Pompey, près de Nancy.'),
     ),
-    // Updates keep the fields they are not given, so the previous buttons are removed explicitly
-    links: [],
+    links: [
+      externalLink(WHATSAPP_URL, 'Envoyer mes photos', 'default'),
+      pageLink(galerie, 'Voir les résultats', 'outline'),
+    ],
   },
   layout: [
+    {
+      blockType: 'content',
+      columns: photos
+        ? [
+            // On phones the text comes first, between the result beside the title and the close-up
+            { size: 'half', richText: richText(heading(TECHNIQUE_TITLE, 'h2'), ...techniqueText) },
+            { size: 'half', media: photos.closeUp },
+          ]
+        : [
+            { size: 'oneThird', richText: richText(heading(TECHNIQUE_TITLE, 'h2')) },
+            { size: 'twoThirds', richText: richText(...techniqueText) },
+          ],
+    },
     {
       blockType: 'services',
       items: effectCards(services),
     },
     {
-      blockType: 'content',
-      columns: [
-        {
-          size: 'oneThird',
-          richText: richText(
-            heading('Une solution esthétique moderne contre la perte de cheveux', 'h2'),
-          ),
-        },
-        {
-          size: 'twoThirds',
-          richText: richText(
-            paragraph(
-              'Je mets ma minutie au service de votre image afin de vous aider à retrouver un style qui vous correspond et davantage de confiance.',
-            ),
-            paragraph(
-              'En tant que praticien spécialisé en tricopigmentation, je vous accompagne à chaque étape de cette transformation.',
-            ),
-          ),
-          enableLink: true,
-          ...pageLink(galerie, 'Mes résultats', 'default'),
-        },
-      ],
-    },
-    {
-      blockType: 'content',
-      columns: [
-        {
-          size: 'oneThird',
-          richText: richText(heading('Une bonne tricopigmentation ne se remarque pas', 'h2')),
-        },
-        {
-          size: 'twoThirds',
-          richText: richText(
-            paragraph(
-              'La tricopigmentation est une technique de micropigmentation du cuir chevelu qui recrée visuellement l’apparence de cheveux rasés ou atténue l’effet de transparence lorsque la densité s’affaiblit.',
-            ),
-            paragraph(
-              'Inspirée du tatouage, elle consiste à déposer des milliers de micro-points de pigments sur le cuir chevelu et permet sans chirurgie et sans délai d’apporter une réelle transformation visuelle.',
-            ),
-            paragraph(
-              'Une densité plus homogène, une teinte adaptée, une ligne frontale qui épouse votre morphologie et un rendu global suffisamment naturel pour que le changement soit visible, sans attirer l’attention.',
-            ),
-          ),
-        },
-      ],
+      blockType: 'gallery',
+      heading: 'Mes résultats, une fois cicatrisés.',
+      limit: 2,
     },
     {
       blockType: 'cta',
+      style: 'band',
+      media: photos?.leo,
       richText: richText(
-        heading('Basé à Pompey, près de Nancy, au service de la Lorraine et du Grand Est', 'h3'),
+        heading('J’ai été client avant d’être praticien.', 'h2'),
         paragraph(
-          'Je vous reçois à Pompey, à proximité de Nancy, dans un espace entièrement dédié à la tricopigmentation.',
+          'À 29 ans, j’ai moi-même fait une tricopigmentation. Le naturel du résultat, la ligne frontale, la façon dont les pigments vont évoluer avec le temps : ce sont des sujets auxquels je suis particulièrement attentif aujourd’hui.',
         ),
         paragraph(
-          'Une attention particulière est portée à l’hygiène, à l’organisation du poste de travail et à la qualité du matériel utilisé, afin de garantir une prestation rigoureuse du premier échange jusqu’au suivi.',
+          'C’est ce qui m’a amené à me former, puis à ouvrir mon propre studio, entièrement dédié à la tricopigmentation.',
         ),
       ),
-      links: [pageLink(aPropos, 'Découvrir mon studio', 'outline')],
+      links: [pageLink(aPropos, 'Mon parcours et mon studio', 'outline')],
     },
     {
       blockType: 'testimonials',
@@ -201,16 +205,17 @@ export const homePageData = ({
     },
     {
       blockType: 'cta',
+      style: 'band',
       richText: richText(
-        heading('Vous envisagez une tricopigmentation ?', 'h3'),
+        heading('Envoyez-moi quelques photos.', 'h2'),
         paragraph(
-          'Chaque cuir chevelu et chaque projet sont différents. Envoyez-moi quelques photos afin que je puisse étudier votre situation et vous donner un premier avis.',
+          'Chaque cuir chevelu et chaque projet sont différents. J’étudie votre situation et je vous donne un premier avis.',
         ),
       ),
       links: [
         externalLink(WHATSAPP_URL, 'WhatsApp'),
-        externalLink(INSTAGRAM_MESSAGE_URL, 'Instagram'),
-        pageLink(contact, 'Me contacter'),
+        externalLink(INSTAGRAM_MESSAGE_URL, 'Instagram', 'outline'),
+        pageLink(contact, 'Me contacter', 'outline'),
       ],
     },
   ],
