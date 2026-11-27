@@ -25,6 +25,24 @@ export const Header: GlobalConfig = {
         },
       },
     },
+    // The main action on every page, such as sending photos on WhatsApp
+    {
+      name: 'enableButton',
+      type: 'checkbox',
+      label: 'Ajouter un bouton après le menu',
+      admin: {
+        description: 'Sur les téléphones, le bouton ne montre que son icône.',
+      },
+    },
+    link({
+      appearances: false,
+      overrides: {
+        name: 'button',
+        admin: {
+          condition: (_data, siblingData) => Boolean(siblingData?.enableButton),
+        },
+      },
+    }),
   ],
   hooks: {
     afterChange: [revalidateHeader],

@@ -182,6 +182,33 @@
   letter-spacing: -0.02em;
 }
 
+/* The photo hero: the page title as a small label, and the subtitle as the large title, its bold
+   words darker than the rest */
+.prose.photo-hero h1 {
+  margin-bottom: 1.25rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.prose.photo-hero h1 + h2 {
+  margin-bottom: 0.4em;
+  text-wrap: balance;
+  color: var(--muted-foreground);
+  font-size: min(2.75rem, 10vw);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.prose.photo-hero h2 strong {
+  color: var(--foreground);
+  font-weight: inherit;
+}
+
 /* A heading right below the page title reads as its subtitle */
 .prose h1 + h2 {
   margin-top: 0;
@@ -227,6 +254,10 @@
 @variant md {
   .prose h1 {
     font-size: 3.5rem;
+  }
+
+  .prose.photo-hero h1 + h2 {
+    font-size: 4.25rem;
   }
 
   .prose h2 {

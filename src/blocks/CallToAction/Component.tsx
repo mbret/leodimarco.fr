@@ -7,11 +7,27 @@ import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 import { StudioBand } from '@/components/StudioBand'
 
-export const CallToActionBlock: React.FC<CTABlockProps> = ({ links, media, richText, style }) => {
+export const CallToActionBlock: React.FC<CTABlockProps> = ({
+  facts,
+  links,
+  media,
+  richText,
+  style,
+}) => {
   if (style === 'band') {
     return (
       <StudioBand media={media}>
         {richText && <RichText className="mb-0" data={richText} enableGutter={false} />}
+        {facts && facts.length > 0 && (
+          <ul className="mt-8 grid gap-4 border-t border-border pt-5 sm:grid-cols-3">
+            {facts.map(({ id, label, value }) => (
+              <li key={id}>
+                <p className="font-heading text-lg font-semibold">{value}</p>
+                {label && <p className="text-sm text-muted-foreground">{label}</p>}
+              </li>
+            ))}
+          </ul>
+        )}
         {links && links.length > 0 && (
           <div className="mt-8 flex flex-wrap gap-4">
             {links.map(({ link }, i) => (

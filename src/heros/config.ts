@@ -1,5 +1,4 @@
-import type { Field, UploadFieldSingleValidation } from 'payload'
-import { upload } from 'payload/shared'
+import type { Field } from 'payload'
 
 import {
   FixedToolbarFeature,
@@ -9,12 +8,6 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { linkGroup } from '@/fields/linkGroup'
-
-// The photo makes the High Impact hero and the green band; a Low Impact hero can do without
-const requirePhoto: UploadFieldSingleValidation = (value, options) => {
-  const { type } = (options.siblingData ?? {}) as { type?: string }
-  return upload(value, { ...options, required: type === 'highImpact' || type === 'mediumImpact' })
-}
 
 export const hero: Field = {
   name: 'hero',
@@ -42,6 +35,10 @@ export const hero: Field = {
           label: 'Low Impact',
           value: 'lowImpact',
         },
+        {
+          label: 'Photo à côté du titre',
+          value: 'photo',
+        },
       ],
       required: true,
     },
@@ -50,9 +47,9 @@ export const hero: Field = {
       type: 'checkbox',
       label: 'Motif de points',
       admin: {
-        condition: (_, { media, type } = {}) => type === 'lowImpact' && !media,
+        condition: (_, { type } = {}) => type === 'lowImpact',
         description:
-          'Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point. Pas avec une photo.',
+          'Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point.',
       },
     },
     {
@@ -69,6 +66,10 @@ export const hero: Field = {
         },
       }),
       label: false,
+      admin: {
+        description:
+          'Photo à côté du titre : le titre (H1) s’affiche en petit au-dessus, et le sous-titre (H2) en grand, ses mots en gras plus foncés.',
+      },
     },
     linkGroup({
       overrides: {
@@ -79,14 +80,25 @@ export const hero: Field = {
       name: 'media',
       type: 'upload',
       admin: {
-        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact', 'lowImpact'].includes(type),
-        description:
-          'Obligatoire pour High Impact et Bandeau vert. Optionnelle pour Low Impact : la photo s’affiche à droite du titre, à la place du motif de points.',
+        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact', 'photo'].includes(type),
       },
       relationTo: 'media',
       // Images only: the media library also holds videos, which would not fill the hero
       filterOptions: { mimeType: { contains: 'image' } },
-      validate: requirePhoto,
+      required: true,
+    },
+    // Short facts under the buttons, such as the training or the studio's town
+    {
+      name: 'highlights',
+      type: 'array',
+      label: 'Repères',
+      labels: { singular: 'Repère', plural: 'Repères' },
+      maxRows: 4,
+      admin: {
+        condition: (_, { type } = {}) => type === 'photo',
+        description: 'Quelques mots chacun, sur une ligne sous les boutons.',
+      },
+      fields: [{ name: 'text', type: 'text', label: 'Texte', required: true }],
     },
   ],
   label: false,

@@ -37,7 +37,8 @@ import * as migration_20261121_140000_merge_realisation_client from './20261121_
 import * as migration_20261121_164445_faq_key_facts from './20261121_164445_faq_key_facts'
 import * as migration_20261127_122718_cta_style from './20261127_122718_cta_style'
 import * as migration_20261127_164759_effect_drawings from './20261127_164759_effect_drawings'
-import * as migration_20261127_164800_home_photos from './20261127_164800_home_photos'
+import * as migration_20261127_170650_mockup_sections from './20261127_170650_mockup_sections'
+import * as migration_20261127_170700_home_rework from './20261127_170700_home_rework'
 
 export const migrations = [
   {
@@ -236,8 +237,13 @@ export const migrations = [
     name: '20261127_164759_effect_drawings',
   },
   {
-    up: migration_20261127_164800_home_photos.up,
-    down: migration_20261127_164800_home_photos.down,
-    name: '20261127_164800_home_photos',
+    up: migration_20261127_170650_mockup_sections.up,
+    down: migration_20261127_170650_mockup_sections.down,
+    name: '20261127_170650_mockup_sections',
+  },
+  {
+    up: migration_20261127_170700_home_rework.up,
+    down: migration_20261127_170700_home_rework.down,
+    name: '20261127_170700_home_rework',
   },
 ]

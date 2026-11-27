@@ -7,7 +7,7 @@ import { contactPageData } from './contact'
 import { contactFormData } from './contactForm'
 import { faqPageData } from './faq'
 import { homePageData } from './home'
-import { externalLink, INSTAGRAM_URL, PHONE, pageLink, STUDIO_ADDRESS } from './links'
+import { externalLink, headerButton, INSTAGRAM_URL, PHONE, pageLink, STUDIO_ADDRESS } from './links'
 import { prestationsPageData, servicePagesData } from './prestations'
 import { heading, paragraph, richText } from './richText'
 
@@ -143,6 +143,7 @@ export const seed = async ({
           pageLink(faq, 'FAQ'),
           pageLink(contact, 'Contact'),
         ],
+        ...headerButton,
       },
       req,
     })

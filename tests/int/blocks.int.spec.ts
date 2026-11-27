@@ -9,11 +9,12 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { FAQBlock } from '@/blocks/FAQ/Component'
 import { GalleryGrid } from '@/blocks/Gallery/GalleryGrid'
 import { ServicesBlock } from '@/blocks/Services/Component'
+import { StepsBlock } from '@/blocks/Steps/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { heading, paragraph, richText } from '@/endpoints/seed/richText'
 import { Media } from '@/components/Media'
-import { LowImpactHero } from '@/heros/LowImpact'
 import { MediumImpactHero } from '@/heros/MediumImpact'
+import { PhotoHero } from '@/heros/Photo'
 
 const photo = (id: number, alt: string) => ({
   id,
@@ -71,6 +72,29 @@ describe('Testimonials block', () => {
 
     const title = screen.getByRole('heading', { level: 2, name: 'Mes clients témoignent.' })
     expect(title.querySelector('.text-full-stop')?.textContent).toBe('.')
+  })
+
+  it('shows the first review in large type, and each review as its excerpt', () => {
+    render(
+      React.createElement(TestimonialsBlock, {
+        ...block,
+        layout: 'featured',
+        reviews: [
+          {
+            id: '1',
+            rating: 5,
+            text: 'Texte complet.',
+            excerpt: 'Super naturel.',
+            author: 'ily an',
+          },
+          { id: '2', rating: 5, text: 'Très bien géré.', author: 'Théo M.' },
+        ],
+      }),
+    )
+
+    const quotes = [...document.querySelectorAll('blockquote')].map((quote) => quote.textContent)
+    expect(quotes).toEqual(['«\u00a0Super naturel.\u00a0»', '«\u00a0Très bien géré.\u00a0»'])
+    expect(screen.queryByText('Texte complet.')).toBeNull()
   })
 
   it('shows the client’s photo, or their initial without one', () => {
@@ -250,6 +274,20 @@ describe('Call to action block', () => {
     expect(container.querySelector('.bg-card')).toBeNull()
     expect(screen.getByRole('img', { name: 'Léo Di Marco dans son studio' })).toBeTruthy()
     expect(screen.getByText('Envoyez-moi quelques photos.')).toBeTruthy()
+  })
+
+  it('shows the facts of a band under its text', () => {
+    render(
+      React.createElement(CallToActionBlock, {
+        ...block,
+        style: 'band',
+        media: photo(6, 'Léo Di Marco dans son studio'),
+        facts: [{ id: '1', value: '29 ans', label: 'L’âge de ma propre tricopigmentation' }],
+      }),
+    )
+
+    const fact = screen.getByText('29 ans').closest('li')!
+    expect(within(fact).getByText('L’âge de ma propre tricopigmentation')).toBeTruthy()
   })
 })
 
@@ -447,18 +485,50 @@ describe('Green band hero', () => {
   })
 })
 
-describe('Low Impact hero', () => {
-  it('shows its photo in place of the dots', () => {
+describe('Photo hero', () => {
+  it('shows the page title as a label, the large subtitle, the photo and the short facts', () => {
     const { container } = render(
-      React.createElement(LowImpactHero, {
-        type: 'lowImpact',
-        dotPattern: true,
+      React.createElement(PhotoHero, {
+        type: 'photo',
+        richText: richText(
+          heading('Tricopigmentation à Nancy.'),
+          heading('**Un résultat qui se voit.**', 'h2'),
+        ),
         media: photo(2, 'Effet rasé cicatrisé'),
+        highlights: [{ id: '1', text: 'Formé à la Médicoderm Académie' }],
       }),
     )
 
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Tricopigmentation à Nancy.' }),
+    ).toBeTruthy()
+    expect(container.querySelector('.photo-hero h1 + h2 strong')?.textContent).toBe(
+      'Un résultat qui se voit',
+    )
     expect(screen.getByRole('img', { name: 'Effet rasé cicatrisé' })).toBeTruthy()
-    expect(container.querySelector('.dot-field')).toBeNull()
+    expect(screen.getByText('Formé à la Médicoderm Académie')).toBeTruthy()
+  })
+})
+
+describe('Steps block', () => {
+  it('lists the steps in order, each with its label', () => {
+    render(
+      React.createElement(StepsBlock, {
+        blockType: 'steps',
+        heading: 'De vos photos au résultat cicatrisé.',
+        items: [
+          { id: '1', label: 'Aujourd’hui', title: 'Vous m’envoyez quelques photos' },
+          { id: '2', label: 'Au studio', title: 'Je prépare votre projet', text: 'La forme.' },
+        ],
+      }),
+    )
+
+    const steps = within(screen.getByRole('list')).getAllByRole('listitem')
+    expect(steps.map((step) => step.querySelector('h3')?.textContent)).toEqual([
+      'Vous m’envoyez quelques photos',
+      'Je prépare votre projet',
+    ])
+    expect(within(steps[1]).getByText('Au studio')).toBeTruthy()
   })
 })
 

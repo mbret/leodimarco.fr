@@ -17,7 +17,9 @@ describe('Page end', () => {
     expect(pageEnd({ hero: dotsHero, layout: [band, card] })).toEqual({ band: false, dots: true })
   })
 
-  it('has no dots when a photo takes their place beside the title', () => {
-    expect(pageEnd({ hero: { ...dotsHero, media: 1 }, layout: [card] }).dots).toBe(false)
+  it('has no dots after a photo hero', () => {
+    expect(
+      pageEnd({ hero: { type: 'photo', dotPattern: true, media: 1 }, layout: [card] }).dots,
+    ).toBe(false)
   })
 })

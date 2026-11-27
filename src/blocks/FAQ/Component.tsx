@@ -98,7 +98,7 @@ const Highlights: React.FC<{ items: Question[]; title?: string | null }> = ({ it
 const Category: React.FC<{ group: Group }> = ({ group }) => (
   <section className="scroll-mt-8" id={group.anchor}>
     <h2 className="mb-5 text-2xl font-semibold">{colorFullStop(group.title)}</h2>
-    <div className="rounded-xl border border-border bg-card px-5 md:px-7">
+    <div className="border-y border-border">
       <CategoryAccordion ids={group.items.map(({ id }) => id)}>
         {group.items.map((item) => (
           <AccordionItem className="scroll-mt-8" id={item.anchor} key={item.id} value={item.id}>

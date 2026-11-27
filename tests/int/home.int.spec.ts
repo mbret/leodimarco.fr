@@ -44,22 +44,51 @@ describe('Home page', () => {
 
     expect(pageText(homePageData({ ...pages, services, photos }))).toBe(text)
     expect(text).toContain('Une bonne tricopigmentation ne se remarque pas.')
-    expect(text).toContain('J’ai été client avant d’être praticien.')
+    expect(text).toContain('Avant de pratiquer cette technique, j’y ai moi-même eu recours.')
   })
 
   it('puts a healed result beside the title, the close-up beside the technique and Léo on a green band', () => {
     const { hero, layout } = homePageData({ ...pages, services, photos })
 
-    expect(hero).toMatchObject({ type: 'lowImpact', media: photos.hero })
+    expect(hero).toMatchObject({ type: 'photo', media: photos.hero })
+    expect(hero.highlights).toHaveLength(3)
     expect(layout[0]).toMatchObject({
       blockType: 'content',
       columns: [{ size: 'half' }, { size: 'half', media: photos.technique }],
     })
-    expect(layout.find((block) => blockText(block).startsWith('J’ai été client'))).toMatchObject({
-      blockType: 'cta',
-      style: 'band',
-      media: photos.story,
+    expect(layout.find((block) => blockText(block).startsWith('Avant de pratiquer'))).toMatchObject(
+      {
+        blockType: 'cta',
+        style: 'band',
+        media: photos.story,
+        facts: [{ value: '29 ans' }, { value: 'Médicoderm Académie' }, { value: 'Pompey' }],
+      },
+    )
+  })
+
+  it('shows four results, the steps and one featured review', () => {
+    const { layout } = homePageData({ ...pages, services, photos })
+
+    expect(layout.find((block) => block.blockType === 'gallery')).toMatchObject({
+      layout: 'row',
+      limit: 4,
+      enableLink: true,
+      link: { reference: { value: pages.galerie.id } },
     })
+    const steps = layout.find((block) => block.blockType === 'steps')
+    expect(steps?.items.map(({ label }) => label)).toEqual([
+      'Aujourd’hui',
+      'Au studio',
+      'Trois séances',
+      'Après cicatrisation',
+    ])
+    const reviews = layout.find((block) => block.blockType === 'testimonials')
+    expect(reviews?.layout).toBe('featured')
+    expect(reviews?.reviews?.map(({ author, excerpt }) => [author, Boolean(excerpt)])).toEqual([
+      ['ily an', true],
+      ['Théo M.', true],
+      ['Mathieu', true],
+    ])
   })
 
   it('keeps the dots and has no photo on a new site', () => {

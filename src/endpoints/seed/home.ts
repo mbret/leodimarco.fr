@@ -4,7 +4,7 @@ import type { Page } from '@/payload-types'
 
 import { externalLink, INSTAGRAM_MESSAGE_URL, pageLink, WHATSAPP_URL } from './links'
 import type { ServicePages } from './prestations'
-import { heading, paragraph, richText } from './richText'
+import { heading, paragraph, quote, richText, table } from './richText'
 
 type PageData = RequiredDataFromCollectionSlug<'pages'>
 
@@ -37,9 +37,13 @@ const techniqueText = [
   paragraph(
     'Inspirée du tatouage, elle consiste à déposer des milliers de micro-points de pigments sur le cuir chevelu et permet sans chirurgie et sans délai d’apporter une réelle transformation visuelle.',
   ),
-  paragraph(
-    'Une densité plus homogène, une teinte adaptée, une ligne frontale qui épouse votre morphologie et un rendu global suffisamment naturel pour que le changement soit visible, sans attirer l’attention.',
-  ),
+  table({
+    rows: [
+      ['Densité', 'Plus homogène, construite séance après séance'],
+      ['Teinte', 'Adaptée à votre peau et à vos cheveux'],
+      ['Ligne frontale', 'Dessinée pour épouser votre morphologie'],
+    ],
+  }),
 ]
 
 // Léo's Google Business profile, where clients leave their reviews
@@ -64,6 +68,23 @@ export const googleReviews = [
     author: 'Théo M.',
   },
 ]
+
+// The home page's reviews: the first in large type, each one as a short excerpt of its text
+const featuredReviews = [
+  {
+    author: 'ily an',
+    excerpt:
+      'Le résultat est super naturel, vraiment indissociable de la réalité […] la douleur est très supportable, je me suis même endormi quelques minutes lors de ma dernière session.',
+  },
+  {
+    author: 'Théo M.',
+    excerpt: 'Du premier accueil jusqu’à la fin des 3 séances, tout a été parfaitement géré.',
+  },
+  { author: 'Mathieu', excerpt: 'Il est à l’écoute, soigneux, et très doué.' },
+].map(({ author, excerpt }) => ({
+  ...googleReviews.find((review) => review.author === author)!,
+  excerpt,
+}))
 
 // Button to a service's page, as on the Prestations cards
 const serviceButton = (page: Page, label: string) => ({
@@ -109,14 +130,21 @@ export const homePageData = ({
   title: 'Accueil',
   _status: 'published',
   hero: {
-    type: 'lowImpact',
-    // The photo takes the place of the dots, which come back if it is removed
-    dotPattern: true,
-    media: photos?.hero,
+    ...(photos
+      ? {
+          type: 'photo',
+          media: photos.hero,
+          highlights: [
+            { text: 'Formé à la Médicoderm Académie' },
+            { text: 'Activité déclarée à l’ARS' },
+            { text: 'Studio à Pompey, près de Nancy' },
+          ],
+        }
+      : { type: 'lowImpact', dotPattern: true }),
     richText: richText(
       // The non-breaking space keeps "à Nancy" together when the title wraps on phones
       heading('Tricopigmentation à\u00a0Nancy.'),
-      paragraph('**Un résultat qui se voit.**\n**Une technique qui ne se remarque pas.**'),
+      heading('**Un résultat qui se voit.**\nUne technique qui ne se remarque pas.', 'h2'),
       paragraph('Je suis Léo et je vous reçois dans mon studio à Pompey, près de Nancy.'),
     ),
     links: [
@@ -150,29 +178,61 @@ export const homePageData = ({
     {
       blockType: 'gallery',
       heading: 'Mes résultats, une fois cicatrisés.',
-      limit: 2,
+      layout: 'row',
+      limit: 4,
+      enableLink: true,
+      ...pageLink(galerie, 'Voir tous les résultats →'),
     },
     {
       blockType: 'cta',
       style: 'band',
       media: photos?.story,
       richText: richText(
-        heading('J’ai été client avant d’être praticien.', 'h2'),
+        quote('Avant de pratiquer cette technique, j’y ai moi-même eu recours.'),
         paragraph(
-          'À 29 ans, j’ai moi-même fait une tricopigmentation. Le naturel du résultat, la ligne frontale, la façon dont les pigments vont évoluer avec le temps : ce sont des sujets auxquels je suis particulièrement attentif aujourd’hui.',
-        ),
-        paragraph(
-          'C’est ce qui m’a amené à me former, puis à ouvrir mon propre studio, entièrement dédié à la tricopigmentation.',
+          'J’ai découvert la tricopigmentation en tant que client, avec toutes les questions qui accompagnent ce choix. C’est ce qui m’a amené à me former, puis à ouvrir mon propre studio.',
         ),
       ),
+      facts: [
+        { value: '29 ans', label: 'L’âge de ma propre tricopigmentation' },
+        { value: 'Médicoderm Académie', label: 'Formé auprès de Samuel Troonen' },
+        { value: 'Pompey', label: 'Studio déclaré à l’ARS, près de Nancy' },
+      ],
       links: [pageLink(aPropos, 'Mon parcours et mon studio', 'outline')],
+    },
+    {
+      blockType: 'steps',
+      heading: 'De vos photos au résultat cicatrisé.',
+      items: [
+        {
+          label: 'Aujourd’hui',
+          title: 'Vous m’envoyez quelques photos',
+          text: 'Sur WhatsApp ou Instagram. J’étudie votre situation et je vous donne un premier avis.',
+        },
+        {
+          label: 'Au studio',
+          title: 'Je prépare votre projet',
+          text: 'La forme du crâne, les cheveux encore présents, leur densité, la ligne frontale.',
+        },
+        {
+          label: 'Trois séances',
+          title: 'La densité se construit',
+          text: 'Espacées d’environ 10 à 14 jours, plutôt qu’un résultat très marqué dès le départ.',
+        },
+        {
+          label: 'Après cicatrisation',
+          title: 'Les ajustements',
+          text: 'Je regarde comment les pigments ont évolué et j’ajuste si nécessaire.',
+        },
+      ],
     },
     {
       blockType: 'testimonials',
       heading: 'Mes clients témoignent',
       intro:
         'Au-delà du changement esthétique, mes clients parlent souvent d’une chose : retrouver de la confiance et ne plus avoir à penser constamment à leur perte de cheveux.',
-      reviews: googleReviews,
+      layout: 'featured',
+      reviews: featuredReviews,
       enableLink: true,
       ...externalLink(GOOGLE_REVIEWS_URL, 'Voir tous les avis Google →'),
     },
@@ -180,7 +240,7 @@ export const homePageData = ({
       blockType: 'faq',
       categories: [
         {
-          title: 'Questions fréquentes',
+          title: 'Vos questions.',
           items: [
             {
               question: 'Est-ce que le rendu fait tatouage ?',

@@ -21,6 +21,16 @@ export const Testimonials: Block = {
       label: 'Introduction',
     },
     {
+      name: 'layout',
+      type: 'select',
+      label: 'Disposition',
+      defaultValue: 'cards',
+      options: [
+        { label: 'Trois cartes', value: 'cards' },
+        { label: 'Le premier avis en grand', value: 'featured' },
+      ],
+    },
+    {
       name: 'reviews',
       type: 'array',
       label: 'Avis',
@@ -47,6 +57,15 @@ export const Testimonials: Block = {
           type: 'textarea',
           label: 'Avis',
           required: true,
+        },
+        {
+          name: 'excerpt',
+          type: 'textarea',
+          label: 'Extrait',
+          admin: {
+            description:
+              'Optionnel : une ou deux phrases de l’avis. Quand le premier avis est en grand, les avis montrent leur extrait.',
+          },
         },
         {
           name: 'author',

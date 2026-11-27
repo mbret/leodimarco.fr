@@ -10,6 +10,7 @@ import { GalleryBlock } from '@/blocks/Gallery/Component'
 import { KeyFactsBlock } from '@/blocks/KeyFacts/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ServicesBlock } from '@/blocks/Services/Component'
+import { StepsBlock } from '@/blocks/Steps/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 
 const blockComponents = {
@@ -21,6 +22,7 @@ const blockComponents = {
   keyFacts: KeyFactsBlock,
   mediaBlock: MediaBlock,
   services: ServicesBlock,
+  steps: StepsBlock,
   testimonials: TestimonialsBlock,
 }
 

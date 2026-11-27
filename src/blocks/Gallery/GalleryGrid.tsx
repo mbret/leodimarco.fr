@@ -162,8 +162,17 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
   )
 }
 
-export const GalleryGrid: React.FC<{ realisations: Realisation[] }> = ({ realisations }) => (
-  <ul className="grid gap-x-6 gap-y-12 sm:grid-cols-2">
+// Two clients per row from tablets, or four on large screens in a row of small photos
+export const GalleryGrid: React.FC<{ realisations: Realisation[]; row?: boolean }> = ({
+  realisations,
+  row,
+}) => (
+  <ul
+    className={cn(
+      'grid',
+      row ? 'grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4' : 'gap-x-6 gap-y-12 sm:grid-cols-2',
+    )}
+  >
     {realisations.map((realisation, index) => (
       <li key={realisation.id}>
         <RealisationCard

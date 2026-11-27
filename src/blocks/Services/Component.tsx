@@ -4,7 +4,7 @@ import React from 'react'
 import type { ServicesBlock as ServicesBlockProps } from '@/payload-types'
 
 import { type Effect, EffectDrawing } from '@/components/EffectDrawing'
-import { colorFullStop } from '@/components/FullStop'
+import { BlockHeading } from '@/components/BlockHeading'
 import { CMSLink } from '@/components/Link'
 import {
   Card,
@@ -64,18 +64,7 @@ export const ServicesBlock: React.FC<ServicesBlockProps> = ({
 
   return (
     <div className="container">
-      {(heading || enableLink) && (
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
-          {heading && <h2 className="text-3xl font-semibold">{colorFullStop(heading)}</h2>}
-          {enableLink && (
-            <CMSLink
-              {...link}
-              appearance="inline"
-              className="font-medium underline underline-offset-4"
-            />
-          )}
-        </div>
-      )}
+      <BlockHeading enableLink={enableLink} heading={heading} link={link} />
       {/* Two columns from tablets, and rows of three on large screens when the services fill them */}
       <div
         className={cn('grid gap-4 md:grid-cols-2', {

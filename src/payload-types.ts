@@ -157,11 +157,14 @@ export interface Page {
   id: number;
   title: string;
   hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'photo';
     /**
-     * Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point. Pas avec une photo.
+     * Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point.
      */
     dotPattern?: boolean | null;
+    /**
+     * Photo à côté du titre : le titre (H1) s’affiche en petit au-dessus, et le sous-titre (H2) en grand, ses mots en gras plus foncés.
+     */
     richText?: {
       root: {
         type: string;
@@ -196,10 +199,16 @@ export interface Page {
           id?: string | null;
         }[]
       | null;
-    /**
-     * Obligatoire pour High Impact et Bandeau vert. Optionnelle pour Low Impact : la photo s’affiche à droite du titre, à la place du motif de points.
-     */
     media?: (number | null) | Media;
+    /**
+     * Quelques mots chacun, sur une ligne sous les boutons.
+     */
+    highlights?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   layout: (
     | ContentBlock
@@ -207,6 +216,7 @@ export interface Page {
     | MediaBlock
     | GalleryBlock
     | ServicesBlock
+    | StepsBlock
     | TestimonialsBlock
     | FAQBlock
     | FormBlock
@@ -443,6 +453,16 @@ export interface CallToActionBlock {
    * Optionnelle. Encadré : une photo ronde à gauche du texte, par exemple votre portrait. Bandeau vert : la photo en grand à droite du texte, jusqu’au bord de l’écran.
    */
   media?: (number | null) | Media;
+  /**
+   * Bandeau vert : une valeur courte et sa légende, sur une ligne sous le texte.
+   */
+  facts?:
+    | {
+        value: string;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   links?:
     | {
         link: {
@@ -482,6 +502,18 @@ export interface MediaBlock {
  */
 export interface GalleryBlock {
   heading?: string | null;
+  enableLink?: boolean | null;
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    url?: string | null;
+    label: string;
+  };
+  layout?: ('cards' | 'row') | null;
   /**
    * Laisser vide pour afficher toutes les réalisations.
    */
@@ -541,11 +573,34 @@ export interface ServicesBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StepsBlock".
+ */
+export interface StepsBlock {
+  heading?: string | null;
+  /**
+   * Dans l’ordre : elles sont numérotées et reliées par une ligne de points.
+   */
+  items: {
+    /**
+     * Optionnel, en petit au-dessus, par exemple « Au studio ».
+     */
+    label?: string | null;
+    title: string;
+    text?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'steps';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TestimonialsBlock".
  */
 export interface TestimonialsBlock {
   heading?: string | null;
   intro?: string | null;
+  layout?: ('cards' | 'featured') | null;
   /**
    * Par exemple des avis Google, recopiés ici. Trois avis remplissent une ligne.
    */
@@ -553,6 +608,10 @@ export interface TestimonialsBlock {
     | {
         rating: number;
         text: string;
+        /**
+         * Optionnel : une ou deux phrases de l’avis. Quand le premier avis est en grand, les avis montrent leur extrait.
+         */
+        excerpt?: string | null;
         author?: string | null;
         /**
          * Avec son accord. Sans photo, l’avis montre l’initiale de son nom.
@@ -1155,6 +1214,12 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         media?: T;
+        highlights?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
       };
   layout?:
     | T
@@ -1164,6 +1229,7 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         gallery?: T | GalleryBlockSelect<T>;
         services?: T | ServicesBlockSelect<T>;
+        steps?: T | StepsBlockSelect<T>;
         testimonials?: T | TestimonialsBlockSelect<T>;
         faq?: T | FAQBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
@@ -1227,6 +1293,13 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
   style?: T;
   richText?: T;
   media?: T;
+  facts?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
   links?:
     | T
     | {
@@ -1260,6 +1333,17 @@ export interface MediaBlockSelect<T extends boolean = true> {
  */
 export interface GalleryBlockSelect<T extends boolean = true> {
   heading?: T;
+  enableLink?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  layout?: T;
   limit?: T;
   id?: T;
   blockName?: T;
@@ -1305,16 +1389,35 @@ export interface ServicesBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StepsBlock_select".
+ */
+export interface StepsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        label?: T;
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TestimonialsBlock_select".
  */
 export interface TestimonialsBlockSelect<T extends boolean = true> {
   heading?: T;
   intro?: T;
+  layout?: T;
   reviews?:
     | T
     | {
         rating?: T;
         text?: T;
+        excerpt?: T;
         author?: T;
         photo?: T;
         id?: T;
@@ -1800,6 +1903,20 @@ export interface Header {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Sur les téléphones, le bouton ne montre que son icône.
+   */
+  enableButton?: boolean | null;
+  button?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    url?: string | null;
+    label: string;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1868,6 +1985,16 @@ export interface HeaderSelect<T extends boolean = true> {
               label?: T;
             };
         id?: T;
+      };
+  enableButton?: T;
+  button?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
       };
   updatedAt?: T;
   createdAt?: T;

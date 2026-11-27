@@ -33,8 +33,9 @@ const publish = (type: RequiredDataFromCollectionSlug<'pages'>['hero']['type']) 
   })
 
 describe('Hero photo', () => {
-  it('is required for the green band and the High Impact hero', async () => {
+  it('is required for the photo hero, the green band and the High Impact hero', async () => {
     const missingPhoto = { data: { errors: [{ path: 'hero.media' }] } }
+    await expect(publish('photo')).rejects.toMatchObject(missingPhoto)
     await expect(publish('mediumImpact')).rejects.toMatchObject(missingPhoto)
     await expect(publish('highImpact')).rejects.toMatchObject(missingPhoto)
   })

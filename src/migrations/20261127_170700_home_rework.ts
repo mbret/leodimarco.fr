@@ -4,14 +4,16 @@ import { fileURLToPath } from 'url'
 import { type MigrateDownArgs, type MigrateUpArgs, sql } from '@payloadcms/db-vercel-postgres'
 
 import { type HomePhotos, homePageData } from '../endpoints/seed/home'
+import { headerButton } from '../endpoints/seed/links'
 
 const photosDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'media')
 
-// Rebuilds the home page around photos: a healed result beside the title, the healed points up
-// close, the three effects drawn in dots, two réalisations, and Léo's story and the invitation to
-// send photos on green bands. It
-// rewrites the whole page from the seed data, as 20261009_140500_home_content did: edits made in the
-// admin since are lost, and the previous page stays in its version history.
+// Rebuilds the home page around photos, as in the proposal: a healed result beside the title, the
+// healed points up close, the three effects drawn in dots, four réalisations, Léo's story, the steps,
+// one featured review, and the invitation to send photos. It rewrites the whole page from the seed
+// data, as 20261009_140500_home_content did: edits made in the admin since are lost, and the
+// previous page stays in its version history. It also gives the header its button to send photos,
+// unless it has one.
 // The photos are the ones the earlier migrations uploaded, found by file name, or uploaded again
 // from src/migrations/media where one is missing.
 // Sites that were not seeded yet get the page without photos from the starter pages button instead.
@@ -105,9 +107,24 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
     // Migrations run before the build, which renders the new content anyway
     context: { disableRevalidate: true },
   })
+
+  const header = await payload.findGlobal({ slug: 'header', depth: 0, req })
+  if (!header.enableButton) {
+    await payload.updateGlobal({
+      slug: 'header',
+      data: headerButton,
+      depth: 0,
+      req,
+      context: { disableRevalidate: true },
+    })
+  }
 }
 
-export async function down(_args: MigrateDownArgs): Promise<void> {
-  // Content change only. The previous home page stays in the page's version history, and the
-  // photos stay in the media library.
+export async function down({ db }: MigrateDownArgs): Promise<void> {
+  // The previous home page stays in the page's version history, and the photos stay in the media
+  // library. Pages with the photo hero go back to Low Impact, so that the schema migration before
+  // this one can remove that hero type.
+  await db.execute(sql`
+    update pages set hero_type = 'lowImpact' where hero_type = 'photo';
+    update _pages_v set version_hero_type = 'lowImpact' where version_hero_type = 'photo';`)
 }

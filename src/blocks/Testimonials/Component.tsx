@@ -50,10 +50,52 @@ const Byline: React.FC<{ index: number; review: Review }> = ({ index, review }) 
   )
 }
 
+const Stars: React.FC<{ rating: number }> = ({ rating }) => (
+  <div aria-label={`Note : ${rating} sur 5`} className="flex gap-1" role="img">
+    {Array.from({ length: 5 }, (_, i) => (
+      <StarIcon
+        aria-hidden
+        className={cn('size-4', i < rating ? 'fill-current' : 'text-muted-foreground')}
+        key={i}
+      />
+    ))}
+  </div>
+)
+
+// The first review in large type, beside the others: one quote gets read where three equal cards
+// get skipped. Each review shows its excerpt when it has one.
+const Featured: React.FC<{ reviews: Review[] }> = ({ reviews: [first, ...others] }) => (
+  <div className="mt-8 grid gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
+    <figure>
+      <Stars rating={first.rating} />
+      <blockquote className="mt-5 font-heading text-2xl leading-tight font-medium tracking-tight text-balance md:text-4xl">
+        «&nbsp;{first.excerpt || first.text}&nbsp;»
+      </blockquote>
+      <Byline index={0} review={first} />
+    </figure>
+    {others.length > 0 && (
+      <ul className="grid content-start gap-6">
+        {others.map((review, index) => (
+          <li className="border-t border-border pt-5" key={review.id}>
+            <figure>
+              <Stars rating={review.rating} />
+              <blockquote className="mt-3 leading-relaxed">
+                «&nbsp;{review.excerpt || review.text}&nbsp;»
+              </blockquote>
+              <Byline index={index + 1} review={review} />
+            </figure>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+)
+
 export const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
   enableLink,
   heading,
   intro,
+  layout,
   link,
   reviews,
 }) => {
@@ -66,23 +108,13 @@ export const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
     <div className="container">
       {heading && <h2 className="text-2xl font-semibold">{colorFullStop(heading)}</h2>}
       {intro && <p className="mt-4 max-w-[48rem] text-muted-foreground">{intro}</p>}
-      {items.length > 0 && (
+      {items.length > 0 && layout === 'featured' && <Featured reviews={items} />}
+      {items.length > 0 && layout !== 'featured' && (
         <ul className="mt-8 grid gap-4 md:grid-cols-3">
           {items.map((review, index) => (
             <li key={review.id}>
               <figure className="flex h-full flex-col rounded-lg border border-border bg-card p-6">
-                <div aria-label={`Note : ${review.rating} sur 5`} className="flex gap-1" role="img">
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <StarIcon
-                      aria-hidden
-                      className={cn(
-                        'size-4',
-                        i < review.rating ? 'fill-current' : 'text-muted-foreground',
-                      )}
-                      key={i}
-                    />
-                  ))}
-                </div>
+                <Stars rating={review.rating} />
                 <blockquote className="mt-4 flex-1 leading-relaxed whitespace-pre-line">
                   {review.text}
                 </blockquote>
