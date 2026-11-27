@@ -52,31 +52,34 @@
   @apply mx-auto max-w-5xl px-4 md:px-8;
 }
 
-/* The colours of Léo's studio: its white wall, the green band painted across it and black ink. One
-   light theme for the whole site, on the shadcn/ui token names. */
+/* The colours of Léo's studio: a near-black tinted with the green of its wall, light text, and the
+   green band painted across the wall. One dark theme for the whole site, on the shadcn/ui token
+   names. */
 :root {
+  color-scheme: dark;
   --radius: 0.625rem;
-  --background: #f4f5f2;
-  --foreground: #161a17;
-  --card: #fbfcfa;
-  --card-foreground: #161a17;
-  --popover: #fbfcfa;
-  --popover-foreground: #161a17;
-  --primary: var(--studio);
-  --primary-foreground: #f4f5f2;
-  --secondary: #e7ebe6;
-  --secondary-foreground: #161a17;
-  --muted: #e7ebe6;
-  --muted-foreground: #5a645c;
-  --accent: #e7ebe6;
-  --accent-foreground: #161a17;
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: rgb(22 26 23 / 12%);
-  --input: rgb(22 26 23 / 18%);
-  --ring: var(--studio);
+  --background: #0f1411;
+  --foreground: #edf1ec;
+  --card: #161d18;
+  --card-foreground: #edf1ec;
+  --popover: #161d18;
+  --popover-foreground: #edf1ec;
+  --primary: #edf1ec;
+  --primary-foreground: #0f1411;
+  --secondary: #1c251f;
+  --secondary-foreground: #edf1ec;
+  --muted: #1c251f;
+  --muted-foreground: #9da89f;
+  --accent: #1c251f;
+  --accent-foreground: #edf1ec;
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: rgb(255 255 255 / 12%);
+  --input: rgb(255 255 255 / 16%);
+  --ring: #7fa98a;
   /* Green of the studio wall in Léo's photos */
   --studio: #364b3c;
-  --full-stop: var(--studio);
+  /* The studio green, lighter so that it shows on the dark background */
+  --full-stop: #7fa98a;
 }
 
 /* A band in the green of the studio wall. What it holds turns light: utilities and rich text read
@@ -183,7 +186,7 @@
 }
 
 /* The photo hero: the page title as a small label, and the subtitle as the large title, its bold
-   words darker than the rest */
+   words brighter than the rest */
 .prose.photo-hero h1 {
   margin-bottom: 1.25rem;
   color: var(--muted-foreground);
@@ -267,12 +270,6 @@
   .prose blockquote {
     font-size: 1.875rem;
   }
-}
-
-/* The High Impact hero pulls its photo up behind the header, so the header turns white over it */
-body:has(.high-impact-hero) > header {
-  --foreground: white;
-  color: white;
 }
 
 /* Dots (components/DotField): each group of dots shows once --dot-fill passes its threshold. The
