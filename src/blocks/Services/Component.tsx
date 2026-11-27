@@ -2,7 +2,7 @@ import React from 'react'
 
 import type { ServicesBlock as ServicesBlockProps } from '@/payload-types'
 
-import { withFullStop } from '@/components/FullStop'
+import { colorFullStop } from '@/components/FullStop'
 import { CMSLink } from '@/components/Link'
 import {
   Card,
@@ -21,7 +21,7 @@ export const ServicesBlock: React.FC<ServicesBlockProps> = ({ heading, items }) 
 
   return (
     <div className="container">
-      {heading && <h2 className="mb-8 text-3xl font-semibold">{withFullStop(heading)}</h2>}
+      {heading && <h2 className="mb-8 text-3xl font-semibold">{colorFullStop(heading)}</h2>}
       {/* Two columns from tablets, and rows of three on large screens when the services fill them */}
       <div
         className={cn('grid gap-4 md:grid-cols-2', {

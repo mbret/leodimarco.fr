@@ -8,7 +8,6 @@ import { Media } from '@/components/Media'
 import { StudioBand } from '@/components/StudioBand'
 
 export const CallToActionBlock: React.FC<CTABlockProps> = ({ links, media, richText, style }) => {
-  // The band spans the screen, its photo beside the text; the card keeps to the page column
   if (style === 'band') {
     return (
       <StudioBand media={media}>

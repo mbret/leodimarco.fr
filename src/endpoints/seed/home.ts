@@ -23,9 +23,9 @@ export type HomePhotos = {
   // A healed result, beside the title
   hero: number
   // The healed points up close, beside « Une bonne tricopigmentation ne se remarque pas »
-  closeUp: number
+  technique: number
   // Léo in his studio, on the green band that tells his story
-  leo: number
+  story: number
 }
 
 const TECHNIQUE_TITLE = 'Une bonne tricopigmentation ne se remarque pas.'
@@ -70,7 +70,7 @@ const serviceButton = (page: Page, label: string) => ({
   ...pageLink(page, label, 'outline'),
 })
 
-// The three effects below the title, each leading to its service's page
+// The three effects, each leading to its service's page
 export const effectCards = (services?: ServicePages) => [
   {
     title: 'Effet rasé',
@@ -89,10 +89,9 @@ export const effectCards = (services?: ServicePages) => [
   },
 ]
 
-// Home page content, from Léo's home page document, built around photos: a healed result beside the
-// title, the healed points up close beside the technique, and Léo's own story on a green band.
-// Without photos, as on a new site, the dot pattern stays beside the title. Used by the seed and by
-// the migrations that bring existing sites up to date.
+// Home page content, from Léo's home page document. Without photos, as on a new site, the dot
+// pattern stays beside the title. Used by the seed and by the migrations that bring existing sites
+// up to date.
 export const homePageData = ({
   aPropos,
   contact,
@@ -127,7 +126,7 @@ export const homePageData = ({
         ? [
             // On phones the text comes first, between the result beside the title and the close-up
             { size: 'half', richText: richText(heading(TECHNIQUE_TITLE, 'h2'), ...techniqueText) },
-            { size: 'half', media: photos.closeUp },
+            { size: 'half', media: photos.technique },
           ]
         : [
             { size: 'oneThird', richText: richText(heading(TECHNIQUE_TITLE, 'h2')) },
@@ -146,7 +145,7 @@ export const homePageData = ({
     {
       blockType: 'cta',
       style: 'band',
-      media: photos?.leo,
+      media: photos?.story,
       richText: richText(
         heading('J’ai été client avant d’être praticien.', 'h2'),
         paragraph(

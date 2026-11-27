@@ -7,7 +7,6 @@ import { CMSLink } from '@/components/Link'
 import RichText from '@/components/RichText'
 import { StudioBand } from '@/components/StudioBand'
 
-// Title and text on a band in the green of the studio wall, with the photo beside them
 export const MediumImpactHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumbs'] }> = ({
   breadcrumbs,
   links,

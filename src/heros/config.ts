@@ -50,7 +50,6 @@ export const hero: Field = {
       type: 'checkbox',
       label: 'Motif de points',
       admin: {
-        // A photo takes the place of the dots beside the title
         condition: (_, { media, type } = {}) => type === 'lowImpact' && !media,
         description:
           'Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point. Pas avec une photo.',
@@ -82,7 +81,7 @@ export const hero: Field = {
       admin: {
         condition: (_, { type } = {}) => ['highImpact', 'mediumImpact', 'lowImpact'].includes(type),
         description:
-          'Optionnelle pour Low Impact : la photo s’affiche à droite du titre, à la place du motif de points.',
+          'Obligatoire pour High Impact et Bandeau vert. Optionnelle pour Low Impact : la photo s’affiche à droite du titre, à la place du motif de points.',
       },
       relationTo: 'media',
       // Images only: the media library also holds videos, which would not fill the hero

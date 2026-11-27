@@ -65,6 +65,13 @@ describe('Testimonials block', () => {
     expect(screen.getByText('Marc')).toBeTruthy()
   })
 
+  it('shows the full stop that ends its title in green', () => {
+    render(React.createElement(TestimonialsBlock, { ...block, heading: 'Mes clients témoignent.' }))
+
+    const title = screen.getByRole('heading', { level: 2, name: 'Mes clients témoignent.' })
+    expect(title.querySelector('.text-full-stop')?.textContent).toBe('.')
+  })
+
   it('shows the client’s photo, or their initial without one', () => {
     render(
       React.createElement(TestimonialsBlock, {

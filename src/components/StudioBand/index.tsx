@@ -6,12 +6,10 @@ import { Media } from '@/components/Media'
 import { cn } from '@/utilities/ui'
 
 // Text on a band in the green of the studio wall, with its photo beside it from the middle of the
-// screen to its right edge. On phones the photo comes under the text. The photo stays framed on the
-// focal point set in Media.
+// screen to its right edge. On phones the photo comes under the text.
 export const StudioBand: React.FC<{
   children: React.ReactNode
   media?: MediaType | number | null
-  // The photo loads first, for a band at the top of the page
   priority?: boolean
 }> = ({ children, media, priority }) => {
   const photo = typeof media === 'object' ? media : null

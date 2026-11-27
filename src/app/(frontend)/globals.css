@@ -36,12 +36,6 @@
 @source inline("md:col-span-{4,6,8,12}");
 @source inline("border-border");
 @source inline("bg-card");
-@source inline("border-error");
-@source inline("bg-error/30");
-@source inline("border-success");
-@source inline("bg-success/30");
-@source inline("border-warning");
-@source inline("bg-warning/30");
 
 @theme {
   --breakpoint-sm: 40rem;
@@ -80,15 +74,9 @@
   --border: rgb(22 26 23 / 12%);
   --input: rgb(22 26 23 / 18%);
   --ring: var(--studio);
-  /* Banner block status colors */
-  --success: oklch(28% 0.1 200deg);
-  --warning: oklch(35% 0.08 70deg);
-  --error: oklch(45% 0.1 25deg);
-  /* Green of the studio wall in Léo's photos: the buttons, and the bands behind a Medium Impact
-     hero, a Call to Action in « Bandeau vert » and the most asked FAQ questions */
+  /* Green of the studio wall in Léo's photos */
   --studio: #364b3c;
-  /* The full stop at the end of a title, a point of pigment */
-  --point: var(--studio);
+  --full-stop: var(--studio);
 }
 
 /* A band in the green of the studio wall. What it holds turns light: utilities and rich text read
@@ -106,7 +94,7 @@
   --border: rgb(255 255 255 / 18%);
   --input: rgb(255 255 255 / 25%);
   --ring: #eef2ee;
-  --point: #b7d0bd;
+  --full-stop: #b7d0bd;
   background-color: var(--background);
   color: var(--foreground);
 }
@@ -134,11 +122,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-error: var(--error);
-  --color-studio: var(--studio);
-  --color-point: var(--point);
+  --color-full-stop: var(--full-stop);
 }
 
 @layer base {

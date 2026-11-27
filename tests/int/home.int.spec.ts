@@ -17,7 +17,7 @@ const services = {
   densification: page(6, 'densification-capillaire'),
   camouflage: page(7, 'camouflage-de-cicatrices'),
 }
-const photos: HomePhotos = { hero: 11, closeUp: 12, leo: 13 }
+const photos: HomePhotos = { hero: 11, technique: 12, story: 13 }
 
 type PageData = ReturnType<typeof homePageData>
 type Block = PageData['layout'][number]
@@ -53,12 +53,12 @@ describe('Home page', () => {
     expect(hero).toMatchObject({ type: 'lowImpact', media: photos.hero })
     expect(layout[0]).toMatchObject({
       blockType: 'content',
-      columns: [{ size: 'half' }, { size: 'half', media: photos.closeUp }],
+      columns: [{ size: 'half' }, { size: 'half', media: photos.technique }],
     })
     expect(layout.find((block) => blockText(block).startsWith('J’ai été client'))).toMatchObject({
       blockType: 'cta',
       style: 'band',
-      media: photos.leo,
+      media: photos.story,
     })
   })
 

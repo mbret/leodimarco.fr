@@ -24,16 +24,8 @@ const blockComponents = {
   testimonials: TestimonialsBlock,
 }
 
-type Block = Page['layout'][0]
-
-// A green band that ends the page rests on the footer, without the space under the other blocks
-export const endsOnBand = (blocks?: Block[] | null) => {
-  const last = blocks?.at(-1)
-  return last?.blockType === 'cta' && last.style === 'band'
-}
-
 export const RenderBlocks: React.FC<{
-  blocks: Block[]
+  blocks: Page['layout'][0][]
 }> = (props) => {
   const { blocks } = props
 
@@ -49,9 +41,10 @@ export const RenderBlocks: React.FC<{
             const Block = blockComponents[blockType]
 
             if (Block) {
-              const restsOnFooter = index === blocks.length - 1 && endsOnBand(blocks)
               return (
-                <div className={restsOnFooter ? 'mt-10 md:mt-16' : 'my-10 md:my-16'} key={index}>
+                // Space above each block only, so that a green band ending the page can rest on the
+                // footer. The page adds the space under the last block.
+                <div className="mt-10 md:mt-16" key={index}>
                   {/* @ts-expect-error there may be some mismatch between the expected types here */}
                   <Block {...block} disableInnerContainer />
                 </div>

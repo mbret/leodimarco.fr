@@ -197,7 +197,7 @@ export interface Page {
         }[]
       | null;
     /**
-     * Optionnelle pour Low Impact : la photo s’affiche à droite du titre, à la place du motif de points.
+     * Obligatoire pour High Impact et Bandeau vert. Optionnelle pour Low Impact : la photo s’affiche à droite du titre, à la place du motif de points.
      */
     media?: (number | null) | Media;
   };

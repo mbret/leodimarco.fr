@@ -3,7 +3,7 @@ import React from 'react'
 
 import type { FAQBlock as FAQBlockProps } from '@/payload-types'
 
-import { withFullStop } from '@/components/FullStop'
+import { colorFullStop } from '@/components/FullStop'
 import { CMSLink } from '@/components/Link'
 import RichText from '@/components/RichText'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
@@ -65,20 +65,22 @@ const Highlights: React.FC<{ items: Question[]; title?: string | null }> = ({ it
     <ol className="grid studio-band overflow-hidden rounded-xl md:auto-cols-fr md:grid-flow-col">
       {items.map((item, i) => (
         <li
-          className="group relative flex flex-col border-white/15 p-6 transition-colors not-first:border-t hover:bg-white/5 md:p-8 md:not-first:border-t-0 md:not-first:border-l"
+          className="group relative flex flex-col border-border p-6 transition-colors not-first:border-t hover:bg-accent md:p-8 md:not-first:border-t-0 md:not-first:border-l"
           key={item.id}
         >
           <span
             aria-hidden
-            className="font-heading text-5xl leading-none font-semibold tracking-tight text-white/40 tabular-nums md:text-6xl"
+            className="font-heading text-5xl leading-none font-semibold tracking-tight text-foreground/40 tabular-nums md:text-6xl"
           >
             {String(i + 1).padStart(2, '0')}
           </span>
           <h3 className="mt-6 text-lg leading-snug font-semibold md:mt-10">{item.question}</h3>
-          <p className="mt-3 flex-1 text-sm leading-relaxed text-white/75">{item.shortAnswer}</p>
+          <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+            {item.shortAnswer}
+          </p>
           {/* The link covers the whole card */}
           <a
-            className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-white/60 focus-visible:after:ring-inset"
+            className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-ring focus-visible:after:ring-inset"
             href={`#${item.anchor}`}
           >
             Lire la réponse
@@ -95,7 +97,7 @@ const Highlights: React.FC<{ items: Question[]; title?: string | null }> = ({ it
 
 const Category: React.FC<{ group: Group }> = ({ group }) => (
   <section className="scroll-mt-8" id={group.anchor}>
-    <h2 className="mb-5 text-2xl font-semibold">{withFullStop(group.title)}</h2>
+    <h2 className="mb-5 text-2xl font-semibold">{colorFullStop(group.title)}</h2>
     <div className="rounded-xl border border-border bg-card px-5 md:px-7">
       <CategoryAccordion ids={group.items.map(({ id }) => id)}>
         {group.items.map((item) => (

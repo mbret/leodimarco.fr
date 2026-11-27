@@ -4,7 +4,7 @@ import React from 'react'
 
 import type { GalleryBlock as GalleryBlockProps } from '@/payload-types'
 
-import { withFullStop } from '@/components/FullStop'
+import { colorFullStop } from '@/components/FullStop'
 
 import { GalleryGrid } from './GalleryGrid'
 
@@ -21,7 +21,7 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = async ({ heading, limit
 
   return (
     <div className="container">
-      {heading && <h2 className="mb-8 text-3xl font-semibold">{withFullStop(heading)}</h2>}
+      {heading && <h2 className="mb-8 text-3xl font-semibold">{colorFullStop(heading)}</h2>}
       {realisations.length > 0 ? (
         <GalleryGrid realisations={realisations} />
       ) : (

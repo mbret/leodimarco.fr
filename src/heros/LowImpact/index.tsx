@@ -9,7 +9,6 @@ import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { cn } from '@/utilities/ui'
 
-// The dots beside the title, and at the end of the page. A photo takes their place.
 export const showsDotPattern = (hero?: Page['hero'] | null) =>
   hero?.type === 'lowImpact' && Boolean(hero.dotPattern) && !hero.media
 

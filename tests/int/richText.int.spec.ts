@@ -31,9 +31,9 @@ describe('Rich text', () => {
 
     const [title, sectionTitle] = screen.getAllByRole('heading')
     expect(title.textContent).toBe('Tricopigmentation à Nancy.')
-    expect(title.querySelector('.text-point')?.textContent).toBe('.')
+    expect(title.querySelector('.text-full-stop')?.textContent).toBe('.')
     expect(sectionTitle.textContent).toBe('Envoyez-moi quelques photos.')
-    expect(sectionTitle.querySelector('.text-point')?.textContent).toBe('.')
+    expect(sectionTitle.querySelector('.text-full-stop')?.textContent).toBe('.')
   })
 
   it('leaves an ellipsis and the full stop of a smaller heading as they are', () => {
@@ -41,7 +41,7 @@ describe('Rich text', () => {
 
     expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Et ensuite...')
     expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('Basé à Pompey.')
-    expect(document.querySelector('.text-point')).toBeNull()
+    expect(document.querySelector('.text-full-stop')).toBeNull()
   })
 
   it('shows check lists as a list with check marks, not as checkboxes', () => {

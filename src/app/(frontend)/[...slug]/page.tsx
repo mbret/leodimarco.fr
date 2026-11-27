@@ -8,14 +8,15 @@ import { permanentRedirect } from 'next/navigation'
 import React, { cache } from 'react'
 import { homeStatic } from '@/endpoints/seed/home-static'
 
-import { endsOnBand, RenderBlocks } from '@/blocks/RenderBlocks'
+import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { DotField } from '@/components/DotField'
-import { showsDotPattern } from '@/heros/LowImpact'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import { pagePath } from '@/utilities/pagePath'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { cn } from '@/utilities/ui'
+
+import { pageEnd } from './pageEnd'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -77,18 +78,19 @@ export default async function Page({ params: paramsPromise }: Args) {
   }
 
   const { breadcrumbs, hero, layout } = page
-  // Pages with dots beside their title get them mirrored at the bottom left too, resting on the
-  // footer: the page stretches down to it when it is shorter than the screen
-  const dots = showsDotPattern(hero)
+  // The patch of dots at the end rests on the footer: the page stretches down to it when it is
+  // shorter than the screen
+  const end = pageEnd(page)
   // The green band starts right under the menu
   const band = hero?.type === 'mediumImpact'
 
   return (
     <article
       className={cn(
-        !endsOnBand(layout) && 'pb-12 md:pb-24',
+        // The space under the last block, as the blocks only have space above them
+        !end.band && 'pb-22 md:pb-40',
         !band && 'pt-8 md:pt-16',
-        dots && 'relative isolate grow',
+        end.dots && 'relative isolate grow',
       )}
     >
       {/* Allows redirects for valid pages too */}
@@ -98,7 +100,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       <RenderHero {...hero} breadcrumbs={breadcrumbs} />
       <RenderBlocks blocks={layout} />
-      {dots && (
+      {end.dots && (
         <DotField
           className="container absolute inset-x-0 bottom-0 -z-10 h-60 overflow-hidden"
           variant="end"

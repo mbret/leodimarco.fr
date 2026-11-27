@@ -74,12 +74,12 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
       'realisation-effet-rase-5.jpg',
       'Tricopigmentation effet rasé cicatrisée, vue de face sur fond vert foncé',
     ),
-    closeUp: await findOrUpload(
+    technique: await findOrUpload(
       'realisation-effet-rase-gros-plan.jpg',
       'Micro-points de tricopigmentation cicatrisés, en gros plan sur la tempe',
     ),
     // Léo stands left of the middle, his face in the upper third
-    leo: await findOrUpload(
+    story: await findOrUpload(
       'a-propos-leo.jpg',
       'Léo Di Marco dans son studio de tricopigmentation à Pompey',
       { x: 38, y: 35 },
