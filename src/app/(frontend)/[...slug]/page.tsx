@@ -82,14 +82,14 @@ export default async function Page({ params: paramsPromise }: Args) {
   // shorter than the screen
   const end = pageEnd(page)
   // The green band starts right under the menu
-  const band = hero?.type === 'mediumImpact'
+  const startsOnBand = hero?.type === 'mediumImpact'
 
   return (
     <article
       className={cn(
         // The space under the last block, as the blocks only have space above them
         !end.band && 'pb-22 md:pb-40',
-        !band && 'pt-8 md:pt-16',
+        !startsOnBand && 'pt-8 md:pt-16',
         end.dots && 'relative isolate grow',
       )}
     >
