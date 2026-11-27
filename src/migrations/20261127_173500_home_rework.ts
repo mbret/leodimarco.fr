@@ -8,9 +8,7 @@ import { headerButton } from '../endpoints/seed/links'
 
 const photosDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'media')
 
-// Rebuilds the home page around photos, as in the proposal: a healed result beside the title, the
-// healed points up close, the three effects drawn in dots, four réalisations, Léo's story, the steps,
-// one featured review, and the invitation to send photos. It rewrites the whole page from the seed
+// Rebuilds the home page around photos. It rewrites the whole page from the seed
 // data, as 20261009_140500_home_content did: edits made in the admin since are lost, and the
 // previous page stays in its version history. It also gives the header its button to send photos,
 // unless it has one.
@@ -120,11 +118,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   }
 }
 
-export async function down({ db }: MigrateDownArgs): Promise<void> {
-  // The previous home page stays in the page's version history, and the photos stay in the media
-  // library. Pages with the photo hero go back to Low Impact, so that the schema migration before
-  // this one can remove that hero type.
-  await db.execute(sql`
-    update pages set hero_type = 'lowImpact' where hero_type = 'photo';
-    update _pages_v set version_hero_type = 'lowImpact' where version_hero_type = 'photo';`)
-}
+// The previous home page stays in the page's version history, and the photos stay in the media
+// library
+export async function down(_args: MigrateDownArgs): Promise<void> {}

@@ -74,27 +74,24 @@ describe('Testimonials block', () => {
     expect(title.querySelector('.text-full-stop')?.textContent).toBe('.')
   })
 
-  it('shows the first review in large type, and each review as its excerpt', () => {
+  it('shows the first review in large type, beside the others', () => {
     render(
       React.createElement(TestimonialsBlock, {
         ...block,
         layout: 'featured',
         reviews: [
-          {
-            id: '1',
-            rating: 5,
-            text: 'Texte complet.',
-            excerpt: 'Super naturel.',
-            author: 'ily an',
-          },
+          { id: '1', rating: 5, text: 'Super naturel.', author: 'ily an' },
           { id: '2', rating: 5, text: 'Très bien géré.', author: 'Théo M.' },
         ],
       }),
     )
 
-    const quotes = [...document.querySelectorAll('blockquote')].map((quote) => quote.textContent)
-    expect(quotes).toEqual(['«\u00a0Super naturel.\u00a0»', '«\u00a0Très bien géré.\u00a0»'])
-    expect(screen.queryByText('Texte complet.')).toBeNull()
+    const [first, ...others] = document.querySelectorAll('figure')
+    expect(first.querySelector('blockquote')?.textContent).toBe('«\u00a0Super naturel.\u00a0»')
+    expect(first.closest('li')).toBeNull()
+    expect(others.map((review) => review.querySelector('blockquote')?.textContent)).toEqual([
+      '«\u00a0Très bien géré.\u00a0»',
+    ])
   })
 
   it('shows the client’s photo, or their initial without one', () => {
@@ -216,18 +213,25 @@ describe('Services block', () => {
     ...extra,
   })
 
-  it('shows a service with a drawing as a tile whose link covers it', () => {
+  const items = [
+    service('camouflage', { illustration: 'scar' }),
+    service('rase', { illustration: 'shaved' }),
+  ]
+
+  it('shows each service as a tile with its drawing, whose link covers it', () => {
     const { container } = render(
       React.createElement(ServicesBlock, {
         blockType: 'services',
         heading: 'Trois effets.',
+        layout: 'drawings',
         enableLink: true,
         link: { type: 'custom', url: '/prestations', label: 'Toutes les prestations →' },
-        items: [service('camouflage', { illustration: 'scar' }), service('rase')],
+        items,
       }),
     )
 
     expect(screen.getByRole('link', { name: 'Toutes les prestations →' })).toBeTruthy()
+    expect(container.querySelector('[data-slot="card"]')).toBeNull()
     const tileLink = screen.getByRole('link', { name: 'Découvrir camouflage' })
     expect(tileLink.className).toContain('after:inset-0')
     const tile = tileLink.closest('div')!
@@ -237,8 +241,15 @@ describe('Services block', () => {
     expect([...paths].some((path) => path.getAttribute('class')?.includes('group-hover'))).toBe(
       true,
     )
-    // A service without a drawing keeps its card
-    expect(container.querySelectorAll('[data-slot="card"]')).toHaveLength(1)
+  })
+
+  it('shows each service as a card without its drawing by default', () => {
+    const { container } = render(
+      React.createElement(ServicesBlock, { blockType: 'services', items }),
+    )
+
+    expect(container.querySelectorAll('[data-slot="card"]')).toHaveLength(2)
+    expect(container.querySelector('svg')).toBeNull()
   })
 })
 
@@ -274,6 +285,26 @@ describe('Call to action block', () => {
     expect(container.querySelector('.bg-card')).toBeNull()
     expect(screen.getByRole('img', { name: 'Léo Di Marco dans son studio' })).toBeTruthy()
     expect(screen.getByText('Envoyez-moi quelques photos.')).toBeTruthy()
+    expect(container.querySelector('.dot-field')).toBeNull()
+  })
+
+  it('shows dots on the right of a band without a photo', () => {
+    // jsdom has no layout: the text the dots keep clear of has no boxes
+    const original = Range.prototype.getClientRects
+    Range.prototype.getClientRects = () => [] as unknown as DOMRectList
+
+    try {
+      const { container } = render(
+        React.createElement(CallToActionBlock, { ...block, style: 'band' }),
+      )
+
+      const field = container.querySelector('.dot-field-band')
+      expect(field?.getAttribute('aria-hidden')).toBe('true')
+      expect(field?.querySelectorAll('path').length).toBeGreaterThan(0)
+      expect(field?.querySelector('svg')?.getAttribute('class')).toContain('right-0')
+    } finally {
+      Range.prototype.getClientRects = original
+    }
   })
 
   it('shows the facts of a band under its text', () => {
@@ -572,6 +603,23 @@ describe('Gallery', () => {
       'Dos',
     ])
     expect(views.getByRole('button', { name: '3/4' }).getAttribute('aria-pressed')).toBe('true')
+  })
+
+  it('loads smaller photos in a row of four than in cards', () => {
+    const sizes = (layout?: 'cards' | 'row') => {
+      const { container, unmount } = render(
+        React.createElement(GalleryGrid, {
+          layout,
+          realisations: [realisation(1, [{ id: 'a', view: 'face', image: photo(1, 'Face') }])],
+        }),
+      )
+      const value = container.querySelector('img')?.getAttribute('sizes')
+      unmount()
+      return value
+    }
+
+    expect(sizes('row')).toBe('(max-width: 1024px) 50vw, 240px')
+    expect(sizes()).toBe('(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px')
   })
 
   // jsdom lays nothing out, so each test gives the strip the width of one view

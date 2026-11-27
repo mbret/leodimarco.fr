@@ -25,13 +25,14 @@ export const Header: GlobalConfig = {
         },
       },
     },
-    // The main action on every page, such as sending photos on WhatsApp
+    // Always shown with a message icon (Header/Nav), so it suits a link that opens a conversation
     {
       name: 'enableButton',
       type: 'checkbox',
       label: 'Ajouter un bouton après le menu',
       admin: {
-        description: 'Sur les téléphones, le bouton ne montre que son icône.',
+        description:
+          'Avec une icône de message, pour ouvrir une conversation. Sur les téléphones et les tablettes, le bouton ne montre que son icône.',
       },
     },
     link({

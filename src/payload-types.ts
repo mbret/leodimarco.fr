@@ -528,6 +528,7 @@ export interface GalleryBlock {
  */
 export interface ServicesBlock {
   heading?: string | null;
+  layout?: ('cards' | 'drawings') | null;
   enableLink?: boolean | null;
   link?: {
     type?: ('reference' | 'custom') | null;
@@ -543,7 +544,7 @@ export interface ServicesBlock {
     title: string;
     description?: string | null;
     /**
-     * Optionnel : un dessin en points au-dessus du nom. La prestation s’affiche alors sans cadre, et tout le dessin mène au lien.
+     * Le dessin au-dessus du nom. Tout le dessin mène au lien.
      */
     illustration?: ('shaved' | 'density' | 'scar') | null;
     /**
@@ -602,16 +603,12 @@ export interface TestimonialsBlock {
   intro?: string | null;
   layout?: ('cards' | 'featured') | null;
   /**
-   * Par exemple des avis Google, recopiés ici. Trois avis remplissent une ligne.
+   * Par exemple des avis Google, recopiés ici en entier ou en extrait. En cartes, trois avis remplissent une ligne.
    */
   reviews?:
     | {
         rating: number;
         text: string;
-        /**
-         * Optionnel : une ou deux phrases de l’avis. Quand le premier avis est en grand, les avis montrent leur extrait.
-         */
-        excerpt?: string | null;
         author?: string | null;
         /**
          * Avec son accord. Sans photo, l’avis montre l’initiale de son nom.
@@ -1354,6 +1351,7 @@ export interface GalleryBlockSelect<T extends boolean = true> {
  */
 export interface ServicesBlockSelect<T extends boolean = true> {
   heading?: T;
+  layout?: T;
   enableLink?: T;
   link?:
     | T
@@ -1417,7 +1415,6 @@ export interface TestimonialsBlockSelect<T extends boolean = true> {
     | {
         rating?: T;
         text?: T;
-        excerpt?: T;
         author?: T;
         photo?: T;
         id?: T;
@@ -1904,7 +1901,7 @@ export interface Header {
       }[]
     | null;
   /**
-   * Sur les téléphones, le bouton ne montre que son icône.
+   * Avec une icône de message, pour ouvrir une conversation. Sur les téléphones et les tablettes, le bouton ne montre que son icône.
    */
   enableButton?: boolean | null;
   button?: {

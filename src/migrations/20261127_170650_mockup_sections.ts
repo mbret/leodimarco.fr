@@ -131,7 +131,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+  // Pages with the photo hero go back to Low Impact first, so that the hero type can be removed
   await db.execute(sql`
+  UPDATE "pages" SET "hero_type" = 'lowImpact' WHERE "hero_type" = 'photo';
+  UPDATE "_pages_v" SET "version_hero_type" = 'lowImpact' WHERE "version_hero_type" = 'photo';
    DROP TABLE "pages_hero_highlights" CASCADE;
   DROP TABLE "pages_blocks_cta_facts" CASCADE;
   DROP TABLE "pages_blocks_steps_items" CASCADE;

@@ -29,7 +29,7 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = async ({
     <div className="container">
       <BlockHeading enableLink={enableLink} heading={heading} link={link} />
       {realisations.length > 0 ? (
-        <GalleryGrid realisations={realisations} row={layout === 'row'} />
+        <GalleryGrid layout={layout ?? undefined} realisations={realisations} />
       ) : (
         <p className="text-muted-foreground">Les réalisations arrivent bientôt.</p>
       )}

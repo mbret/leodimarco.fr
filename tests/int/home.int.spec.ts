@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { Page } from '@/payload-types'
 
-import { homePageData, type HomePhotos } from '@/endpoints/seed/home'
+import { googleReviews, homePageData, type HomePhotos } from '@/endpoints/seed/home'
 import { toPlainText } from '@/utilities/toPlainText'
 
 const page = (id: number, slug: string) => ({ id, slug, title: slug }) as Page
@@ -84,11 +84,12 @@ describe('Home page', () => {
     ])
     const reviews = layout.find((block) => block.blockType === 'testimonials')
     expect(reviews?.layout).toBe('featured')
-    expect(reviews?.reviews?.map(({ author, excerpt }) => [author, Boolean(excerpt)])).toEqual([
-      ['ily an', true],
-      ['Théo M.', true],
-      ['Mathieu', true],
-    ])
+    expect(reviews?.reviews?.map(({ author }) => author)).toEqual(['ily an', 'Théo M.', 'Mathieu'])
+    // Each quote keeps the client's own words, cut from their Google review
+    for (const { author, text } of reviews?.reviews ?? []) {
+      const review = googleReviews.find((google) => google.author === author)
+      for (const passage of text.split(' […] ')) expect(review?.text).toContain(passage)
+    }
   })
 
   it('keeps the dots and has no photo on a new site', () => {
@@ -124,6 +125,7 @@ describe('Home page', () => {
     ])
     expect(effects).toMatchObject({
       heading: 'Trois effets.',
+      layout: 'drawings',
       enableLink: true,
       link: { reference: { value: prestations.id } },
     })

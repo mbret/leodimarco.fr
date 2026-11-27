@@ -62,14 +62,12 @@ const Stars: React.FC<{ rating: number }> = ({ rating }) => (
   </div>
 )
 
-// The first review in large type, beside the others: one quote gets read where three equal cards
-// get skipped. Each review shows its excerpt when it has one.
 const Featured: React.FC<{ reviews: Review[] }> = ({ reviews: [first, ...others] }) => (
   <div className="mt-8 grid gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
     <figure>
       <Stars rating={first.rating} />
-      <blockquote className="mt-5 font-heading text-2xl leading-tight font-medium tracking-tight text-balance md:text-4xl">
-        «&nbsp;{first.excerpt || first.text}&nbsp;»
+      <blockquote className="mt-5 font-heading text-2xl leading-tight font-medium tracking-tight text-balance whitespace-pre-line md:text-4xl">
+        «&nbsp;{first.text}&nbsp;»
       </blockquote>
       <Byline index={0} review={first} />
     </figure>
@@ -79,8 +77,8 @@ const Featured: React.FC<{ reviews: Review[] }> = ({ reviews: [first, ...others]
           <li className="border-t border-border pt-5" key={review.id}>
             <figure>
               <Stars rating={review.rating} />
-              <blockquote className="mt-3 leading-relaxed">
-                «&nbsp;{review.excerpt || review.text}&nbsp;»
+              <blockquote className="mt-3 leading-relaxed whitespace-pre-line">
+                «&nbsp;{review.text}&nbsp;»
               </blockquote>
               <Byline index={index + 1} review={review} />
             </figure>

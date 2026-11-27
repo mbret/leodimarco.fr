@@ -87,7 +87,6 @@ export const hero: Field = {
       filterOptions: { mimeType: { contains: 'image' } },
       required: true,
     },
-    // Short facts under the buttons, such as the training or the studio's town
     {
       name: 'highlights',
       type: 'array',

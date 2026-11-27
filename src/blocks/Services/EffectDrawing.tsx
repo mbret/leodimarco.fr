@@ -4,10 +4,18 @@ import React, { useEffect, useRef } from 'react'
 
 import type { ServicesBlock } from '@/payload-types'
 
-import { between, dotPath, scatterDots, smoothstep } from '@/components/DotField'
+import {
+  type Point,
+  between,
+  dotPath,
+  randomGroups,
+  randomWave,
+  scatterDots,
+  smoothstep,
+} from '@/components/DotField/dots'
 import { cn } from '@/utilities/ui'
 
-export type Effect = NonNullable<ServicesBlock['items'][number]['illustration']>
+type Effect = NonNullable<ServicesBlock['items'][number]['illustration']>
 
 // The drawing's box, which its frame shows at 5:4
 const WIDTH = 400
@@ -16,16 +24,6 @@ const SCAR_GROUPS = 6
 // Pointing at the tile, the dots fill the scar group by group
 const SCAR_CLASS =
   'opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none'
-
-// Two waves with random frequencies and phases, for an uneven line across the drawing
-const randomWave = (amplitude: number) => {
-  const waves = [
-    { amplitude, frequency: between(5, 9), phase: between(0, 2 * Math.PI) },
-    { amplitude: amplitude / 3, frequency: between(13, 19), phase: between(0, 2 * Math.PI) },
-  ]
-  return (t: number) =>
-    waves.reduce((sum, wave) => sum + wave.amplitude * Math.sin(t * wave.frequency + wave.phase), 0)
-}
 
 type Drawing = { dots: string; hairs?: string; scar?: string[] }
 
@@ -56,14 +54,13 @@ const drawings: Record<Effect, () => Drawing> = {
   scar: () => {
     const amplitude = between(0.1, 0.16)
     const phase = between(0, 2 * Math.PI)
-    const onScar = ([x, y]: [number, number]) =>
+    const onScar = ([x, y]: Point) =>
       Math.abs(y - HEIGHT * (0.52 + amplitude * Math.sin((x / WIDTH) * 3.2 + phase))) < 10
     const points = scatterDots(() => 0.9, WIDTH, HEIGHT)
-    const scar = Array.from({ length: SCAR_GROUPS }, (): [number, number][] => [])
-    for (const point of points.filter(onScar)) {
-      scar[Math.floor(Math.random() * SCAR_GROUPS)].push(point)
+    return {
+      dots: dotPath(points.filter((point) => !onScar(point))),
+      scar: randomGroups(points.filter(onScar), SCAR_GROUPS).map(dotPath),
     }
-    return { dots: dotPath(points.filter((point) => !onScar(point))), scar: scar.map(dotPath) }
   },
 }
 

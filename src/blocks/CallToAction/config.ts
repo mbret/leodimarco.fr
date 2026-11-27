@@ -54,13 +54,12 @@ export const CallToAction: Block = {
           'Optionnelle. Encadré : une photo ronde à gauche du texte, par exemple votre portrait. Bandeau vert : la photo en grand à droite du texte, jusqu’au bord de l’écran.',
       },
     },
-    // Short facts under the text of a band, such as « 29 ans » or the studio's town
     {
       name: 'facts',
       type: 'array',
       label: 'Repères',
       labels: { singular: 'Repère', plural: 'Repères' },
-      maxRows: 4,
+      maxRows: 3,
       admin: {
         condition: (_data, siblingData) => siblingData?.style === 'band',
         description: 'Bandeau vert : une valeur courte et sa légende, sur une ligne sous le texte.',

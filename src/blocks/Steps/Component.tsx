@@ -2,17 +2,19 @@ import React from 'react'
 
 import type { StepsBlock as StepsBlockProps } from '@/payload-types'
 
-import { colorFullStop } from '@/components/FullStop'
+import { BlockHeading } from '@/components/BlockHeading'
 import { cn } from '@/utilities/ui'
 
 // Numbered steps joined by a line of dots: down the page on phones and tablets, across it in one
 // row on large screens
 export const StepsBlock: React.FC<StepsBlockProps> = ({ heading, items }) => {
   const steps = items || []
+  // One level below the block heading, as the names of the services
+  const StepHeading = heading ? 'h3' : 'h2'
 
   return (
     <div className="container">
-      {heading && <h2 className="mb-10 text-3xl font-semibold">{colorFullStop(heading)}</h2>}
+      <BlockHeading heading={heading} />
       <ol className="grid gap-8 lg:auto-cols-fr lg:grid-flow-col lg:gap-6">
         {steps.map(({ id, label, text, title }, index) => (
           <li className="relative pl-14 lg:pt-14 lg:pl-0" key={id}>
@@ -37,7 +39,9 @@ export const StepsBlock: React.FC<StepsBlockProps> = ({ heading, items }) => {
                 {label}
               </p>
             )}
-            <h3 className="mt-1 font-heading text-lg leading-snug font-semibold">{title}</h3>
+            <StepHeading className="mt-1 font-heading text-lg leading-snug font-semibold tracking-normal">
+              {title}
+            </StepHeading>
             {text && <p className="mt-2 text-muted-foreground">{text}</p>}
           </li>
         ))}

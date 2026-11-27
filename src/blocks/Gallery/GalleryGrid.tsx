@@ -22,9 +22,10 @@ const viewLabels: Record<Realisation['photos'][number]['view'], string> = {
 // One client: their photos in a 4:5 frame, one at a time, and a chip per view to show another.
 // On phones the frame also swipes from one view to the next. A tap or a click on the photo, or the
 // zoom button, opens the photos in the viewer, where a pinch or the mouse wheel zooms.
-const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = ({
+const RealisationCard: React.FC<{ label: string; realisation: Realisation; size: string }> = ({
   label,
   realisation,
+  size,
 }) => {
   const { description, photos, title } = realisation
   const strip = useRef<HTMLDivElement>(null)
@@ -82,7 +83,7 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
   }
 
   return (
-    <figure className="grid gap-3">
+    <figure className="grid grid-cols-[minmax(0,1fr)] gap-3">
       <div className="relative">
         <div
           aria-label={label}
@@ -104,13 +105,7 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
               key={id}
               onClick={openViewer}
             >
-              <Media
-                fill
-                focalPoint
-                imgClassName="object-cover"
-                resource={image}
-                size="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
-              />
+              <Media fill focalPoint imgClassName="object-cover" resource={image} size={size} />
             </div>
           ))}
         </div>
@@ -134,7 +129,7 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
           )}
         </span>
         {photos.length > 1 ? (
-          <span aria-label="Vues" className="flex gap-1" role="group">
+          <span aria-label="Vues" className="flex flex-wrap gap-1" role="group">
             {photos.map(({ id, view }, index) => (
               <button
                 aria-pressed={index === shown}
@@ -162,22 +157,29 @@ const RealisationCard: React.FC<{ label: string; realisation: Realisation }> = (
   )
 }
 
-// Two clients per row from tablets, or four on large screens in a row of small photos
-export const GalleryGrid: React.FC<{ realisations: Realisation[]; row?: boolean }> = ({
-  realisations,
-  row,
-}) => (
-  <ul
-    className={cn(
-      'grid',
-      row ? 'grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4' : 'gap-x-6 gap-y-12 sm:grid-cols-2',
-    )}
-  >
+// The grid of each layout, and the width its photos show at, for the browser to pick their size
+const layouts = {
+  cards: {
+    grid: 'gap-x-6 gap-y-12 sm:grid-cols-2',
+    size: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px',
+  },
+  row: {
+    grid: 'grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4',
+    size: '(max-width: 1024px) 50vw, 240px',
+  },
+}
+
+export const GalleryGrid: React.FC<{
+  layout?: keyof typeof layouts
+  realisations: Realisation[]
+}> = ({ layout = 'cards', realisations }) => (
+  <ul className={cn('grid', layouts[layout].grid)}>
     {realisations.map((realisation, index) => (
       <li key={realisation.id}>
         <RealisationCard
           label={`${realisation.title}, réalisation ${index + 1} sur ${realisations.length}`}
           realisation={realisation}
+          size={layouts[layout].size}
         />
       </li>
     ))}

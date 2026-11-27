@@ -302,6 +302,11 @@
   mask-composite: intersect;
 }
 
+/* Green bands: beside the text, fading out at the top and bottom */
+.dot-field-band {
+  mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+}
+
 /* Desktops: beside the title column and at the bottom left, fading out at the top and bottom */
 @variant lg {
   .dot-field-hero,

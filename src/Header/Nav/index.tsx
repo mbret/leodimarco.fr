@@ -24,7 +24,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
       {data?.enableButton && data.button && (
         <CMSLink {...data.button} appearance="default" label={null} size="sm">
           <MessageCircleIcon aria-hidden />
-          <span className="max-sm:sr-only">{data.button.label}</span>
+          <span className="max-lg:sr-only">{data.button.label}</span>
         </CMSLink>
       )}
 

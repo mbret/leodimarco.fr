@@ -15,7 +15,6 @@ export const Gallery: Block = {
       type: 'text',
       label: 'Titre',
     },
-    // Link beside the title, for example to the whole gallery
     {
       name: 'enableLink',
       type: 'checkbox',

@@ -26,7 +26,7 @@ export const StudioBand: React.FC<{
       {!photo && (
         <DotField
           className="absolute inset-y-0 right-0 -z-10 w-full overflow-hidden lg:w-1/2"
-          variant="hero"
+          variant="band"
         />
       )}
       {photo && (

@@ -69,22 +69,20 @@ export const googleReviews = [
   },
 ]
 
-// The home page's reviews: the first in large type, each one as a short excerpt of its text
+// Cut from the clients' Google reviews above
 const featuredReviews = [
   {
+    rating: 5,
+    text: 'Le résultat est super naturel, vraiment indissociable de la réalité […] la douleur est très supportable, je me suis même endormi quelques minutes lors de ma dernière session.',
     author: 'ily an',
-    excerpt:
-      'Le résultat est super naturel, vraiment indissociable de la réalité […] la douleur est très supportable, je me suis même endormi quelques minutes lors de ma dernière session.',
   },
   {
+    rating: 5,
+    text: 'Du premier accueil jusqu’à la fin des 3 séances, tout a été parfaitement géré.',
     author: 'Théo M.',
-    excerpt: 'Du premier accueil jusqu’à la fin des 3 séances, tout a été parfaitement géré.',
   },
-  { author: 'Mathieu', excerpt: 'Il est à l’écoute, soigneux, et très doué.' },
-].map(({ author, excerpt }) => ({
-  ...googleReviews.find((review) => review.author === author)!,
-  excerpt,
-}))
+  { rating: 5, text: 'Il est à l’écoute, soigneux, et très doué.', author: 'Mathieu' },
+]
 
 // Button to a service's page, as on the Prestations cards
 const serviceButton = (page: Page, label: string) => ({
@@ -169,6 +167,7 @@ export const homePageData = ({
     {
       blockType: 'services',
       heading: 'Trois effets.',
+      layout: 'drawings',
       items: effectCards(services),
       ...(prestations && {
         enableLink: true,

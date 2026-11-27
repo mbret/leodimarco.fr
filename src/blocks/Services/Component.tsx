@@ -3,7 +3,6 @@ import React from 'react'
 
 import type { ServicesBlock as ServicesBlockProps } from '@/payload-types'
 
-import { type Effect, EffectDrawing } from '@/components/EffectDrawing'
 import { BlockHeading } from '@/components/BlockHeading'
 import { CMSLink } from '@/components/Link'
 import {
@@ -16,20 +15,19 @@ import {
 } from '@/components/ui/card'
 import { cn } from '@/utilities/ui'
 
+import { EffectDrawing } from './EffectDrawing'
+
 type Service = ServicesBlockProps['items'][number]
 
-// A service with a drawing has no frame: the drawing, its name and text, and its link, which
-// covers the whole tile
-const ServiceTile: React.FC<{ effect: Effect; Heading: 'h2' | 'h3'; item: Service }> = ({
-  effect,
-  Heading,
-  item,
-}) => (
+// A service as a tile without a frame. Its link's ::after covers the whole tile.
+const ServiceTile: React.FC<{ Heading: 'h2' | 'h3'; item: Service }> = ({ Heading, item }) => (
   <div className="group relative flex flex-col">
-    <EffectDrawing
-      className="aspect-[5/4] w-full rounded-lg bg-muted text-foreground/70"
-      effect={effect}
-    />
+    {item.illustration && (
+      <EffectDrawing
+        className="aspect-[5/4] w-full rounded-lg bg-muted text-foreground/70"
+        effect={item.illustration}
+      />
+    )}
     <Heading className="mt-5 font-heading text-lg font-semibold tracking-normal">
       {item.title}
     </Heading>
@@ -56,6 +54,7 @@ export const ServicesBlock: React.FC<ServicesBlockProps> = ({
   enableLink,
   heading,
   items,
+  layout,
   link,
 }) => {
   // Service names are headings so search engines see them, one level below the block heading
@@ -69,17 +68,12 @@ export const ServicesBlock: React.FC<ServicesBlockProps> = ({
       <div
         className={cn('grid gap-4 md:grid-cols-2', {
           'lg:grid-cols-3': services.length % 3 === 0,
-          'gap-x-6 gap-y-10': services.some(({ illustration }) => illustration),
+          'gap-x-6 gap-y-10': layout === 'drawings',
         })}
       >
         {services.map((item) =>
-          item.illustration ? (
-            <ServiceTile
-              effect={item.illustration}
-              Heading={ItemHeading}
-              item={item}
-              key={item.id}
-            />
+          layout === 'drawings' ? (
+            <ServiceTile Heading={ItemHeading} item={item} key={item.id} />
           ) : (
             <Card key={item.id}>
               <CardHeader>

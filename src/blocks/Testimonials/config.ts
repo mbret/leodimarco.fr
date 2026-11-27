@@ -40,7 +40,8 @@ export const Testimonials: Block = {
       },
       admin: {
         initCollapsed: true,
-        description: 'Par exemple des avis Google, recopiés ici. Trois avis remplissent une ligne.',
+        description:
+          'Par exemple des avis Google, recopiés ici en entier ou en extrait. En cartes, trois avis remplissent une ligne.',
       },
       fields: [
         {
@@ -57,15 +58,6 @@ export const Testimonials: Block = {
           type: 'textarea',
           label: 'Avis',
           required: true,
-        },
-        {
-          name: 'excerpt',
-          type: 'textarea',
-          label: 'Extrait',
-          admin: {
-            description:
-              'Optionnel : une ou deux phrases de l’avis. Quand le premier avis est en grand, les avis montrent leur extrait.',
-          },
         },
         {
           name: 'author',

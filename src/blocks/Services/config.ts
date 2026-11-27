@@ -15,7 +15,16 @@ export const Services: Block = {
       type: 'text',
       label: 'Titre',
     },
-    // Link beside the title, for example to all the services
+    {
+      name: 'layout',
+      type: 'select',
+      label: 'Disposition',
+      defaultValue: 'cards',
+      options: [
+        { label: 'Cartes', value: 'cards' },
+        { label: 'Dessins en points', value: 'drawings' },
+      ],
+    },
     {
       name: 'enableLink',
       type: 'checkbox',
@@ -58,14 +67,15 @@ export const Services: Block = {
           name: 'illustration',
           type: 'select',
           label: 'Dessin',
+          required: true,
           options: [
             { label: 'Effet rasé', value: 'shaved' },
             { label: 'Effet densité', value: 'density' },
             { label: 'Camouflage de cicatrice', value: 'scar' },
           ],
           admin: {
-            description:
-              'Optionnel : un dessin en points au-dessus du nom. La prestation s’affiche alors sans cadre, et tout le dessin mène au lien.',
+            condition: (_data, _siblingData, { blockData }) => blockData?.layout === 'drawings',
+            description: 'Le dessin au-dessus du nom. Tout le dessin mène au lien.',
           },
         },
         {

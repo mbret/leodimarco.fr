@@ -3,7 +3,6 @@ import React from 'react'
 import { colorFullStop } from '@/components/FullStop'
 import { CMSLink } from '@/components/Link'
 
-// A block's title, with an optional link on its right, such as « Toutes les prestations »
 export const BlockHeading: React.FC<{
   enableLink?: boolean | null
   heading?: string | null

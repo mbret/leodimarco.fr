@@ -38,7 +38,8 @@ import * as migration_20261121_164445_faq_key_facts from './20261121_164445_faq_
 import * as migration_20261127_122718_cta_style from './20261127_122718_cta_style'
 import * as migration_20261127_164759_effect_drawings from './20261127_164759_effect_drawings'
 import * as migration_20261127_170650_mockup_sections from './20261127_170650_mockup_sections'
-import * as migration_20261127_170700_home_rework from './20261127_170700_home_rework'
+import * as migration_20261127_173408_services_layout from './20261127_173408_services_layout'
+import * as migration_20261127_173500_home_rework from './20261127_173500_home_rework'
 
 export const migrations = [
   {
@@ -242,8 +243,13 @@ export const migrations = [
     name: '20261127_170650_mockup_sections',
   },
   {
-    up: migration_20261127_170700_home_rework.up,
-    down: migration_20261127_170700_home_rework.down,
-    name: '20261127_170700_home_rework',
+    up: migration_20261127_173408_services_layout.up,
+    down: migration_20261127_173408_services_layout.down,
+    name: '20261127_173408_services_layout',
+  },
+  {
+    up: migration_20261127_173500_home_rework.up,
+    down: migration_20261127_173500_home_rework.down,
+    name: '20261127_173500_home_rework',
   },
 ]
