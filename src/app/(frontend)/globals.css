@@ -319,10 +319,37 @@
   }
 }
 
+/* The scar of the camouflage drawing (blocks/Services/EffectDrawing): its dots appear group by
+   group, stay, then fade, in a loop. On phones, where nothing is hovered, it plays on its own. */
+@keyframes scar-fill {
+  0%,
+  20% {
+    opacity: 0;
+  }
+  32%,
+  78% {
+    opacity: 1;
+  }
+  90%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.scar-dots {
+  opacity: 0;
+  animation: scar-fill 5s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dot-field {
     /* The finished drawing at once, whatever the script sets */
     --dot-fill: 1 !important;
     transition: none;
+  }
+
+  /* The scar stays visible, without its dots */
+  .scar-dots {
+    animation: none;
   }
 }

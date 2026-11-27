@@ -20,10 +20,8 @@ type Effect = NonNullable<ServicesBlock['items'][number]['illustration']>
 // The drawing's box, which its frame shows at 5:4
 const WIDTH = 400
 const HEIGHT = 320
+// The scar's dots fill it group by group, in a loop that globals.css draws (.scar-dots)
 const SCAR_GROUPS = 6
-// Pointing at the tile, the dots fill the scar group by group
-const SCAR_CLASS =
-  'opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none'
 
 type Drawing = { dots: string; hairs?: string; scar?: string[] }
 
@@ -81,7 +79,7 @@ export const EffectDrawing: React.FC<{ className?: string; effect: Effect }> = (
       element.setAttribute('d', d)
       element.setAttribute('stroke-width', String(width))
       if (className) element.setAttribute('class', className)
-      if (delay) element.style.transitionDelay = `${delay}ms`
+      if (delay) element.style.animationDelay = `${delay}ms`
       return element
     }
 
@@ -89,7 +87,7 @@ export const EffectDrawing: React.FC<{ className?: string; effect: Effect }> = (
     svg.replaceChildren(
       ...(hairs ? [path(hairs, 1.4, 'opacity-60')] : []),
       path(dots, 3),
-      ...scar.map((d, i) => path(d, 3, SCAR_CLASS, i * 80)),
+      ...scar.map((d, i) => path(d, 3, 'scar-dots', i * 150)),
     )
   }, [effect])
 

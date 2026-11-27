@@ -235,11 +235,11 @@ describe('Services block', () => {
     const tileLink = screen.getByRole('link', { name: 'Découvrir camouflage' })
     expect(tileLink.className).toContain('after:inset-0')
     const tile = tileLink.closest('div')!
-    // The scar's dots sit in their own paths, shown when the visitor points at the tile
-    const paths = tile.querySelectorAll('svg[aria-hidden] path')
-    expect(paths.length).toBeGreaterThan(1)
-    expect([...paths].some((path) => path.getAttribute('class')?.includes('group-hover'))).toBe(
-      true,
+    // The scar's dots sit in their own paths, which fill the scar one after the other, in a loop
+    const scar = [...tile.querySelectorAll<SVGPathElement>('svg[aria-hidden] path.scar-dots')]
+    expect(scar.length).toBeGreaterThan(1)
+    expect(scar.map((path) => path.style.animationDelay)).toEqual(
+      scar.map((_, i) => (i ? `${i * 150}ms` : '')),
     )
   })
 
