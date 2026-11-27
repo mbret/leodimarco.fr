@@ -7,6 +7,7 @@ import {
   SerializedTableCellNode,
   SerializedTableNode,
   SerializedTableRowNode,
+  SerializedTextNode,
   type DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
 import {
@@ -22,6 +23,7 @@ import type {
   Page,
 } from '@/payload-types'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { endsWithFullStop, FullStop } from '@/components/FullStop'
 import { keepPunctuation } from '@/utilities/keepPunctuation'
 import { pagePath } from '@/utilities/pagePath'
 import { cn } from '@/utilities/ui'
@@ -58,6 +60,26 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     const { text } = defaultConverters
     const node = { ...args.node, text: keepPunctuation(args.node.text) }
     return typeof text === 'function' ? text({ ...args, node }) : text
+  },
+  // Page and section titles that end with a full stop show it in the green of the studio wall
+  heading: ({ node, nodesToJSX }) => {
+    const Tag = node.tag
+    const last = node.children.at(-1)
+    if (
+      (Tag === 'h1' || Tag === 'h2') &&
+      last?.type === 'text' &&
+      endsWithFullStop((last as SerializedTextNode).text)
+    ) {
+      const text = last as SerializedTextNode
+      const nodes = [...node.children.slice(0, -1), { ...text, text: text.text.slice(0, -1) }]
+      return (
+        <Tag>
+          {nodesToJSX({ nodes })}
+          <FullStop />
+        </Tag>
+      )
+    }
+    return <Tag>{nodesToJSX({ nodes: node.children })}</Tag>
   },
   // Check lists show a check mark, or an empty circle when unticked, instead of the editor's
   // checkboxes. Screen readers are told which items are unticked.

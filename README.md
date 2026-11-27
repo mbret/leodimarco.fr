@@ -1,6 +1,6 @@
 # leodimarco.fr
 
-Website of Léo Di Marco, tattoo artist. Built with [Payload CMS](https://payloadcms.com) and Next.js, hosted on Vercel, with a Neon Postgres database and Cloudflare R2 for uploads. The UI uses [shadcn/ui](https://ui.shadcn.com) with a single dark theme.
+Website of Léo Di Marco, tattoo artist. Built with [Payload CMS](https://payloadcms.com) and Next.js, hosted on Vercel, with a Neon Postgres database and Cloudflare R2 for uploads. The UI uses [shadcn/ui](https://ui.shadcn.com) with a single light theme in the colours of Léo's studio: the white of its wall, the green band painted across it and black ink. Titles use Bricolage Grotesque and text uses Geist. A page or section title that ends with a full stop shows it in the green of the studio wall.
 
 ## Content
 

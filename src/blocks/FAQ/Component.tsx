@@ -3,6 +3,7 @@ import React from 'react'
 
 import type { FAQBlock as FAQBlockProps } from '@/payload-types'
 
+import { withFullStop } from '@/components/FullStop'
 import { CMSLink } from '@/components/Link'
 import RichText from '@/components/RichText'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
@@ -61,7 +62,7 @@ const Highlights: React.FC<{ items: Question[]; title?: string | null }> = ({ it
       <h2 className="mb-6 text-sm tracking-widest text-muted-foreground uppercase">{title}</h2>
     )}
     {/* The questions share one row of equal columns, whatever their number */}
-    <ol className="grid overflow-hidden rounded-xl bg-studio md:auto-cols-fr md:grid-flow-col">
+    <ol className="grid studio-band overflow-hidden rounded-xl md:auto-cols-fr md:grid-flow-col">
       {items.map((item, i) => (
         <li
           className="group relative flex flex-col border-white/15 p-6 transition-colors not-first:border-t hover:bg-white/5 md:p-8 md:not-first:border-t-0 md:not-first:border-l"
@@ -94,7 +95,7 @@ const Highlights: React.FC<{ items: Question[]; title?: string | null }> = ({ it
 
 const Category: React.FC<{ group: Group }> = ({ group }) => (
   <section className="scroll-mt-8" id={group.anchor}>
-    <h2 className="mb-5 text-2xl font-semibold">{group.title}</h2>
+    <h2 className="mb-5 text-2xl font-semibold">{withFullStop(group.title)}</h2>
     <div className="rounded-xl border border-border bg-card px-5 md:px-7">
       <CategoryAccordion ids={group.items.map(({ id }) => id)}>
         {group.items.map((item) => (

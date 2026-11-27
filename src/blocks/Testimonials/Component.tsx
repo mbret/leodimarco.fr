@@ -3,6 +3,7 @@ import React from 'react'
 
 import type { TestimonialsBlock as TestimonialsBlockProps } from '@/payload-types'
 
+import { withFullStop } from '@/components/FullStop'
 import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 import { cn } from '@/utilities/ui'
@@ -37,7 +38,7 @@ const Byline: React.FC<{ index: number; review: Review }> = ({ index, review }) 
         <span
           aria-hidden
           className={cn(
-            'flex size-10 shrink-0 items-center justify-center rounded-full text-base font-medium text-foreground',
+            'flex size-10 shrink-0 items-center justify-center rounded-full text-base font-medium text-white',
             INITIAL_BACKGROUNDS[index % INITIAL_BACKGROUNDS.length],
           )}
         >
@@ -63,7 +64,7 @@ export const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
 
   return (
     <div className="container">
-      {heading && <h2 className="text-2xl font-semibold">{heading}</h2>}
+      {heading && <h2 className="text-2xl font-semibold">{withFullStop(heading)}</h2>}
       {intro && <p className="mt-4 max-w-[48rem] text-muted-foreground">{intro}</p>}
       {items.length > 0 && (
         <ul className="mt-8 grid gap-4 md:grid-cols-3">

@@ -3,7 +3,14 @@ import React from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import RichText from '@/components/RichText'
-import { bulletList, checkList, paragraph, richText, table } from '@/endpoints/seed/richText'
+import {
+  bulletList,
+  checkList,
+  heading,
+  paragraph,
+  richText,
+  table,
+} from '@/endpoints/seed/richText'
 import type { ContentBlock } from '@/payload-types'
 
 afterEach(cleanup)
@@ -14,6 +21,29 @@ type StoredRichText = NonNullable<NonNullable<ContentBlock['columns']>[number]['
 const renderRichText = (data: StoredRichText) => render(React.createElement(RichText, { data }))
 
 describe('Rich text', () => {
+  it('shows the full stop that ends a title in the green of the studio wall', () => {
+    renderRichText(
+      richText(
+        heading('Tricopigmentation à Nancy.'),
+        heading('Envoyez-moi quelques photos.', 'h2'),
+      ),
+    )
+
+    const [title, sectionTitle] = screen.getAllByRole('heading')
+    expect(title.textContent).toBe('Tricopigmentation à Nancy.')
+    expect(title.querySelector('.text-point')?.textContent).toBe('.')
+    expect(sectionTitle.textContent).toBe('Envoyez-moi quelques photos.')
+    expect(sectionTitle.querySelector('.text-point')?.textContent).toBe('.')
+  })
+
+  it('leaves an ellipsis and the full stop of a smaller heading as they are', () => {
+    renderRichText(richText(heading('Et ensuite...', 'h2'), heading('Basé à Pompey.', 'h3')))
+
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Et ensuite...')
+    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('Basé à Pompey.')
+    expect(document.querySelector('.text-point')).toBeNull()
+  })
+
   it('shows check lists as a list with check marks, not as checkboxes', () => {
     renderRichText(richText(checkList('Poste désinfecté', 'Consommables stériles')))
 
