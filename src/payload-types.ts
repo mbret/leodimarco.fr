@@ -159,7 +159,7 @@ export interface Page {
   hero: {
     type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
     /**
-     * Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point.
+     * Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point. Pas avec une photo.
      */
     dotPattern?: boolean | null;
     richText?: {
@@ -196,6 +196,9 @@ export interface Page {
           id?: string | null;
         }[]
       | null;
+    /**
+     * Optionnelle pour Low Impact : la photo s’affiche à droite du titre, à la place du motif de points.
+     */
     media?: (number | null) | Media;
   };
   layout: (
@@ -417,6 +420,10 @@ export interface ContentBlock {
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
+  /**
+   * Le bandeau vert, dans le vert du mur du studio, occupe toute la largeur de l’écran.
+   */
+  style?: ('card' | 'band') | null;
   richText?: {
     root: {
       type: string;
@@ -433,7 +440,7 @@ export interface CallToActionBlock {
     [k: string]: unknown;
   } | null;
   /**
-   * Optionnelle : une photo ronde à gauche du texte, par exemple votre portrait.
+   * Optionnelle. Encadré : une photo ronde à gauche du texte, par exemple votre portrait. Bandeau vert : la photo en grand à droite du texte, jusqu’au bord de l’écran.
    */
   media?: (number | null) | Media;
   links?:
@@ -1202,6 +1209,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
  * via the `definition` "CallToActionBlock_select".
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
+  style?: T;
   richText?: T;
   media?: T;
   links?:

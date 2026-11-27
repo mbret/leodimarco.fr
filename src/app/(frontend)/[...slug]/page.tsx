@@ -8,8 +8,9 @@ import { permanentRedirect } from 'next/navigation'
 import React, { cache } from 'react'
 import { homeStatic } from '@/endpoints/seed/home-static'
 
-import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { endsOnBand, RenderBlocks } from '@/blocks/RenderBlocks'
 import { DotField } from '@/components/DotField'
+import { showsDotPattern } from '@/heros/LowImpact'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import { pagePath } from '@/utilities/pagePath'
@@ -78,13 +79,17 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { breadcrumbs, hero, layout } = page
   // Pages with dots beside their title get them mirrored at the bottom left too, resting on the
   // footer: the page stretches down to it when it is shorter than the screen
-  const dots = hero?.type === 'lowImpact' && Boolean(hero.dotPattern)
+  const dots = showsDotPattern(hero)
   // The green band starts right under the menu
   const band = hero?.type === 'mediumImpact'
 
   return (
     <article
-      className={cn('pb-12 md:pb-24', !band && 'pt-8 md:pt-16', dots && 'relative isolate grow')}
+      className={cn(
+        !endsOnBand(layout) && 'pb-12 md:pb-24',
+        !band && 'pt-8 md:pt-16',
+        dots && 'relative isolate grow',
+      )}
     >
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />

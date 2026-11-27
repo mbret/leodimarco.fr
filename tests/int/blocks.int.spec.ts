@@ -11,6 +11,7 @@ import { GalleryGrid } from '@/blocks/Gallery/GalleryGrid'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { heading, paragraph, richText } from '@/endpoints/seed/richText'
 import { Media } from '@/components/Media'
+import { LowImpactHero } from '@/heros/LowImpact'
 import { MediumImpactHero } from '@/heros/MediumImpact'
 
 const photo = (id: number, alt: string) => ({
@@ -190,6 +191,21 @@ describe('Call to action block', () => {
     render(React.createElement(CallToActionBlock, block))
 
     expect(screen.queryByRole('img')).toBeNull()
+  })
+
+  it('spans the screen on a green band, with its photo beside the text', () => {
+    const { container } = render(
+      React.createElement(CallToActionBlock, {
+        ...block,
+        style: 'band',
+        media: photo(6, 'Léo Di Marco dans son studio'),
+      }),
+    )
+
+    expect(container.querySelector('.studio-band')).toBeTruthy()
+    expect(container.querySelector('.bg-card')).toBeNull()
+    expect(screen.getByRole('img', { name: 'Léo Di Marco dans son studio' })).toBeTruthy()
+    expect(screen.getByText('Envoyez-moi quelques photos.')).toBeTruthy()
   })
 })
 
@@ -384,6 +400,21 @@ describe('Green band hero', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'À propos de moi' })).toBeTruthy()
     const portrait = screen.getByRole('img', { name: 'Léo Di Marco dans son studio' })
     expect(portrait.style.objectPosition).toBe('38% 35%')
+  })
+})
+
+describe('Low Impact hero', () => {
+  it('shows its photo in place of the dots', () => {
+    const { container } = render(
+      React.createElement(LowImpactHero, {
+        type: 'lowImpact',
+        dotPattern: true,
+        media: photo(2, 'Effet rasé cicatrisé'),
+      }),
+    )
+
+    expect(screen.getByRole('img', { name: 'Effet rasé cicatrisé' })).toBeTruthy()
+    expect(container.querySelector('.dot-field')).toBeNull()
   })
 })
 

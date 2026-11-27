@@ -14,6 +14,20 @@ export const CallToAction: Block = {
   interfaceName: 'CallToActionBlock',
   fields: [
     {
+      name: 'style',
+      type: 'select',
+      label: 'Style',
+      defaultValue: 'card',
+      options: [
+        { label: 'Encadré', value: 'card' },
+        { label: 'Bandeau vert', value: 'band' },
+      ],
+      admin: {
+        description:
+          'Le bandeau vert, dans le vert du mur du studio, occupe toute la largeur de l’écran.',
+      },
+    },
+    {
       name: 'richText',
       type: 'richText',
       editor: lexicalEditor({
@@ -36,7 +50,8 @@ export const CallToAction: Block = {
       // Images only: the media library also holds videos
       filterOptions: { mimeType: { contains: 'image' } },
       admin: {
-        description: 'Optionnelle : une photo ronde à gauche du texte, par exemple votre portrait.',
+        description:
+          'Optionnelle. Encadré : une photo ronde à gauche du texte, par exemple votre portrait. Bandeau vert : la photo en grand à droite du texte, jusqu’au bord de l’écran.',
       },
     },
     linkGroup({
