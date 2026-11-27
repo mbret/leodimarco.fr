@@ -83,6 +83,23 @@ describe('Home page', () => {
     ])
   })
 
+  it('draws each effect, under a title that links to all the services', () => {
+    const prestations = page(8, 'prestations')
+    const { layout } = homePageData({ ...pages, prestations, services, photos })
+    const effects = layout.find((block) => block.blockType === 'services')
+
+    expect(effects?.items.map(({ illustration }) => illustration)).toEqual([
+      'shaved',
+      'density',
+      'scar',
+    ])
+    expect(effects).toMatchObject({
+      heading: 'Trois effets.',
+      enableLink: true,
+      link: { reference: { value: prestations.id } },
+    })
+  })
+
   it('ends on a green band that asks for photos, WhatsApp first', () => {
     const last = homePageData({ ...pages, services, photos }).layout.at(-1)
 

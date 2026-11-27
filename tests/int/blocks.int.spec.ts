@@ -8,6 +8,7 @@ import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FAQBlock } from '@/blocks/FAQ/Component'
 import { GalleryGrid } from '@/blocks/Gallery/GalleryGrid'
+import { ServicesBlock } from '@/blocks/Services/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 import { heading, paragraph, richText } from '@/endpoints/seed/richText'
 import { Media } from '@/components/Media'
@@ -178,6 +179,42 @@ describe('Content block', () => {
 
     expect(screen.getByText('Mon engagement')).toBeTruthy()
     expect(screen.queryByRole('img')).toBeNull()
+  })
+})
+
+describe('Services block', () => {
+  const service = (title: string, extra: object = {}) => ({
+    id: title,
+    title,
+    description: 'Description.',
+    enableLink: true,
+    link: { type: 'custom' as const, url: `/prestations/${title}`, label: `Découvrir ${title}` },
+    ...extra,
+  })
+
+  it('shows a service with a drawing as a tile whose link covers it', () => {
+    const { container } = render(
+      React.createElement(ServicesBlock, {
+        blockType: 'services',
+        heading: 'Trois effets.',
+        enableLink: true,
+        link: { type: 'custom', url: '/prestations', label: 'Toutes les prestations →' },
+        items: [service('camouflage', { illustration: 'scar' }), service('rase')],
+      }),
+    )
+
+    expect(screen.getByRole('link', { name: 'Toutes les prestations →' })).toBeTruthy()
+    const tileLink = screen.getByRole('link', { name: 'Découvrir camouflage' })
+    expect(tileLink.className).toContain('after:inset-0')
+    const tile = tileLink.closest('div')!
+    // The scar's dots sit in their own paths, shown when the visitor points at the tile
+    const paths = tile.querySelectorAll('svg[aria-hidden] path')
+    expect(paths.length).toBeGreaterThan(1)
+    expect([...paths].some((path) => path.getAttribute('class')?.includes('group-hover'))).toBe(
+      true,
+    )
+    // A service without a drawing keeps its card
+    expect(container.querySelectorAll('[data-slot="card"]')).toHaveLength(1)
   })
 })
 

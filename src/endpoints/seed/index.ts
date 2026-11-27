@@ -126,7 +126,9 @@ export const seed = async ({
     })
   }
 
-  const home = await ensurePage(homePageData({ aPropos, contact, faq, galerie, services }))
+  const home = await ensurePage(
+    homePageData({ aPropos, contact, faq, galerie, prestations, services }),
+  )
 
   const header = await payload.findGlobal({ slug: 'header', depth: 0, req })
   if (!hasValidLinks(header.navItems)) {

@@ -14,7 +14,7 @@ Everything is edited from the admin panel at `/admin`, which is in French.
   - Call to Action: text and buttons, with an optional round photo beside the text, such as Léo's portrait. Its « Bandeau vert » style puts it on a band in the green of the studio wall across the whole screen, with its photo large beside the text, up to the edge of the screen (under the text on phones). A band that ends the page rests on the footer
   - Media
   - Gallery: shows the Réalisations
-  - Prestations: service cards with an optional price and button
+  - Prestations: service cards with an optional price and button, and an optional link beside the block title. A service given a « Dessin » (effet rasé, densité or cicatrice) shows as a tile instead: a drawing in dots, different on every visit, above its name, and its link covers the whole tile. On the scar drawing, the dots fill the scar when visitors point at the tile
   - Avis clients: client reviews with their star rating and the client's initial, or their photo when one is added, and an optional link such as "Voir tous les avis Google". The section appears as soon as it has a review or a link
   - FAQ: questions and answers in categories, each category optionally ending with a button. Questions ticked "Mettre en avant" also appear at the top with their short answer, on a band in the green of the studio wall. With two categories or more, a list of the categories appears. On large screens it stays beside the questions and marks the one being read. On phones and tablets it shows as chips above the questions. The questions are exposed to search engines as structured data
   - Form: a form built in the Forms collection

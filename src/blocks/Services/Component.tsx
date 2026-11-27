@@ -1,7 +1,9 @@
+import { ArrowRightIcon } from 'lucide-react'
 import React from 'react'
 
 import type { ServicesBlock as ServicesBlockProps } from '@/payload-types'
 
+import { type Effect, EffectDrawing } from '@/components/EffectDrawing'
 import { colorFullStop } from '@/components/FullStop'
 import { CMSLink } from '@/components/Link'
 import {
@@ -14,42 +16,104 @@ import {
 } from '@/components/ui/card'
 import { cn } from '@/utilities/ui'
 
-export const ServicesBlock: React.FC<ServicesBlockProps> = ({ heading, items }) => {
+type Service = ServicesBlockProps['items'][number]
+
+// A service with a drawing has no frame: the drawing, its name and text, and its link, which
+// covers the whole tile
+const ServiceTile: React.FC<{ effect: Effect; Heading: 'h2' | 'h3'; item: Service }> = ({
+  effect,
+  Heading,
+  item,
+}) => (
+  <div className="group relative flex flex-col">
+    <EffectDrawing
+      className="aspect-[5/4] w-full rounded-lg bg-muted text-foreground/70"
+      effect={effect}
+    />
+    <Heading className="mt-5 font-heading text-lg font-semibold tracking-normal">
+      {item.title}
+    </Heading>
+    {item.price && <p className="mt-1 text-sm text-muted-foreground">{item.price}</p>}
+    {item.description && (
+      <p className="mt-2 whitespace-pre-line text-muted-foreground">{item.description}</p>
+    )}
+    {item.enableLink && (
+      <CMSLink
+        {...item.link}
+        appearance="inline"
+        className="mt-4 inline-flex items-center gap-1.5 self-start font-medium outline-none after:absolute after:inset-0 after:rounded-lg focus-visible:after:ring-2 focus-visible:after:ring-ring"
+      >
+        <ArrowRightIcon
+          aria-hidden
+          className="size-4 transition-transform group-hover:translate-x-1"
+        />
+      </CMSLink>
+    )}
+  </div>
+)
+
+export const ServicesBlock: React.FC<ServicesBlockProps> = ({
+  enableLink,
+  heading,
+  items,
+  link,
+}) => {
   // Service names are headings so search engines see them, one level below the block heading
   const ItemHeading = heading ? 'h3' : 'h2'
   const services = items || []
 
   return (
     <div className="container">
-      {heading && <h2 className="mb-8 text-3xl font-semibold">{colorFullStop(heading)}</h2>}
+      {(heading || enableLink) && (
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+          {heading && <h2 className="text-3xl font-semibold">{colorFullStop(heading)}</h2>}
+          {enableLink && (
+            <CMSLink
+              {...link}
+              appearance="inline"
+              className="font-medium underline underline-offset-4"
+            />
+          )}
+        </div>
+      )}
       {/* Two columns from tablets, and rows of three on large screens when the services fill them */}
       <div
         className={cn('grid gap-4 md:grid-cols-2', {
           'lg:grid-cols-3': services.length % 3 === 0,
+          'gap-x-6 gap-y-10': services.some(({ illustration }) => illustration),
         })}
       >
-        {services.map((item) => (
-          <Card key={item.id}>
-            <CardHeader>
-              <CardTitle className="font-heading">
-                {/* globals.css tightens h2 letter spacing, which only suits large titles */}
-                <ItemHeading className="tracking-normal">{item.title}</ItemHeading>
-              </CardTitle>
-              {item.price && <CardDescription>{item.price}</CardDescription>}
-            </CardHeader>
-            {item.description && (
-              <CardContent>
-                <p className="whitespace-pre-line">{item.description}</p>
-              </CardContent>
-            )}
-            {/* Kept at the bottom so the buttons line up across cards */}
-            {item.enableLink && (
-              <CardFooter className="mt-auto">
-                <CMSLink {...item.link} />
-              </CardFooter>
-            )}
-          </Card>
-        ))}
+        {services.map((item) =>
+          item.illustration ? (
+            <ServiceTile
+              effect={item.illustration}
+              Heading={ItemHeading}
+              item={item}
+              key={item.id}
+            />
+          ) : (
+            <Card key={item.id}>
+              <CardHeader>
+                <CardTitle className="font-heading">
+                  {/* globals.css tightens h2 letter spacing, which only suits large titles */}
+                  <ItemHeading className="tracking-normal">{item.title}</ItemHeading>
+                </CardTitle>
+                {item.price && <CardDescription>{item.price}</CardDescription>}
+              </CardHeader>
+              {item.description && (
+                <CardContent>
+                  <p className="whitespace-pre-line">{item.description}</p>
+                </CardContent>
+              )}
+              {/* Kept at the bottom so the buttons line up across cards */}
+              {item.enableLink && (
+                <CardFooter className="mt-auto">
+                  <CMSLink {...item.link} />
+                </CardFooter>
+              )}
+            </Card>
+          ),
+        )}
       </div>
     </div>
   )

@@ -22,9 +22,9 @@ const SPACING = 9 // minimum distance between two dots
 // comes from all of them
 const SHOWN = 0.6
 
-const between = (min: number, max: number) => min + Math.random() * (max - min)
+export const between = (min: number, max: number) => min + Math.random() * (max - min)
 
-const smoothstep = (from: number, to: number, x: number) => {
+export const smoothstep = (from: number, to: number, x: number) => {
   const t = Math.min(Math.max((x - from) / (to - from), 0), 1)
   return t * t * (3 - 2 * t)
 }
@@ -59,20 +59,23 @@ const randomShape = (variant: Variant) => {
   return variant === 'hero' ? shape : (u: number, v: number) => shape(1 - u, v)
 }
 
-// Random points, kept according to the shape and only when no other dot is too close. Each group
-// is one path of zero-length segments, which round line caps draw as dots.
-export const randomDots = (variant: Variant, width: number, height: number, avoid: Box[] = []) => {
-  const shape = randomShape(variant)
+// Random points, each kept with the chance given for its position, and only when no other point is
+// too close
+export const scatterDots = (
+  chance: (x: number, y: number) => number,
+  width: number,
+  height: number,
+) => {
   const cell = SPACING / Math.SQRT2 // small enough to hold one dot at most
   const columns = Math.ceil(width / cell)
   const grid: [number, number][] = []
-  const paths = Array.from({ length: GROUPS }, () => '')
+  const points: [number, number][] = []
 
   for (let attempt = Math.round(width * height * 0.22); attempt > 0; attempt--) {
     const x = Math.random() * width
     const y = Math.random() * height
-    const chance = shape(x / width, y / height)
-    if (!chance || Math.random() > chance * clearance(avoid, x, y)) continue
+    const share = chance(x, y)
+    if (!share || Math.random() > share) continue
 
     const column = Math.floor(x / cell)
     const row = Math.floor(y / cell)
@@ -86,12 +89,33 @@ export const randomDots = (variant: Variant, width: number, height: number, avoi
     if (tooClose) continue
 
     grid[row * columns + column] = [x, y]
-    if (Math.random() < SHOWN) {
-      paths[Math.floor(Math.random() * GROUPS)] += `M${Math.round(x)} ${Math.round(y)}h0`
-    }
+    points.push([x, y])
   }
 
-  return paths.map((d, i) => ({ d, threshold: i / GROUPS, width: between(2.2, 3.4) }))
+  return points
+}
+
+// Each group is one path of zero-length segments, which round line caps draw as dots
+export const dotPath = (points: [number, number][]) =>
+  points.map(([x, y]) => `M${Math.round(x)} ${Math.round(y)}h0`).join('')
+
+export const randomDots = (variant: Variant, width: number, height: number, avoid: Box[] = []) => {
+  const shape = randomShape(variant)
+  const groups = Array.from({ length: GROUPS }, (): [number, number][] => [])
+  const points = scatterDots(
+    (x, y) => shape(x / width, y / height) * clearance(avoid, x, y),
+    width,
+    height,
+  )
+  for (const point of points) {
+    if (Math.random() < SHOWN) groups[Math.floor(Math.random() * GROUPS)].push(point)
+  }
+
+  return groups.map((group, i) => ({
+    d: dotPath(group),
+    threshold: i / GROUPS,
+    width: between(2.2, 3.4),
+  }))
 }
 
 // Where the text and buttons around the drawing sit, relative to the drawing

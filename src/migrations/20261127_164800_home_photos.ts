@@ -8,7 +8,8 @@ import { type HomePhotos, homePageData } from '../endpoints/seed/home'
 const photosDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'media')
 
 // Rebuilds the home page around photos: a healed result beside the title, the healed points up
-// close, two réalisations, and Léo's story and the invitation to send photos on green bands. It
+// close, the three effects drawn in dots, two réalisations, and Léo's story and the invitation to
+// send photos on green bands. It
 // rewrites the whole page from the seed data, as 20261009_140500_home_content did: edits made in the
 // admin since are lost, and the previous page stays in its version history.
 // The photos are the ones the earlier migrations uploaded, found by file name, or uploaded again
@@ -31,7 +32,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
       })
     ).docs[0]
 
-  const [home, aPropos, contact, faq, galerie, effetRase, densification, camouflage] =
+  const [home, aPropos, contact, faq, galerie, prestations, effetRase, densification, camouflage] =
     await Promise.all(
       [
         'home',
@@ -39,12 +40,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
         'contact',
         'faq',
         'galerie',
+        'prestations',
         'effet-rase',
         'densification-capillaire',
         'camouflage-de-cicatrices',
       ].map(findPage),
     )
-  if (!home || !aPropos || !contact || !faq || !galerie) return
+  if (!home || !aPropos || !contact || !faq || !galerie || !prestations) return
   // Without its service pages, an effect card would lose its button
   if (!effetRase || !densification || !camouflage) return
 
@@ -95,6 +97,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
       faq,
       galerie,
       photos,
+      prestations,
       services: { effetRase, densification, camouflage },
     }),
     depth: 0,

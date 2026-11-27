@@ -15,6 +15,7 @@ type LinkedPages = {
   contact: Page
   faq: Page
   galerie: Page
+  prestations?: Page
   services?: ServicePages
 }
 
@@ -74,16 +75,19 @@ const serviceButton = (page: Page, label: string) => ({
 export const effectCards = (services?: ServicePages) => [
   {
     title: 'Effet rasé',
+    illustration: 'shaved' as const,
     description: 'Recréer l’apparence d’un cuir chevelu rasé net et homogène',
     ...(services && serviceButton(services.effetRase, 'Découvrir l’effet rasé')),
   },
   {
     title: 'Effet densité',
+    illustration: 'density' as const,
     description: 'Réduire visuellement la transparence sur une zone clairsemée',
     ...(services && serviceButton(services.densification, 'Découvrir la densification')),
   },
   {
     title: 'Camouflage de cicatrice',
+    illustration: 'scar' as const,
     description: 'Atténuer visuellement le contraste d’une cicatrice du cuir chevelu',
     ...(services && serviceButton(services.camouflage, 'Découvrir le camouflage')),
   },
@@ -98,6 +102,7 @@ export const homePageData = ({
   faq,
   galerie,
   photos,
+  prestations,
   services,
 }: LinkedPages & { photos?: HomePhotos }): PageData => ({
   slug: 'home',
@@ -135,7 +140,12 @@ export const homePageData = ({
     },
     {
       blockType: 'services',
+      heading: 'Trois effets.',
       items: effectCards(services),
+      ...(prestations && {
+        enableLink: true,
+        ...pageLink(prestations, 'Toutes les prestations →'),
+      }),
     },
     {
       blockType: 'gallery',

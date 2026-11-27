@@ -15,6 +15,20 @@ export const Services: Block = {
       type: 'text',
       label: 'Titre',
     },
+    // Link beside the title, for example to all the services
+    {
+      name: 'enableLink',
+      type: 'checkbox',
+      label: 'Ajouter un lien à côté du titre',
+    },
+    link({
+      appearances: false,
+      overrides: {
+        admin: {
+          condition: (_data, siblingData) => Boolean(siblingData?.enableLink),
+        },
+      },
+    }),
     {
       name: 'items',
       type: 'array',
@@ -39,6 +53,20 @@ export const Services: Block = {
           name: 'description',
           type: 'textarea',
           label: 'Description',
+        },
+        {
+          name: 'illustration',
+          type: 'select',
+          label: 'Dessin',
+          options: [
+            { label: 'Effet rasé', value: 'shaved' },
+            { label: 'Effet densité', value: 'density' },
+            { label: 'Camouflage de cicatrice', value: 'scar' },
+          ],
+          admin: {
+            description:
+              'Optionnel : un dessin en points au-dessus du nom. La prestation s’affiche alors sans cadre, et tout le dessin mène au lien.',
+          },
         },
         {
           name: 'price',

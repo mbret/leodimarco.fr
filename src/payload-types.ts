@@ -496,9 +496,24 @@ export interface GalleryBlock {
  */
 export interface ServicesBlock {
   heading?: string | null;
+  enableLink?: boolean | null;
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    url?: string | null;
+    label: string;
+  };
   items: {
     title: string;
     description?: string | null;
+    /**
+     * Optionnel : un dessin en points au-dessus du nom. La prestation s’affiche alors sans cadre, et tout le dessin mène au lien.
+     */
+    illustration?: ('shaved' | 'density' | 'scar') | null;
     /**
      * Texte libre, par exemple « À partir de 80 € » ou « Sur devis ».
      */
@@ -1255,11 +1270,22 @@ export interface GalleryBlockSelect<T extends boolean = true> {
  */
 export interface ServicesBlockSelect<T extends boolean = true> {
   heading?: T;
+  enableLink?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
   items?:
     | T
     | {
         title?: T;
         description?: T;
+        illustration?: T;
         price?: T;
         enableLink?: T;
         link?:
