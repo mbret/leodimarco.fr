@@ -7,6 +7,7 @@ import {
   SerializedTableCellNode,
   SerializedTableNode,
   SerializedTableRowNode,
+  SerializedTextNode,
   type DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
 import {
@@ -22,6 +23,7 @@ import type {
   Page,
 } from '@/payload-types'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { endsWithFullStop, FullStop } from '@/components/FullStop'
 import { keepPunctuation } from '@/utilities/keepPunctuation'
 import { pagePath } from '@/utilities/pagePath'
 import { cn } from '@/utilities/ui'
@@ -48,6 +50,8 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
 const HEADER_ROW = 1
 const HEADER_COLUMN = 2
 
+const isText = (node?: { type: string }): node is SerializedTextNode => node?.type === 'text'
+
 const isHeaderRow = (row: SerializedTableRowNode) =>
   (row.children as SerializedTableCellNode[]).every((cell) => cell.headerState & HEADER_ROW)
 
@@ -58,6 +62,23 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     const { text } = defaultConverters
     const node = { ...args.node, text: keepPunctuation(args.node.text) }
     return typeof text === 'function' ? text({ ...args, node }) : text
+  },
+  // Page and section titles that end with a full stop show it in green
+  heading: (args) => {
+    const { node, nodesToJSX } = args
+    const Tag = node.tag
+    const last = node.children.at(-1)
+    if ((Tag === 'h1' || Tag === 'h2') && isText(last) && endsWithFullStop(last.text)) {
+      const nodes = [...node.children.slice(0, -1), { ...last, text: last.text.slice(0, -1) }]
+      return (
+        <Tag>
+          {nodesToJSX({ nodes })}
+          <FullStop />
+        </Tag>
+      )
+    }
+    const { heading } = defaultConverters
+    return typeof heading === 'function' ? heading(args) : heading
   },
   // Check lists show a check mark, or an empty circle when unticked, instead of the editor's
   // checkboxes. Screen readers are told which items are unticked.

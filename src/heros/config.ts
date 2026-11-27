@@ -35,6 +35,10 @@ export const hero: Field = {
           label: 'Low Impact',
           value: 'lowImpact',
         },
+        {
+          label: 'Photo à côté du titre',
+          value: 'photo',
+        },
       ],
       required: true,
     },
@@ -62,6 +66,10 @@ export const hero: Field = {
         },
       }),
       label: false,
+      admin: {
+        description:
+          'Photo à côté du titre : le titre (H1) s’affiche en petit au-dessus, et le sous-titre (H2) en grand, ses mots en gras plus foncés.',
+      },
     },
     linkGroup({
       overrides: {
@@ -72,12 +80,24 @@ export const hero: Field = {
       name: 'media',
       type: 'upload',
       admin: {
-        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact'].includes(type),
+        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact', 'photo'].includes(type),
       },
       relationTo: 'media',
       // Images only: the media library also holds videos, which would not fill the hero
       filterOptions: { mimeType: { contains: 'image' } },
       required: true,
+    },
+    {
+      name: 'highlights',
+      type: 'array',
+      label: 'Repères',
+      labels: { singular: 'Repère', plural: 'Repères' },
+      maxRows: 4,
+      admin: {
+        condition: (_, { type } = {}) => type === 'photo',
+        description: 'Quelques mots chacun, sur une ligne sous les boutons.',
+      },
+      fields: [{ name: 'text', type: 'text', label: 'Texte', required: true }],
     },
   ],
   label: false,

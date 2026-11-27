@@ -10,6 +10,7 @@ import { GalleryBlock } from '@/blocks/Gallery/Component'
 import { KeyFactsBlock } from '@/blocks/KeyFacts/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ServicesBlock } from '@/blocks/Services/Component'
+import { StepsBlock } from '@/blocks/Steps/Component'
 import { TestimonialsBlock } from '@/blocks/Testimonials/Component'
 
 const blockComponents = {
@@ -21,6 +22,7 @@ const blockComponents = {
   keyFacts: KeyFactsBlock,
   mediaBlock: MediaBlock,
   services: ServicesBlock,
+  steps: StepsBlock,
   testimonials: TestimonialsBlock,
 }
 
@@ -42,7 +44,9 @@ export const RenderBlocks: React.FC<{
 
             if (Block) {
               return (
-                <div className="my-10 md:my-16" key={index}>
+                // Space above each block only, so that a green band ending the page can rest on the
+                // footer. The page adds the space under the last block.
+                <div className="mt-10 md:mt-16" key={index}>
                   {/* @ts-expect-error there may be some mismatch between the expected types here */}
                   <Block {...block} disableInnerContainer />
                 </div>

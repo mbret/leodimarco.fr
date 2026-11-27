@@ -7,7 +7,7 @@ import { contactPageData } from './contact'
 import { contactFormData } from './contactForm'
 import { faqPageData } from './faq'
 import { homePageData } from './home'
-import { externalLink, INSTAGRAM_URL, PHONE, pageLink, STUDIO_ADDRESS } from './links'
+import { externalLink, headerButton, INSTAGRAM_URL, PHONE, pageLink, STUDIO_ADDRESS } from './links'
 import { prestationsPageData, servicePagesData } from './prestations'
 import { heading, paragraph, richText } from './richText'
 
@@ -126,7 +126,9 @@ export const seed = async ({
     })
   }
 
-  const home = await ensurePage(homePageData({ aPropos, contact, faq, galerie, services }))
+  const home = await ensurePage(
+    homePageData({ aPropos, contact, faq, galerie, prestations, services }),
+  )
 
   const header = await payload.findGlobal({ slug: 'header', depth: 0, req })
   if (!hasValidLinks(header.navItems)) {
@@ -141,6 +143,7 @@ export const seed = async ({
           pageLink(faq, 'FAQ'),
           pageLink(contact, 'Contact'),
         ],
+        ...headerButton,
       },
       req,
     })

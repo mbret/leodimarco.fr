@@ -25,6 +25,25 @@ export const Header: GlobalConfig = {
         },
       },
     },
+    // Always shown with a message icon (Header/Nav), so it suits a link that opens a conversation
+    {
+      name: 'enableButton',
+      type: 'checkbox',
+      label: 'Ajouter un bouton après le menu',
+      admin: {
+        description:
+          'Avec une icône de message, pour ouvrir une conversation. Sur les téléphones et les tablettes, le bouton ne montre que son icône.',
+      },
+    },
+    link({
+      appearances: false,
+      overrides: {
+        name: 'button',
+        admin: {
+          condition: (_data, siblingData) => Boolean(siblingData?.enableButton),
+        },
+      },
+    }),
   ],
   hooks: {
     afterChange: [revalidateHeader],

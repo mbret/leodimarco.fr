@@ -157,11 +157,14 @@ export interface Page {
   id: number;
   title: string;
   hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'photo';
     /**
      * Des points discrets à côté du titre et en bas à gauche de la page, différents à chaque visite, qui apparaissent point par point.
      */
     dotPattern?: boolean | null;
+    /**
+     * Photo à côté du titre : le titre (H1) s’affiche en petit au-dessus, et le sous-titre (H2) en grand, ses mots en gras plus foncés.
+     */
     richText?: {
       root: {
         type: string;
@@ -197,6 +200,15 @@ export interface Page {
         }[]
       | null;
     media?: (number | null) | Media;
+    /**
+     * Quelques mots chacun, sur une ligne sous les boutons.
+     */
+    highlights?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   layout: (
     | ContentBlock
@@ -204,6 +216,7 @@ export interface Page {
     | MediaBlock
     | GalleryBlock
     | ServicesBlock
+    | StepsBlock
     | TestimonialsBlock
     | FAQBlock
     | FormBlock
@@ -417,6 +430,10 @@ export interface ContentBlock {
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
+  /**
+   * Le bandeau vert, dans le vert du mur du studio, occupe toute la largeur de l’écran.
+   */
+  style?: ('card' | 'band') | null;
   richText?: {
     root: {
       type: string;
@@ -433,9 +450,19 @@ export interface CallToActionBlock {
     [k: string]: unknown;
   } | null;
   /**
-   * Optionnelle : une photo ronde à gauche du texte, par exemple votre portrait.
+   * Optionnelle. Encadré : une photo ronde à gauche du texte, par exemple votre portrait. Bandeau vert : la photo en grand à droite du texte, jusqu’au bord de l’écran.
    */
   media?: (number | null) | Media;
+  /**
+   * Bandeau vert : une valeur courte et sa légende, sur une ligne sous le texte.
+   */
+  facts?:
+    | {
+        value: string;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   links?:
     | {
         link: {
@@ -475,6 +502,18 @@ export interface MediaBlock {
  */
 export interface GalleryBlock {
   heading?: string | null;
+  enableLink?: boolean | null;
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    url?: string | null;
+    label: string;
+  };
+  layout?: ('cards' | 'row') | null;
   /**
    * Laisser vide pour afficher toutes les réalisations.
    */
@@ -489,9 +528,25 @@ export interface GalleryBlock {
  */
 export interface ServicesBlock {
   heading?: string | null;
+  layout?: ('cards' | 'drawings') | null;
+  enableLink?: boolean | null;
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    url?: string | null;
+    label: string;
+  };
   items: {
     title: string;
     description?: string | null;
+    /**
+     * Le dessin au-dessus du nom. Tout le dessin mène au lien.
+     */
+    illustration?: ('shaved' | 'density' | 'scar') | null;
     /**
      * Texte libre, par exemple « À partir de 80 € » ou « Sur devis ».
      */
@@ -519,13 +574,36 @@ export interface ServicesBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StepsBlock".
+ */
+export interface StepsBlock {
+  heading?: string | null;
+  /**
+   * Dans l’ordre : elles sont numérotées et reliées par une ligne de points.
+   */
+  items: {
+    /**
+     * Optionnel, en petit au-dessus, par exemple « Au studio ».
+     */
+    label?: string | null;
+    title: string;
+    text?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'steps';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TestimonialsBlock".
  */
 export interface TestimonialsBlock {
   heading?: string | null;
   intro?: string | null;
+  layout?: ('cards' | 'featured') | null;
   /**
-   * Par exemple des avis Google, recopiés ici. Trois avis remplissent une ligne.
+   * Par exemple des avis Google, recopiés ici en entier ou en extrait. En cartes, trois avis remplissent une ligne.
    */
   reviews?:
     | {
@@ -1133,6 +1211,12 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         media?: T;
+        highlights?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
       };
   layout?:
     | T
@@ -1142,6 +1226,7 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         gallery?: T | GalleryBlockSelect<T>;
         services?: T | ServicesBlockSelect<T>;
+        steps?: T | StepsBlockSelect<T>;
         testimonials?: T | TestimonialsBlockSelect<T>;
         faq?: T | FAQBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
@@ -1202,8 +1287,16 @@ export interface ContentBlockSelect<T extends boolean = true> {
  * via the `definition` "CallToActionBlock_select".
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
+  style?: T;
   richText?: T;
   media?: T;
+  facts?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
   links?:
     | T
     | {
@@ -1237,6 +1330,17 @@ export interface MediaBlockSelect<T extends boolean = true> {
  */
 export interface GalleryBlockSelect<T extends boolean = true> {
   heading?: T;
+  enableLink?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  layout?: T;
   limit?: T;
   id?: T;
   blockName?: T;
@@ -1247,11 +1351,23 @@ export interface GalleryBlockSelect<T extends boolean = true> {
  */
 export interface ServicesBlockSelect<T extends boolean = true> {
   heading?: T;
+  layout?: T;
+  enableLink?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
   items?:
     | T
     | {
         title?: T;
         description?: T;
+        illustration?: T;
         price?: T;
         enableLink?: T;
         link?:
@@ -1271,11 +1387,29 @@ export interface ServicesBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StepsBlock_select".
+ */
+export interface StepsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        label?: T;
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TestimonialsBlock_select".
  */
 export interface TestimonialsBlockSelect<T extends boolean = true> {
   heading?: T;
   intro?: T;
+  layout?: T;
   reviews?:
     | T
     | {
@@ -1766,6 +1900,20 @@ export interface Header {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Avec une icône de message, pour ouvrir une conversation. Sur les téléphones et les tablettes, le bouton ne montre que son icône.
+   */
+  enableButton?: boolean | null;
+  button?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    url?: string | null;
+    label: string;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1834,6 +1982,16 @@ export interface HeaderSelect<T extends boolean = true> {
               label?: T;
             };
         id?: T;
+      };
+  enableButton?: T;
+  button?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
       };
   updatedAt?: T;
   createdAt?: T;

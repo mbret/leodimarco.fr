@@ -36,12 +36,6 @@
 @source inline("md:col-span-{4,6,8,12}");
 @source inline("border-border");
 @source inline("bg-card");
-@source inline("border-error");
-@source inline("bg-error/30");
-@source inline("border-success");
-@source inline("bg-success/30");
-@source inline("border-warning");
-@source inline("bg-warning/30");
 
 @theme {
   --breakpoint-sm: 40rem;
@@ -49,7 +43,7 @@
   --breakpoint-lg: 64rem;
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 86rem;
-  --font-heading: var(--font-manrope);
+  --font-heading: var(--font-bricolage);
   --font-sans: var(--font-geist-sans);
 }
 
@@ -58,47 +52,54 @@
   @apply mx-auto max-w-5xl px-4 md:px-8;
 }
 
-/* shadcn/ui neutral dark theme. The site is dark only: <html> always has the `dark` class. */
+/* The colours of Léo's studio: a near-black tinted with the green of its wall, light text, and the
+   green band painted across the wall. One dark theme for the whole site, on the shadcn/ui token
+   names. */
 :root {
+  color-scheme: dark;
   --radius: 0.625rem;
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: #0f1411;
+  --foreground: #edf1ec;
+  --card: #161d18;
+  --card-foreground: #edf1ec;
+  --popover: #161d18;
+  --popover-foreground: #edf1ec;
+  --primary: #edf1ec;
+  --primary-foreground: #0f1411;
+  --secondary: #1c251f;
+  --secondary-foreground: #edf1ec;
+  --muted: #1c251f;
+  --muted-foreground: #9da89f;
+  --accent: #1c251f;
+  --accent-foreground: #edf1ec;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-  /* Banner block status colors */
-  --success: oklch(28% 0.1 200deg);
-  --warning: oklch(35% 0.08 70deg);
-  --error: oklch(45% 0.1 25deg);
-  /* Green of the studio wall in Léo's photos: the band behind a Medium Impact hero and behind the
-     most asked FAQ questions */
+  --border: rgb(255 255 255 / 12%);
+  --input: rgb(255 255 255 / 16%);
+  --ring: #7fa98a;
+  /* Green of the studio wall in Léo's photos */
   --studio: #364b3c;
+  /* The studio green, lighter so that it shows on the dark background */
+  --full-stop: #7fa98a;
+}
+
+/* A band in the green of the studio wall. What it holds turns light: utilities and rich text read
+   these tokens where they are used, so redefining them here is enough. */
+@utility studio-band {
+  --background: var(--studio);
+  --foreground: #eef2ee;
+  --card: rgb(255 255 255 / 6%);
+  --card-foreground: #eef2ee;
+  --muted-foreground: rgb(238 242 238 / 75%);
+  --primary: #eef2ee;
+  --primary-foreground: #263529;
+  --accent: rgb(255 255 255 / 10%);
+  --accent-foreground: #eef2ee;
+  --border: rgb(255 255 255 / 18%);
+  --input: rgb(255 255 255 / 25%);
+  --ring: #eef2ee;
+  --full-stop: #b7d0bd;
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 @theme inline {
@@ -120,27 +121,11 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-error: var(--error);
-  --color-studio: var(--studio);
+  --color-full-stop: var(--full-stop);
 }
 
 @layer base {
@@ -152,24 +137,26 @@
   }
 }
 
-/* Rich text: theme colors and heading sizes. Unlayered so they override the typography plugin. */
+/* Rich text: theme colors and heading sizes. Unlayered so they override the typography plugin. They
+   read the tokens themselves, not --color-*, which is resolved once for the whole page: rich text on
+   a green band then takes the band's light colours. */
 .prose {
-  --tw-prose-body: var(--color-foreground);
-  --tw-prose-headings: var(--color-foreground);
-  --tw-prose-lead: var(--color-muted-foreground);
-  --tw-prose-links: var(--color-foreground);
-  --tw-prose-bold: var(--color-foreground);
-  --tw-prose-counters: var(--color-muted-foreground);
-  --tw-prose-bullets: var(--color-muted-foreground);
-  --tw-prose-hr: var(--color-border);
-  --tw-prose-quotes: var(--color-foreground);
-  --tw-prose-quote-borders: var(--color-border);
-  --tw-prose-captions: var(--color-muted-foreground);
-  --tw-prose-code: var(--color-foreground);
-  --tw-prose-pre-code: var(--color-foreground);
-  --tw-prose-pre-bg: var(--color-card);
-  --tw-prose-th-borders: var(--color-border);
-  --tw-prose-td-borders: var(--color-border);
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-lead: var(--muted-foreground);
+  --tw-prose-links: var(--foreground);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-counters: var(--muted-foreground);
+  --tw-prose-bullets: var(--muted-foreground);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: var(--border);
+  --tw-prose-captions: var(--muted-foreground);
+  --tw-prose-code: var(--foreground);
+  --tw-prose-pre-code: var(--foreground);
+  --tw-prose-pre-bg: var(--card);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
 }
 
 .prose h1 {
@@ -188,7 +175,7 @@
 /* Quotes set a sentence of the text apart, in large type */
 .prose blockquote {
   margin-block: 1.5em;
-  border-inline-start: 2px solid var(--color-foreground);
+  border-inline-start: 2px solid var(--foreground);
   padding-inline-start: 1em;
   font-family: var(--font-heading);
   font-size: 1.5rem;
@@ -196,6 +183,33 @@
   font-weight: 500;
   line-height: 1.35;
   letter-spacing: -0.02em;
+}
+
+/* The photo hero: the page title as a small label, and the subtitle as the large title, its bold
+   words brighter than the rest */
+.prose.photo-hero h1 {
+  margin-bottom: 1.25rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.prose.photo-hero h1 + h2 {
+  margin-bottom: 0.4em;
+  text-wrap: balance;
+  color: var(--muted-foreground);
+  font-size: min(2.75rem, 10vw);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.prose.photo-hero h2 strong {
+  color: var(--foreground);
+  font-weight: inherit;
 }
 
 /* A heading right below the page title reads as its subtitle */
@@ -218,7 +232,7 @@
 }
 
 .prose thead th {
-  color: var(--color-muted-foreground);
+  color: var(--muted-foreground);
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.1em;
@@ -237,12 +251,17 @@
 }
 
 .prose tbody td {
-  color: var(--color-muted-foreground);
+  color: var(--muted-foreground);
 }
 
 @variant md {
   .prose h1 {
     font-size: 3.5rem;
+  }
+
+  /* Beside the photo, in half the width of a tablet */
+  .prose.photo-hero h1 + h2 {
+    font-size: 3rem;
   }
 
   .prose h2 {
@@ -251,6 +270,12 @@
 
   .prose blockquote {
     font-size: 1.875rem;
+  }
+}
+
+@variant lg {
+  .prose.photo-hero h1 + h2 {
+    font-size: 4.25rem;
   }
 }
 
@@ -287,6 +312,11 @@
   mask-composite: intersect;
 }
 
+/* Green bands: beside the text, fading out at the top and bottom */
+.dot-field-band {
+  mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+}
+
 /* Desktops: beside the title column and at the bottom left, fading out at the top and bottom */
 @variant lg {
   .dot-field-hero,
@@ -296,10 +326,37 @@
   }
 }
 
+/* The scar of the camouflage drawing (blocks/Services/EffectDrawing): its dots appear group by
+   group, stay, then fade, in a loop. On phones, where nothing is hovered, it plays on its own. */
+@keyframes scar-fill {
+  0%,
+  20% {
+    opacity: 0;
+  }
+  32%,
+  78% {
+    opacity: 1;
+  }
+  90%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.scar-dots {
+  opacity: 0;
+  animation: scar-fill 5s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dot-field {
     /* The finished drawing at once, whatever the script sets */
     --dot-fill: 1 !important;
     transition: none;
+  }
+
+  /* The scar stays visible, without its dots */
+  .scar-dots {
+    animation: none;
   }
 }

@@ -21,6 +21,16 @@ export const Testimonials: Block = {
       label: 'Introduction',
     },
     {
+      name: 'layout',
+      type: 'select',
+      label: 'Disposition',
+      defaultValue: 'cards',
+      options: [
+        { label: 'Trois cartes', value: 'cards' },
+        { label: 'Le premier avis en grand', value: 'featured' },
+      ],
+    },
+    {
       name: 'reviews',
       type: 'array',
       label: 'Avis',
@@ -30,7 +40,8 @@ export const Testimonials: Block = {
       },
       admin: {
         initCollapsed: true,
-        description: 'Par exemple des avis Google, recopiés ici. Trois avis remplissent une ligne.',
+        description:
+          'Par exemple des avis Google, recopiés ici en entier ou en extrait. En cartes, trois avis remplissent une ligne.',
       },
       fields: [
         {

@@ -5,8 +5,42 @@ import type { CallToActionBlock as CTABlockProps } from '@/payload-types'
 import RichText from '@/components/RichText'
 import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
+import { StudioBand } from '@/components/StudioBand'
 
-export const CallToActionBlock: React.FC<CTABlockProps> = ({ links, media, richText }) => {
+export const CallToActionBlock: React.FC<CTABlockProps> = ({
+  facts,
+  links,
+  media,
+  richText,
+  style,
+}) => {
+  if (style === 'band') {
+    return (
+      <StudioBand media={media}>
+        {richText && <RichText className="mb-0" data={richText} enableGutter={false} />}
+        {facts && facts.length > 0 && (
+          // In a row once their column fits three long words such as « tricopigmentation » side by
+          // side, and one under the other in a narrower column
+          <ul className="mt-8 grid gap-4 border-t border-border pt-5 @min-[26rem]:grid-cols-3">
+            {facts.map(({ id, label, value }) => (
+              <li key={id}>
+                <p className="font-heading text-lg font-semibold">{value}</p>
+                {label && <p className="text-sm text-muted-foreground">{label}</p>}
+              </li>
+            ))}
+          </ul>
+        )}
+        {links && links.length > 0 && (
+          <div className="mt-8 flex flex-wrap gap-4">
+            {links.map(({ link }, i) => (
+              <CMSLink key={i} size="lg" {...link} />
+            ))}
+          </div>
+        )}
+      </StudioBand>
+    )
+  }
+
   return (
     <div className="container">
       <div className="bg-card rounded border-border border p-4 flex flex-col gap-8 md:flex-row md:justify-between md:items-center">

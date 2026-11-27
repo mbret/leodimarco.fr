@@ -10,6 +10,11 @@ export const WHATSAPP_URL = `https://wa.me/${PHONE.slice(1)}`
 export const INSTAGRAM_URL = 'https://www.instagram.com/leodimarcotricopigmentation/'
 export const INSTAGRAM_MESSAGE_URL = 'https://ig.me/m/leodimarcotricopigmentation'
 
+export const headerButton = {
+  enableButton: true,
+  button: { type: 'custom' as const, url: WHATSAPP_URL, newTab: true, label: 'Envoyer mes photos' },
+}
+
 // Link to another page, as stored by the link field
 export const pageLink = (page: Page, label: string, appearance?: 'default' | 'outline') => ({
   link: {

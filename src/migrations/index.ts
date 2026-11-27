@@ -35,6 +35,11 @@ import * as migration_20261113_145332_realisation_views from './20261113_145332_
 import * as migration_20261121_120000_media_webp_sizes from './20261121_120000_media_webp_sizes'
 import * as migration_20261121_140000_merge_realisation_client from './20261121_140000_merge_realisation_client'
 import * as migration_20261121_164445_faq_key_facts from './20261121_164445_faq_key_facts'
+import * as migration_20261127_122718_cta_style from './20261127_122718_cta_style'
+import * as migration_20261127_164759_effect_drawings from './20261127_164759_effect_drawings'
+import * as migration_20261127_170650_mockup_sections from './20261127_170650_mockup_sections'
+import * as migration_20261127_173408_services_layout from './20261127_173408_services_layout'
+import * as migration_20261127_173500_home_rework from './20261127_173500_home_rework'
 
 export const migrations = [
   {
@@ -221,5 +226,30 @@ export const migrations = [
     up: migration_20261121_164445_faq_key_facts.up,
     down: migration_20261121_164445_faq_key_facts.down,
     name: '20261121_164445_faq_key_facts',
+  },
+  {
+    up: migration_20261127_122718_cta_style.up,
+    down: migration_20261127_122718_cta_style.down,
+    name: '20261127_122718_cta_style',
+  },
+  {
+    up: migration_20261127_164759_effect_drawings.up,
+    down: migration_20261127_164759_effect_drawings.down,
+    name: '20261127_164759_effect_drawings',
+  },
+  {
+    up: migration_20261127_170650_mockup_sections.up,
+    down: migration_20261127_170650_mockup_sections.down,
+    name: '20261127_170650_mockup_sections',
+  },
+  {
+    up: migration_20261127_173408_services_layout.up,
+    down: migration_20261127_173408_services_layout.down,
+    name: '20261127_173408_services_layout',
+  },
+  {
+    up: migration_20261127_173500_home_rework.up,
+    down: migration_20261127_173500_home_rework.down,
+    name: '20261127_173500_home_rework',
   },
 ]

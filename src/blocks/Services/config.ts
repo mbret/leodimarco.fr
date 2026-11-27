@@ -16,6 +16,29 @@ export const Services: Block = {
       label: 'Titre',
     },
     {
+      name: 'layout',
+      type: 'select',
+      label: 'Disposition',
+      defaultValue: 'cards',
+      options: [
+        { label: 'Cartes', value: 'cards' },
+        { label: 'Dessins en points', value: 'drawings' },
+      ],
+    },
+    {
+      name: 'enableLink',
+      type: 'checkbox',
+      label: 'Ajouter un lien à côté du titre',
+    },
+    link({
+      appearances: false,
+      overrides: {
+        admin: {
+          condition: (_data, siblingData) => Boolean(siblingData?.enableLink),
+        },
+      },
+    }),
+    {
       name: 'items',
       type: 'array',
       label: 'Prestations',
@@ -39,6 +62,21 @@ export const Services: Block = {
           name: 'description',
           type: 'textarea',
           label: 'Description',
+        },
+        {
+          name: 'illustration',
+          type: 'select',
+          label: 'Dessin',
+          required: true,
+          options: [
+            { label: 'Effet rasé', value: 'shaved' },
+            { label: 'Effet densité', value: 'density' },
+            { label: 'Camouflage de cicatrice', value: 'scar' },
+          ],
+          admin: {
+            condition: (_data, _siblingData, { blockData }) => blockData?.layout === 'drawings',
+            description: 'Le dessin au-dessus du nom. Tout le dessin mène au lien.',
+          },
         },
         {
           name: 'price',

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { cn } from '@/utilities/ui'
 import { GeistSans } from 'geist/font/sans'
-import { Manrope } from 'next/font/google'
+import { Bricolage_Grotesque } from 'next/font/google'
 import React from 'react'
 
 import { Analytics } from '@vercel/analytics/next'
@@ -19,17 +19,18 @@ import { draftMode } from 'next/headers'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 
-// Headings; body text uses Geist
-const manrope = Manrope({
+// Headings; body text uses Geist. The optical size axis draws large titles tighter than small ones.
+const bricolage = Bricolage_Grotesque({
+  axes: ['opsz'],
   subsets: ['latin'],
-  variable: '--font-manrope',
+  variable: '--font-bricolage',
 })
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
 
   return (
-    <html className={cn(GeistSans.variable, manrope.variable, 'dark')} lang="fr">
+    <html className={cn(GeistSans.variable, bricolage.variable)} lang="fr">
       <head>
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
