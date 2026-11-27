@@ -269,6 +269,12 @@
   }
 }
 
+/* The High Impact hero pulls its photo up behind the header, so the header turns white over it */
+body:has(.high-impact-hero) > header {
+  --foreground: white;
+  color: white;
+}
+
 /* Dots (components/DotField): each group of dots shows once --dot-fill passes its threshold. The
    script sets it to 1 once the drawing is on screen, and the dots are pigmented in, group by group. */
 @property --dot-fill {
