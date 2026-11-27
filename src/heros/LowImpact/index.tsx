@@ -15,7 +15,7 @@ export const LowImpactHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadc
   richText,
 }) => {
   return (
-    <div className="container md:mt-16">
+    <div className="container">
       <Breadcrumbs breadcrumbs={breadcrumbs} />
       {/* The dots are placed from the title, so a breadcrumb above it does not move them */}
       <div className={cn(dotPattern && 'relative isolate')}>
@@ -23,7 +23,7 @@ export const LowImpactHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadc
             end of the page whatever the length of the intro, so every page shows the same patch */}
         {dotPattern && (
           <DotField
-            className="absolute inset-x-0 -top-8 -z-10 h-60 overflow-hidden md:-top-32"
+            className="absolute inset-x-0 -top-8 -z-10 h-60 overflow-hidden md:-top-16"
             variant="hero"
           />
         )}

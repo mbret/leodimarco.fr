@@ -16,7 +16,7 @@ export const PhotoHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumb
   media,
   richText,
 }) => (
-  <div className="container md:mt-16">
+  <div className="container">
     <Breadcrumbs breadcrumbs={breadcrumbs} />
     <div className="lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
       <div className="max-w-[48rem]">
