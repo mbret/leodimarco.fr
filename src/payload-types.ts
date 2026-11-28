@@ -199,6 +199,9 @@ export interface Page {
           id?: string | null;
         }[]
       | null;
+    /**
+     * Photo à côté du titre : la photo s’affiche entière, à la forme de son recadrage dans Médias. Une photo large fait un bandeau sur les téléphones.
+     */
     media?: (number | null) | Media;
     /**
      * Quelques mots chacun, sur une ligne sous les boutons.

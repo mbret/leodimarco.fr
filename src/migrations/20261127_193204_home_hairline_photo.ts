@@ -5,9 +5,11 @@ import { type MigrateDownArgs, type MigrateUpArgs, sql } from '@payloadcms/db-ve
 
 const photosDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'media')
 
-// Puts a crop of the frontal hairline in the home hero, in place of the healed result seen from the
-// front. It swaps the photo only while the home page still shows the earlier one and has no
-// unpublished draft, so that a photo or a draft set in the admin stays as it is.
+const HAIRLINE = 'realisation-ligne-frontale.jpg'
+
+// Puts a crop of the frontal hairline in Médias, and in the home hero in place of the healed result
+// seen from the front. The hero changes only while it still shows the earlier photo and the page
+// has no unpublished draft, so that a photo or a draft set in the admin stays as it is.
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   // Checking for pages with SQL rather than Payload keeps this migration working on a new site
   // after later schema changes
@@ -25,6 +27,19 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
       })
     ).docs[0]
 
+  // In Médias even when the hero keeps its photo, so that the crop can be picked in the admin
+  const hairline =
+    (await findMedia(HAIRLINE))?.id ??
+    (
+      await payload.create({
+        collection: 'media',
+        data: { alt: 'Ligne frontale d’une tricopigmentation effet rasé, vue de face' },
+        depth: 0,
+        filePath: path.join(photosDir, HAIRLINE),
+        req,
+      })
+    ).id
+
   const latestHome = (
     await payload.find({
       collection: 'pages',
@@ -36,25 +51,12 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
     })
   ).docs[0]
   const earlier = await findMedia('realisation-effet-rase-5.jpg')
-  if (
-    !latestHome ||
-    latestHome._status !== 'published' ||
-    !earlier ||
-    latestHome.hero.media !== earlier.id
-  )
+  if (!latestHome || !earlier || latestHome.hero.media !== earlier.id) return
+  // The page saves a draft while it is edited, so a change left unpublished blocks the swap
+  if (latestHome._status !== 'published') {
+    payload.logger.warn(`The home page has an unpublished draft: pick ${HAIRLINE} in its hero`)
     return
-
-  const hairline =
-    (await findMedia('realisation-ligne-frontale.jpg'))?.id ??
-    (
-      await payload.create({
-        collection: 'media',
-        data: { alt: 'Ligne frontale d’une tricopigmentation effet rasé, vue de face' },
-        depth: 0,
-        filePath: path.join(photosDir, 'realisation-ligne-frontale.jpg'),
-        req,
-      })
-    ).id
+  }
 
   await payload.update({
     collection: 'pages',
