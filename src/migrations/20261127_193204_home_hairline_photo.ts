@@ -5,10 +5,9 @@ import { type MigrateDownArgs, type MigrateUpArgs, sql } from '@payloadcms/db-ve
 
 const photosDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'media')
 
-// Shows the frontal hairline beside the home page title, in place of the healed result seen from the
-// front: a wide crop from the top of the head to the eyebrows, which reads as a band across the
-// screen on phones. It changes only that photo, and only while the home page still shows the earlier
-// one and has no unpublished draft, so that a photo or a draft set in the admin stays as it is.
+// Puts a crop of the frontal hairline in the home hero, in place of the healed result seen from the
+// front. It swaps the photo only while the home page still shows the earlier one and has no
+// unpublished draft, so that a photo or a draft set in the admin stays as it is.
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   // Checking for pages with SQL rather than Payload keeps this migration working on a new site
   // after later schema changes
@@ -26,8 +25,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
       })
     ).docs[0]
 
-  // The latest version, a draft when one is newer than the published page
-  const home = (
+  const latestHome = (
     await payload.find({
       collection: 'pages',
       depth: 0,
@@ -38,7 +36,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
     })
   ).docs[0]
   const earlier = await findMedia('realisation-effet-rase-5.jpg')
-  if (!home || home._status !== 'published' || !earlier || home.hero.media !== earlier.id) return
+  if (
+    !latestHome ||
+    latestHome._status !== 'published' ||
+    !earlier ||
+    latestHome.hero.media !== earlier.id
+  )
+    return
 
   const hairline =
     (await findMedia('realisation-ligne-frontale.jpg'))?.id ??
@@ -54,8 +58,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
 
   await payload.update({
     collection: 'pages',
-    id: home.id,
-    data: { hero: { ...home.hero, media: hairline } },
+    id: latestHome.id,
+    data: { hero: { ...latestHome.hero, media: hairline } },
     depth: 0,
     req,
     // Migrations run before the build, which renders the new photo anyway

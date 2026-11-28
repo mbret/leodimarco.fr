@@ -8,8 +8,8 @@ import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 
 // The photo beside the text from tablets, and under it across the whole screen on phones, at the
-// shape it was uploaded or cropped to: a wide crop reads as a band. The page title shows as a small
-// label above the subtitle (globals.css).
+// shape it was uploaded or cropped to. The page title shows as a small label above the subtitle
+// (globals.css).
 export const PhotoHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumbs'] }> = ({
   breadcrumbs,
   highlights,

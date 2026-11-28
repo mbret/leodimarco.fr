@@ -540,7 +540,7 @@ describe('Photo hero', () => {
     expect(screen.getByText('Formé à la Médicoderm Académie')).toBeTruthy()
   })
 
-  it('shows the photo at the shape it was cropped to, such as a wide crop of the hairline', () => {
+  it('shows the photo at the shape it was uploaded or cropped to', () => {
     render(
       React.createElement(PhotoHero, {
         type: 'photo',
