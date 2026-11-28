@@ -81,6 +81,8 @@ export const hero: Field = {
       type: 'upload',
       admin: {
         condition: (_, { type } = {}) => ['highImpact', 'mediumImpact', 'photo'].includes(type),
+        description:
+          'Photo à côté du titre : la photo s’affiche entière, à la forme de son recadrage dans Media. Une photo large fait un bandeau sur les téléphones.',
       },
       relationTo: 'media',
       // Images only: the media library also holds videos, which would not fill the hero

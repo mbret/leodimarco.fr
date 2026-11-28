@@ -539,6 +539,19 @@ describe('Photo hero', () => {
     expect(screen.getByRole('img', { name: 'Effet rasé cicatrisé' })).toBeTruthy()
     expect(screen.getByText('Formé à la Médicoderm Académie')).toBeTruthy()
   })
+
+  it('shows the photo at the shape it was uploaded or cropped to', () => {
+    render(
+      React.createElement(PhotoHero, {
+        type: 'photo',
+        richText: richText(heading('Tricopigmentation à Nancy.')),
+        media: { ...photo(3, 'Ligne frontale'), width: 960, height: 640 },
+      }),
+    )
+
+    const img = screen.getByRole('img', { name: 'Ligne frontale' })
+    expect([img.getAttribute('width'), img.getAttribute('height')]).toEqual(['960', '640'])
+  })
 })
 
 describe('Steps block', () => {

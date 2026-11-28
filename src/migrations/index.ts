@@ -40,6 +40,7 @@ import * as migration_20261127_164759_effect_drawings from './20261127_164759_ef
 import * as migration_20261127_170650_mockup_sections from './20261127_170650_mockup_sections'
 import * as migration_20261127_173408_services_layout from './20261127_173408_services_layout'
 import * as migration_20261127_173500_home_rework from './20261127_173500_home_rework'
+import * as migration_20261127_193204_home_hairline_photo from './20261127_193204_home_hairline_photo'
 
 export const migrations = [
   {
@@ -251,5 +252,10 @@ export const migrations = [
     up: migration_20261127_173500_home_rework.up,
     down: migration_20261127_173500_home_rework.down,
     name: '20261127_173500_home_rework',
+  },
+  {
+    up: migration_20261127_193204_home_hairline_photo.up,
+    down: migration_20261127_193204_home_hairline_photo.down,
+    name: '20261127_193204_home_hairline_photo',
   },
 ]
