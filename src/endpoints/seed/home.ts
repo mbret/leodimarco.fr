@@ -23,7 +23,7 @@ type LinkedPages = {
 export type HomePhotos = {
   // A healed result, beside the title
   hero: number
-  // The frontal hairline, cropped wide, beside « Une bonne tricopigmentation ne se remarque pas »
+  // The healed points up close, beside « Une bonne tricopigmentation ne se remarque pas »
   technique: number
   // Léo in his studio, on the green band that tells his story
   story: number

@@ -7,8 +7,9 @@ import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 
-// The photo beside the text from tablets, and under it across the whole width on phones. The page
-// title shows as a small label above the subtitle (globals.css).
+// The photo beside the text from tablets, and under it across the whole screen on phones, at the
+// shape it was uploaded or cropped to: a wide crop reads as a band. The page title shows as a small
+// label above the subtitle (globals.css).
 export const PhotoHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumbs'] }> = ({
   breadcrumbs,
   highlights,
@@ -43,10 +44,8 @@ export const PhotoHero: React.FC<Page['hero'] & { breadcrumbs?: Page['breadcrumb
       </div>
       {media && typeof media === 'object' && (
         <Media
-          className="relative mt-10 aspect-[4/5] overflow-hidden rounded-xl md:mt-0"
-          fill
-          focalPoint
-          imgClassName="object-cover"
+          className="-mx-4 mt-10 md:mx-0 md:mt-0"
+          imgClassName="w-full md:rounded-xl"
           priority
           resource={media}
           size="(min-width: 768px) 420px, 100vw"
