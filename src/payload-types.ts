@@ -200,7 +200,7 @@ export interface Page {
         }[]
       | null;
     /**
-     * Photo à côté du titre : la photo s’affiche entière, à la forme de son recadrage dans Médias. Une photo large fait un bandeau sur les téléphones.
+     * Photo à côté du titre : la photo s’affiche entière, à la forme de son recadrage dans Media. Une photo large fait un bandeau sur les téléphones.
      */
     media?: (number | null) | Media;
     /**

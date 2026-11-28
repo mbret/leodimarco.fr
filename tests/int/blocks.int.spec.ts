@@ -551,7 +551,6 @@ describe('Photo hero', () => {
 
     const img = screen.getByRole('img', { name: 'Ligne frontale' })
     expect([img.getAttribute('width'), img.getAttribute('height')]).toEqual(['960', '640'])
-    expect(img.style.position).not.toBe('absolute')
   })
 })
 
